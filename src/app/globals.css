@@ -1,0 +1,214 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ink: #000000;
+    --cream: #ffffff;
+    --warm: #000000;
+    --muted: #767676;
+    --light: #ffffff;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-jost), 'Jost', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: #000000;
+    color: #ffffff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+@layer components {
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .section-title {
+    font-family: var(--font-jost), 'Jost', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .section-title em {
+    font-style: normal;
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .btn-primary {
+    @apply relative overflow-hidden px-10 py-4 text-[11px] uppercase tracking-[0.25em] font-semibold;
+    background-color: var(--ink);
+    color: var(--cream);
+    border-radius: 0;
+    transition: all 0.5s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #333333;
+  }
+
+  .btn-ghost {
+    @apply relative overflow-hidden px-10 py-4 text-[11px] uppercase tracking-[0.25em] font-semibold;
+    background-color: transparent;
+    color: var(--ink);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0;
+    transition: all 0.5s ease;
+  }
+
+  .btn-ghost:hover {
+    border-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .section-padding {
+    @apply px-5 md:px-8 lg:px-16 xl:px-24;
+  }
+
+  .section-spacing {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .divider {
+    @apply w-full h-[1px] bg-black/5;
+  }
+
+  .product-card-hover {
+    @apply transition-all duration-500 ease;
+  }
+
+  .product-card-hover:hover .product-letter {
+    transform: scale(1.1);
+  }
+}
+
+@layer utilities {
+  .font-playfair {
+    font-family: var(--font-playfair), 'Playfair Display', serif;
+  }
+
+  .font-jost {
+    font-family: var(--font-jost), 'Jost', sans-serif;
+  }
+
+  .text-ink {
+    color: var(--ink);
+  }
+
+  .text-cream {
+    color: var(--cream);
+  }
+
+  .text-warm {
+    color: var(--warm);
+  }
+
+  .text-muted {
+    color: var(--muted);
+  }
+
+  .text-light {
+    color: var(--light);
+  }
+
+  .bg-ink {
+    background-color: var(--ink);
+  }
+
+  .bg-cream {
+    background-color: var(--cream);
+  }
+
+  .bg-warm {
+    background-color: var(--warm);
+  }
+
+  .bg-muted {
+    background-color: var(--muted);
+  }
+
+  .bg-light {
+    background-color: var(--light);
+  }
+
+  .border-warm {
+    border-color: var(--warm);
+  }
+
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  .stagger-6 { animation-delay: 0.6s; }
+  .stagger-7 { animation-delay: 0.7s; }
+  .stagger-8 { animation-delay: 0.8s; }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-vertical {
+  0%, 100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleY(0.6);
+    opacity: 0.5;
+  }
+}
+
+.animate-fadeUp {
+  animation: fadeUp 0.8s ease-out forwards;
+}
+
+.animate-pulse-vertical {
+  animation: pulse-vertical 2s ease-in-out infinite;
+}
