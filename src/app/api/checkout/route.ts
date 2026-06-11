@@ -20,31 +20,85 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { addressId } = body;
-
-    // Get the user's cart items with product details
-    const cartItems = await prisma.cartItem.findMany({
-      where: { userId: user.id },
-      include: {
-        product: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            isActive: true,
-          },
-        },
-        variant: {
-          select: {
-            id: true,
-            size: true,
-            color: true,
-            stock: true,
-            sku: true,
-          },
+    const { items, addressId, shippingAddress } = body;
+    const variantInclude = {
+      product: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          isActive: true,
         },
       },
-    });
+    };
+
+    // Map items from body or read from DB cart
+    let cartItems;
+    if (items && Array.isArray(items) && items.length > 0) {
+      cartItems = [];
+      for (const item of items) {
+        const variantById = item.variantId
+          ? await prisma.productVariant.findUnique({
+              where: { id: item.variantId },
+              include: variantInclude,
+            })
+          : null;
+
+        const variant =
+          variantById && variantById.productId === item.productId
+            ? variantById
+            : await prisma.productVariant.findFirst({
+              where: {
+                productId: item.productId,
+                size: item.size,
+                color: item.color,
+              },
+              include: variantInclude,
+            });
+
+        if (!variant) {
+          return apiError('VARIANT_NOT_FOUND', `Variant not found for product ${item.productId} (${item.size}/${item.color})`, 400);
+        }
+
+        cartItems.push({
+          productId: item.productId,
+          variantId: variant.id,
+          quantity: item.quantity,
+          product: variant.product,
+          variant: {
+            id: variant.id,
+            size: variant.size,
+            color: variant.color,
+            stock: variant.stock,
+            sku: variant.sku,
+          }
+        });
+      }
+    } else {
+      // Get the user's cart items with product details
+      cartItems = await prisma.cartItem.findMany({
+        where: { userId: user.id },
+        include: {
+          product: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              isActive: true,
+            },
+          },
+          variant: {
+            select: {
+              id: true,
+              size: true,
+              color: true,
+              stock: true,
+              sku: true,
+            },
+          },
+        },
+      });
+    }
 
     if (cartItems.length === 0) {
       return apiError('EMPTY_CART', 'Your cart is empty', 400);
@@ -107,22 +161,79 @@ export async function POST(request: Request) {
 
     const total = subtotal + shippingFee + tax;
 
+    // Save inline address first if provided
+    let deliveryAddressId = addressId;
+    if (deliveryAddressId) {
+      // Verify the address belongs to the authenticated user
+      const existingAddress = await prisma.address.findUnique({
+        where: { id: deliveryAddressId },
+        select: { userId: true },
+      });
+      if (!existingAddress || existingAddress.userId !== user.id) {
+        return apiError('VALIDATION_ERROR', 'Invalid shipping address. Address not found or unauthorized.', 400);
+      }
+    } else if (shippingAddress) {
+      // Validate shipping address fields on backend
+      const { fullName, phone, line1, city, state, postalCode } = shippingAddress;
+      if (!fullName?.trim() || !phone?.trim() || !line1?.trim() || !city?.trim() || !state?.trim() || !postalCode?.trim()) {
+        return apiError('VALIDATION_ERROR', 'All required shipping address fields must be filled.', 400);
+      }
+      if (!/^\d{10}$/.test(phone.trim())) {
+        return apiError('VALIDATION_ERROR', 'Invalid phone number. Must be 10 digits.', 400);
+      }
+      if (!/^\d{6}$/.test(postalCode.trim())) {
+        return apiError('VALIDATION_ERROR', 'Invalid postal code. Must be 6 digits.', 400);
+      }
+
+      const savedAddress = await prisma.address.create({
+        data: {
+          userId: user.id,
+          fullName: shippingAddress.fullName.trim(),
+          phone: shippingAddress.phone.trim(),
+          line1: shippingAddress.line1.trim(),
+          line2: shippingAddress.line2?.trim() || '',
+          city: shippingAddress.city.trim(),
+          state: shippingAddress.state.trim(),
+          postalCode: shippingAddress.postalCode.trim(),
+          country: shippingAddress.country || 'India',
+          label: 'Shipping',
+          isDefault: false
+        }
+      });
+      deliveryAddressId = savedAddress.id;
+    }
+
+    if (!deliveryAddressId) {
+      return apiError('VALIDATION_ERROR', 'No delivery address provided', 400);
+    }
+
     // Generate order number
     const orderCount = await prisma.order.count();
     const orderNumber = `AUTH-${String(orderCount + 1).padStart(6, '0')}`;
 
-    // Create the Razorpay order with auto-capture
-    const razorpay = getRazorpay();
-    const razorpayOrder = await razorpay.orders.create({
-      amount: total, // Already in paise
-      currency: 'INR',
-      receipt: orderNumber,
-      payment_capture: true, // Auto-capture — [Audit #4]
-      notes: {
-        userId: user.id,
-        orderNumber,
-      },
-    });
+    // Create the Razorpay order with auto-capture, or fallback to mock in local sandbox environment
+    let razorpayOrder;
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!keyId || !keySecret || keyId === 'rzp_test_...' || keySecret === 'your-key-secret') {
+      // Mock order for test checkout sandbox
+      razorpayOrder = {
+        id: `order_MOCK_${Math.random().toString(36).substring(2, 15)}`,
+      };
+    } else {
+      const razorpay = getRazorpay();
+      razorpayOrder = await razorpay.orders.create({
+        amount: total, // Already in paise
+        currency: 'INR',
+        receipt: orderNumber,
+        payment_capture: true, // Auto-capture — [Audit #4]
+        notes: {
+          userId: user.id,
+          orderNumber,
+        },
+      });
+    }
 
     // Create the order in our database
     const order = await prisma.order.create({
@@ -135,7 +246,7 @@ export async function POST(request: Request) {
         shippingFee,
         tax,
         total,
-        addressId: addressId ?? null,
+        addressId: deliveryAddressId,
         razorpayOrderId: razorpayOrder.id,
         items: {
           create: lineItems.map((item) => ({

@@ -1,0 +1,40 @@
+/* ── Overlay base ──────────────────────────────────────────────── */
+#author-loader {
+  position: fixed;
+  inset: 0;
+  background: #0A0A0A;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  /* starts visible; JS takes control */
+  opacity: 1;
+  visibility: visible;
+  will-change: opacity;
+  pointer-events: all;
+}
+
+/* ── Ellipse stroke-draw ───────────────────────────────────────── */
+@keyframes al-stroke-draw {
+  0%   { stroke-dashoffset: 880; }
+  50%  { stroke-dashoffset: 0;   }
+  100% { stroke-dashoffset: -880; }
+}
+.al-ellipse {
+  stroke-dasharray: 880;
+  stroke-dashoffset: 880;
+  animation: al-stroke-draw 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* ── Logo Text Fade-In ─────────────────────────────────────────── */
+@keyframes al-text-fade {
+  0%   { opacity: 0; transform: scale(0.94); }
+  100% { opacity: 1; transform: scale(1);    }
+}
+.al-logo-text {
+  opacity: 0;
+  transform-origin: 100px 60px; /* Center of the viewBox */
+  animation: al-text-fade 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.72s forwards;
+}

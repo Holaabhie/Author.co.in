@@ -60,6 +60,7 @@ export async function GET(request: NextRequest) {
         orderBy: { [safeSortBy]: sortOrder },
         include: {
           user: { select: { id: true, name: true, email: true, phone: true } },
+          address: true,
           items: {
             select: {
               id: true,

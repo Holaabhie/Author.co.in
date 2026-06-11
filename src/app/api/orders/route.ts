@@ -10,7 +10,10 @@ import { prisma } from '@/lib/db';
 export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser();
+    console.log('[ORDERS_API] getCurrentUser result:', user ? { id: user.id, email: user.email } : null);
+
     if (!user) {
+      console.warn('[ORDERS_API] No authenticated user — returning 401');
       return apiUnauthorized();
     }
 
@@ -36,9 +39,16 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    console.log('[ORDERS_API] Found', orders.length, 'orders for user', user.id);
     return apiSuccess(orders);
-  } catch (error) {
-    console.error('[ORDERS_GET_ERROR]', error);
+  } catch (error: any) {
+    console.error('[ORDERS_GET_ERROR]', {
+      name: error?.name,
+      message: error?.message,
+      code: error?.code,
+      meta: error?.meta,
+      stack: error?.stack?.split('\n').slice(0, 5).join('\n'),
+    });
     return apiError('INTERNAL_ERROR', 'Failed to fetch your orders', 500);
   }
 }

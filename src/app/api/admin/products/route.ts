@@ -59,9 +59,9 @@ export async function GET(request: NextRequest) {
           category: { select: { id: true, name: true, slug: true } },
           brand: { select: { id: true, name: true, slug: true } },
           images: {
-            where: { isPrimary: true },
+            orderBy: { sortOrder: 'asc' },
             take: 1,
-            select: { id: true, url: true, alt: true },
+            select: { id: true, url: true, alt: true, color: true, publicId: true },
           },
           _count: {
             select: {

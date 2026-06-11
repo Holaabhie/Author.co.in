@@ -145,7 +145,7 @@ export default function AdminProductsPage() {
       if (!json.success) {
         throw new Error(json.message || `Failed to ${action} product`);
       }
-      toast.success(`Product ${action}d successfully`);
+      /* success toast removed */
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Failed to update product status");
@@ -169,7 +169,7 @@ export default function AdminProductsPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success("Product deleted successfully");
+        /* success toast removed */
         fetchProducts();
       } else {
         throw new Error(json.message || "Failed to delete product");
@@ -265,7 +265,7 @@ export default function AdminProductsPage() {
             <AlertTriangle className="w-10 h-10 text-author-mid mx-auto opacity-50" />
             <h3 className="font-heading text-lg font-bold text-author-white uppercase tracking-wider">No Products Found</h3>
             <p className="text-xs text-author-mid max-w-sm mx-auto">
-              We couldn't find any products matching your search criteria. Try adjusting your filters.
+              We couldn&apos;t find any products matching your search criteria. Try adjusting your filters.
             </p>
           </div>
         ) : (

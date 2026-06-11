@@ -1,3 +1,9 @@
+/* ============================================================
+   AUTHOR — Global Styles
+   Font A (Display/Headlines): Barlow Condensed — var(--font-barlow-condensed)
+   Font B (Body/Product Content): Inter — var(--font-inter)
+   No external @import needed — fonts loaded via next/font/google in layout.tsx
+   ============================================================ */
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @tailwind base;
@@ -6,11 +12,15 @@
 
 @layer base {
   :root {
-    --ink: #000000;
-    --cream: #ffffff;
-    --warm: #000000;
-    --muted: oklch(0.97 0 0);
-    --light: #ffffff;
+    /* ── Brand Color Tokens ── */
+    --ink: #000000;           /* Primary: pure black */
+    --cream: #ffffff;         /* Button text, inverse */
+    --light: #F5F5F5;         /* Light backgrounds */
+    --sand: #C8BFB6;          /* AUTHOR sand/beige accent */
+    --warm: #B8A07A;          /* Warm gold accent */
+    --muted: #6B6B6B;         /* Muted text */
+
+    /* ── ShadCN / Tailwind tokens ── */
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
@@ -58,8 +68,9 @@
     @apply font-sans;
   }
 
+  /* Font B (Inter) as the default body font */
   body {
-    font-family: var(--font-jost), 'Jost', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-family: var(--font-inter), 'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     background-color: #ffffff;
     color: #000000;
     overflow-x: hidden;
@@ -86,10 +97,7 @@
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.3);
   }
-  .theme {
-    --font-heading: var(--font-sans);
-    --font-sans: var(--font-sans);
-  }
+
   .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
@@ -126,6 +134,9 @@
 }
 
 @layer components {
+  /* ── Typography System ── */
+
+  /* section-label: small caps label, existing class */
   .section-label {
     font-size: 10px;
     letter-spacing: 0.35em;
@@ -133,9 +144,10 @@
     color: var(--muted);
   }
 
+  /* section-title: display headline, existing class — now uses Barlow Condensed */
   .section-title {
-    font-family: var(--font-jost), 'Jost', sans-serif;
-    font-weight: 400;
+    font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
@@ -146,8 +158,35 @@
     font-weight: 700;
   }
 
+  /*
+   * heading-serif — was used throughout cart, checkout, home components
+   * but was never defined (phantom class). Now defined using Barlow Condensed
+   * to match the premium editorial street-luxury aesthetic.
+   */
+  .heading-serif {
+    font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /*
+   * label-uppercase — was used throughout checkout, cart, product pages
+   * but was never defined (phantom class). Now defined as a small tracking label.
+   */
+  .label-uppercase {
+    font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* ── Buttons ── */
+
   .btn-primary {
     @apply relative overflow-hidden px-10 py-4 text-[11px] uppercase tracking-[0.25em] font-semibold;
+    font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
     background-color: var(--ink);
     color: var(--cream);
     border-radius: 0;
@@ -160,6 +199,7 @@
 
   .btn-ghost {
     @apply relative overflow-hidden px-10 py-4 text-[11px] uppercase tracking-[0.25em] font-semibold;
+    font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
     background-color: transparent;
     color: var(--ink);
     border: 1px solid rgba(0, 0, 0, 0.15);
@@ -171,6 +211,8 @@
     border-color: rgba(0, 0, 0, 0.3);
     background-color: rgba(0, 0, 0, 0.05);
   }
+
+  /* ── Layout ── */
 
   .section-padding {
     @apply px-5 md:px-8 lg:px-16 xl:px-24;
@@ -184,6 +226,8 @@
     @apply w-full h-[1px] bg-black/5;
   }
 
+  /* ── Product Cards ── */
+
   .product-card-hover {
     @apply transition-all duration-500 ease;
   }
@@ -194,58 +238,46 @@
 }
 
 @layer utilities {
+  /* Font utility classes — Font A: Barlow Condensed, Font B: Inter */
+  .font-display {
+    font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+  }
+
+  .font-body {
+    font-family: var(--font-inter), 'Inter', sans-serif;
+  }
+
+  /* Legacy font-playfair alias → now mapped to Barlow Condensed
+   * Keeps existing font-playfair class working without breaking components
+   */
   .font-playfair {
-    font-family: var(--font-playfair), 'Playfair Display', serif;
+    font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
   }
 
+  /* Legacy font-jost alias → now mapped to Inter */
   .font-jost {
-    font-family: var(--font-jost), 'Jost', sans-serif;
+    font-family: var(--font-inter), 'Inter', sans-serif;
   }
 
-  .text-ink {
-    color: var(--ink);
-  }
+  /* ── Color utilities ── */
+  .text-ink { color: var(--ink); }
+  .text-cream { color: var(--cream); }
+  .text-warm { color: var(--warm); }
+  .text-muted { color: var(--muted); }
+  .text-light { color: var(--light); }
+  .text-sand { color: var(--sand); }
 
-  .text-cream {
-    color: var(--cream);
-  }
+  .bg-ink { background-color: var(--ink); }
+  .bg-cream { background-color: var(--cream); }
+  .bg-warm { background-color: var(--warm); }
+  .bg-muted { background-color: var(--muted); }
+  .bg-light { background-color: var(--light); }
+  .bg-sand { background-color: var(--sand); }
 
-  .text-warm {
-    color: var(--warm);
-  }
+  .border-warm { border-color: var(--warm); }
+  .border-sand { border-color: var(--sand); }
 
-  .text-muted {
-    color: var(--muted);
-  }
-
-  .text-light {
-    color: var(--light);
-  }
-
-  .bg-ink {
-    background-color: var(--ink);
-  }
-
-  .bg-cream {
-    background-color: var(--cream);
-  }
-
-  .bg-warm {
-    background-color: var(--warm);
-  }
-
-  .bg-muted {
-    background-color: var(--muted);
-  }
-
-  .bg-light {
-    background-color: var(--light);
-  }
-
-  .border-warm {
-    border-color: var(--warm);
-  }
-
+  /* ── Animation stagger delays ── */
   .stagger-1 { animation-delay: 0.1s; }
   .stagger-2 { animation-delay: 0.2s; }
   .stagger-3 { animation-delay: 0.3s; }
@@ -255,6 +287,8 @@
   .stagger-7 { animation-delay: 0.7s; }
   .stagger-8 { animation-delay: 0.8s; }
 }
+
+/* ── Keyframe Animations ── */
 
 @keyframes fadeUp {
   from {
@@ -284,4 +318,14 @@
 
 .animate-pulse-vertical {
   animation: pulse-vertical 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.15); }
+}
+
+@keyframes trackerPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 149, 108, 0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(200, 149, 108, 0); }
 }

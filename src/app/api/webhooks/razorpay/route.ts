@@ -149,6 +149,12 @@ async function handlePaymentCaptured(event: Record<string, unknown>) {
     return;
   }
 
+  // If already paid, skip stock adjustment and duplicate histories
+  if (order.paymentStatus === 'PAID') {
+    console.info(`[WEBHOOK] Order ${order.orderNumber} already marked as PAID. Skipping duplicate processing.`);
+    return;
+  }
+
   // Update order to CONFIRMED + PAID
   await prisma.$transaction(async (tx) => {
     await tx.order.update({

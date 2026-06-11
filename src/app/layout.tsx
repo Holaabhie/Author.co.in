@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Jost } from "next/font/google";
+import { Barlow_Condensed, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -7,15 +7,16 @@ import Providers from "@/components/providers/Providers";
 import CartDrawer from "@/components/cart/CartDrawer";
 import SearchModal from "@/components/search/SearchModal";
 
-const playfair = Playfair_Display({
+const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-barlow-condensed",
   display: "swap",
 });
 
-const jost = Jost({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-jost",
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -48,8 +49,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${jost.variable}`}>
-      <body className="bg-ink text-light font-jost antialiased">
+    <html lang="en" className={`${barlowCondensed.variable} ${inter.variable}`}>
+      <body className="bg-ink text-light font-sans antialiased">
         <Providers>
           <Navbar />
           <main>{children}</main>

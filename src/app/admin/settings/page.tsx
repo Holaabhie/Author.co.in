@@ -10,8 +10,10 @@ import {
   Save,
   Loader2,
   AlertTriangle,
+  Lock,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { createClient } from "@/lib/supabase/client";
 
 interface InvoiceConfig {
   businessName: string;
@@ -40,9 +42,14 @@ interface ShippingConfig {
 }
 
 export default function AdminSettingsPage() {
-  const [activeTab, setActiveTab] = useState<"invoice" | "notifications" | "shipping">("invoice");
+  const [activeTab, setActiveTab] = useState<"invoice" | "notifications" | "shipping" | "security">("invoice");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  // Form states - Security/Password
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
 
   // Form states - Invoice
   const [businessName, setBusinessName] = useState("");
@@ -129,7 +136,7 @@ export default function AdminSettingsPage() {
       });
       const json = await res.json();
       if (json.success) {
-        toast.success("Invoice settings updated successfully");
+        /* success toast removed */
       } else {
         throw new Error(json.message || "Failed to update invoice settings");
       }
@@ -158,7 +165,7 @@ export default function AdminSettingsPage() {
       });
       const json = await res.json();
       if (json.success) {
-        toast.success("Shipping settings updated successfully");
+        /* success toast removed */
       } else {
         throw new Error(json.message || "Failed to update shipping settings");
       }
@@ -188,7 +195,7 @@ export default function AdminSettingsPage() {
       if (!json.success) {
         throw new Error(json.message || "Failed to update notification toggles");
       }
-      toast.success("Notification channel updated");
+      /* success toast removed */
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Error updating toggle");
@@ -203,7 +210,34 @@ export default function AdminSettingsPage() {
     { id: "invoice", label: "Invoice Settings", icon: FileText },
     { id: "shipping", label: "Shipping & Fulfillment", icon: Truck },
     { id: "notifications", label: "Notifications Channels", icon: Bell },
+    { id: "security", label: "Security & Passcode", icon: Lock },
   ];
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 8) {
+      toast.error("Password must be at least 8 characters long");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      /* success toast removed */
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      console.error("Password change error:", err);
+      toast.error(err.message || "Failed to update passcode");
+    } finally {
+      setChangingPassword(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -480,6 +514,55 @@ export default function AdminSettingsPage() {
               </div>
             )}
           </div>
+        )}
+
+        {activeTab === "security" && (
+          <form onSubmit={handlePasswordChange} className="glass p-6 rounded-lg space-y-6">
+            <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-author-white border-b border-white/5 pb-3 flex items-center gap-2">
+              <Lock className="w-4 h-4 text-author-cream" /> Change Admin Passcode
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div>
+                <label className="text-[10px] text-author-mid uppercase block mb-1">New Passcode (Min 8 chars) *</label>
+                <input
+                  type="password"
+                  required
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-author-charcoal border border-white/10 px-3 py-2 text-xs text-author-white focus:outline-none rounded font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] text-author-mid uppercase block mb-1">Confirm New Passcode *</label>
+                <input
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-author-charcoal border border-white/10 px-3 py-2 text-xs text-author-white focus:outline-none rounded font-mono"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-4 border-t border-white/5">
+              <button
+                type="submit"
+                disabled={changingPassword || !newPassword || !confirmPassword}
+                className="bg-author-cream text-author-black px-6 py-2.5 font-heading text-xs uppercase tracking-[0.2em] font-semibold hover:bg-author-white transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                {changingPassword ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                Update Passcode
+              </button>
+            </div>
+          </form>
         )}
       </div>
     </div>

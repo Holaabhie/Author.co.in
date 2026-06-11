@@ -17,18 +17,22 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-20 section-padding bg-white text-black light-page">
-        <div className="text-center">
-          <ShoppingBag className="w-16 h-16 text-black/20 mx-auto mb-6" />
-          <h1 className="heading-serif text-3xl md:text-5xl mb-4">
-            Your Cart is Empty
-          </h1>
-          <p className="text-black/60 text-sm mb-10">
-            Looks like you haven&apos;t added anything yet.
+      <div className="min-h-screen flex items-center justify-center pt-20 section-padding" style={{ background: '#0A0A0A' }}>
+        <div style={{ background: '#111111', border: '1px solid #1E1E1E', padding: '48px 32px', maxWidth: '480px', width: '100%', textAlign: 'center' }}>
+          <div style={{ width: '100%', height: '1px', background: '#1E1E1E', marginBottom: '32px' }} />
+          <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '22px', color: '#F5F0E8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.3, marginBottom: '4px' }}>
+            Your cart is clean.
+          </h2>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', color: '#666', fontWeight: 300, lineHeight: 1.6, marginBottom: '32px' }}>
+            Keep it that way — or don&apos;t.
           </p>
-          <Link href="/shop" className="btn-outline-dark inline-block">
-            <span>Explore Collection</span>
+          <Link
+            href="/shop"
+            style={{ display: 'inline-block', border: '1px solid #B8A07A', color: '#B8A07A', background: 'transparent', padding: '12px 28px', fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, textDecoration: 'none', transition: 'all 0.22s ease' }}
+          >
+            Start Shopping →
           </Link>
+          <div style={{ width: '100%', height: '1px', background: '#1E1E1E', marginTop: '32px' }} />
         </div>
       </div>
     );
@@ -62,7 +66,7 @@ export default function CartPage() {
                   const effectivePrice = item.salePrice ?? item.price;
                   return (
                     <motion.div
-                      key={`${item.productId}-${item.size}-${item.color}`}
+                      key={item.variantId}
                       layout
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -122,7 +126,7 @@ export default function CartPage() {
                           <div className="flex items-center bg-[#F5F5F5]">
                             <button
                               onClick={() =>
-                                updateQuantity(item.productId, item.size, item.color, item.quantity - 1)
+                                updateQuantity(item.variantId, item.quantity - 1)
                               }
                               className="w-10 h-10 flex items-center justify-center hover:bg-black/5 transition-colors"
                             >
@@ -133,7 +137,7 @@ export default function CartPage() {
                             </span>
                             <button
                               onClick={() =>
-                                updateQuantity(item.productId, item.size, item.color, item.quantity + 1)
+                                updateQuantity(item.variantId, item.quantity + 1)
                               }
                               className="w-10 h-10 flex items-center justify-center hover:bg-black/5 transition-colors"
                             >
@@ -142,7 +146,7 @@ export default function CartPage() {
                           </div>
 
                           <button
-                            onClick={() => removeItem(item.productId, item.size, item.color)}
+                            onClick={() => removeItem(item.variantId)}
                             className="text-xs text-black/40 hover:text-black transition-colors uppercase tracking-wider underline underline-offset-4"
                           >
                             Remove

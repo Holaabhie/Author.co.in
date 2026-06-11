@@ -5,25 +5,25 @@ import Link from "next/link";
 
 const categories = [
   {
-    name: "Outerwear",
-    title: "The Archive",
-    bg: "#1a1510",
-    letter: "A",
-    slug: "outerwear",
-  },
-  {
-    name: "Tees & Knits",
+    name: "T-Shirts",
     title: "Core Essentials",
-    bg: "#0e1318",
+    bg: "#1a1510",
     letter: "T",
     slug: "t-shirts",
   },
   {
-    name: "Cargo & Denim",
-    title: "Utility Fit",
+    name: "Tops",
+    title: "Street Ready",
+    bg: "#0e1318",
+    letter: "O",
+    slug: "tops",
+  },
+  {
+    name: "Sweatpants",
+    title: "Street Ready",
     bg: "#0f0e14",
-    letter: "C",
-    slug: "joggers",
+    letter: "S",
+    slug: "sweatpants",
   },
 ];
 
@@ -50,7 +50,7 @@ export default function CategoryGrid() {
                   className="absolute inset-0 group flex flex-col justify-end p-6 md:p-8"
                 >
                   <span className="section-label text-warm mb-2">{category.name}</span>
-                  <h3 className="font-playfair text-2xl md:text-3xl text-white mb-4">
+                  <h3 className="font-[family:var(--font-barlow-condensed)] text-2xl md:text-3xl text-white mb-4">
                     {category.title}
                   </h3>
                   <span className="section-label text-white/60 group-hover:text-white transition-colors">
@@ -59,7 +59,7 @@ export default function CategoryGrid() {
 
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <span 
-                      className="font-playfair text-[200px] md:text-[300px] text-white italic"
+                      className="font-[family:var(--font-barlow-condensed)] text-[200px] md:text-[300px] text-white"
                       style={{ opacity: 0.08, transform: 'scale(1.5)' }}
                     >
                       {category.letter}

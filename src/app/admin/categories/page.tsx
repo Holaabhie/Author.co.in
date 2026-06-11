@@ -150,7 +150,7 @@ export default function AdminCategoriesPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success(`Category ${editingCategory ? "updated" : "created"} successfully`);
+        /* success toast removed */
         setIsModalOpen(false);
         loadCategories();
       } else {
@@ -184,7 +184,7 @@ export default function AdminCategoriesPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success("Category deleted successfully");
+        /* success toast removed */
         loadCategories();
       } else {
         throw new Error(json.message || "Failed to delete category");

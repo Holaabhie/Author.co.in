@@ -2,25 +2,29 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Heart, ShoppingBag, User, Menu, X, LogOut, ChevronDown } from 'lucide-react';
+import { Search, ShoppingBag, User, Menu, X, LogOut, ChevronDown, ChevronRight, ArrowRight } from 'lucide-react';
 import { useCartStore } from '@/lib/store/cart';
-import { useWishlistStore } from '@/lib/store/wishlist';
 import { useUIStore } from '@/lib/store/ui';
 import { useUser } from '@/hooks/use-user';
+
+const AUTH_PATHS = ['/login', '/register', '/reset-password', '/update-password'];
 
 export default function Navbar() {
   const { user, signOut } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
 
   const { isMobileMenuOpen, openMobileMenu, closeMobileMenu, openSearch } = useUIStore();
   const cartItemCount = useCartStore((state) => state.getItemCount());
   const openCart = useCartStore((state) => state.openCart);
-  const wishlistCount = useWishlistStore((state) => state.getItemCount());
 
   const [mounted, setMounted] = useState(false);
+
+  // 2c: Track scroll direction to hide/show "My Account / Logged in as" block
+  const [sidebarHeaderVisible, setSidebarHeaderVisible] = useState(true);
 
   useEffect(() => {
     setMounted(true);
@@ -32,6 +36,25 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // 2c: Hide sidebar header on scroll down, show on scroll up
+  useEffect(() => {
+    let lastScroll = 0;
+    const handleScroll = () => {
+      const current = window.scrollY;
+      if (current > lastScroll && current > 60) {
+        setSidebarHeaderVisible(false);
+      } else {
+        setSidebarHeaderVisible(true);
+      }
+      lastScroll = current;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Hide navbar entirely on auth/split-screen pages
+  if (AUTH_PATHS.includes(pathname)) return null;
+
   const handleSignOut = async () => {
     closeMobileMenu();
     await signOut();
@@ -39,26 +62,35 @@ export default function Navbar() {
     router.refresh();
   };
 
-  // Main navigation items
+  // 2b: Get first name for display
+  const getDisplayName = () => {
+    if (!user) return '';
+    const fullName = user.user_metadata?.name || user.user_metadata?.full_name;
+    if (fullName) {
+      return fullName.split(' ')[0];
+    }
+    // Fallback: email prefix before @
+    return user.email?.split('@')[0] || '';
+  };
+
+  // Main navigation items — cleaned up
   const mainNav = [
-    { name: 'New Arrivals', href: '/shop?sort=new' },
     {
       name: 'Shop',
       href: '/shop',
       dropdown: [
-        { name: 'T-Shirts', href: '/shop?category=t-shirts' },
-        { name: 'Tops', href: '/shop?category=hoodies' },
-        { name: 'Trousers', href: '/shop?category=joggers' },
+        { name: 'T-Shirts', href: '/shop/tshirts' },
+        { name: 'Tops', href: '/shop/tops' },
+        { name: 'Sweatpants', href: '/shop/sweatpants' },
       ],
     },
-    { name: 'Lookbook', href: '/lookbook' },
     {
       name: 'About',
       href: '/about',
       dropdown: [
         { name: 'Our Story', href: '/about' },
-        { name: 'Shipping', href: '/about' },
-        { name: 'Returns', href: '/about' },
+        { name: 'Shipping', href: '/shipping' },
+        { name: 'Returns', href: '/returns' },
         { name: 'Contact', href: '/contact' },
       ],
     },
@@ -75,10 +107,6 @@ export default function Navbar() {
           isScrolled ? 'bg-white border-b border-neutral-100' : 'bg-transparent'
         }`}
       >
-        {/* Top Announcement Bar */}
-        <div className="bg-black text-white text-center py-2 text-[9px] uppercase tracking-[0.25em] font-medium font-sans">
-          Free shipping on all orders above ₹4,000
-        </div>
 
         <div className="section-padding">
           <nav className="flex items-center justify-between h-14 md:h-16 relative">
@@ -143,15 +171,8 @@ export default function Navbar() {
               </span>
             </Link>
 
-            {/* Right Icons Bar */}
+            {/* Right Icons Bar — 2d: Wishlist icon REMOVED */}
             <div className="flex items-center gap-1 md:gap-3 flex-1 justify-end">
-              
-              {/* Currency Selector (Static INR display as requested) */}
-              <div className="hidden sm:flex items-center mr-4">
-                <span className={`text-[10px] font-bold uppercase tracking-wider font-sans border-r border-neutral-300/30 pr-4 ${textColorClass}`}>
-                  INR ₹
-                </span>
-              </div>
 
               {/* Search button */}
               <button
@@ -168,28 +189,20 @@ export default function Navbar() {
                   <User className={`w-[17px] h-[17px] transition-colors ${iconColorClass}`} />
                 </Link>
               ) : (
-                <Link href="/login" className="p-2 hidden sm:block" aria-label="Account">
+                <Link href={`/login?returnTo=${encodeURIComponent(pathname)}`} className="p-2 hidden sm:block" aria-label="Account">
                   <User className={`w-[17px] h-[17px] transition-colors ${iconColorClass}`} />
                 </Link>
               )}
-
-              {/* Wishlist Link */}
-              <Link href="/account?tab=wishlist" className="p-2 relative" aria-label="Wishlist">
-                <Heart className={`w-[17px] h-[17px] transition-colors ${iconColorClass}`} />
-                {mounted && wishlistCount > 0 && (
-                  <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 text-[8px] font-bold rounded-full bg-black text-white flex items-center justify-center border border-white">
-                    {wishlistCount}
-                  </span>
-                )}
-              </Link>
 
               {/* Cart Drawer Toggle button */}
               <button onClick={openCart} className="p-2 relative" aria-label="Cart">
                 <ShoppingBag className={`w-[17px] h-[17px] transition-colors ${iconColorClass}`} />
                 {mounted && cartItemCount > 0 && (
                   <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
+                    key={cartItemCount}
+                    initial={{ scale: 0.6, opacity: 0 }}
+                    animate={{ scale: [1.4, 0.9, 1], opacity: 1 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                     className="absolute top-0.5 right-0.5 w-3.5 h-3.5 text-[8px] font-bold rounded-full bg-black text-white flex items-center justify-center border border-white"
                   >
                     {cartItemCount}
@@ -201,7 +214,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Drawer Navigation Menu */}
+      {/* Mobile Drawer Navigation Menu — Redesigned */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -219,94 +232,147 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'tween', duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm bg-white z-[70] flex flex-col shadow-xl font-sans"
+              className="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm bg-white z-[70] flex flex-col font-sans"
             >
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between p-5 border-b border-neutral-100">
-                <span className="font-sans font-bold text-base uppercase tracking-widest text-black">Author</span>
-                <button onClick={closeMobileMenu} className="p-2" aria-label="Close menu">
+              {/* Drawer Header — Logo + Close */}
+              <div className="flex items-center justify-between px-6 py-6 border-b border-neutral-100">
+                <span className="font-sans font-bold text-base uppercase tracking-[0.25em] text-black">Author</span>
+                <button onClick={closeMobileMenu} className="p-2 -mr-2" aria-label="Close menu">
                   <X className="w-5 h-5 text-black" />
                 </button>
               </div>
 
-              {user && (
-                <div className="px-5 py-3.5 bg-neutral-50 border-b border-neutral-100">
-                  <p className="text-[9px] text-neutral-400 uppercase tracking-widest">Logged in as</p>
-                  <p className="text-xs text-black mt-0.5 font-medium">
-                    {user.user_metadata?.name || user.email}
-                  </p>
-                </div>
-              )}
-
-              {/* Navigation Links Scroll Container */}
-              <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-6">
-                
-                {/* Main mobile nav links */}
-                {mainNav.map((link) => (
-                  <div key={link.name} className="flex flex-col gap-2">
+              {/* 2a + 2b + 2c: Auth-aware top block — hide on scroll */}
+              <div
+                style={{
+                  transition: 'transform 0.3s ease, opacity 0.25s ease',
+                  transform: sidebarHeaderVisible ? 'translateY(0)' : 'translateY(-100%)',
+                  opacity: sidebarHeaderVisible ? 1 : 0,
+                  overflow: 'hidden',
+                  maxHeight: sidebarHeaderVisible ? '200px' : '0px',
+                }}
+              >
+                {user ? (
+                  <>
                     <Link
-                      href={link.href}
+                      href="/account"
                       onClick={closeMobileMenu}
-                      className="text-xs font-bold text-black uppercase tracking-[0.2em]"
+                      className="flex items-center justify-between px-6 py-4"
+                      style={{ borderBottom: '1px solid #1E1E1E', fontSize: '16px', fontWeight: 500, color: '#C8956C', textTransform: 'uppercase' as const, letterSpacing: '0.12em', textDecoration: 'none' }}
                     >
-                      {link.name}
+                      My Account
+                      <ChevronRight className="w-4 h-4" style={{ color: '#C8956C' }} />
                     </Link>
-                    
-                    {/* Render sub-dropdowns in drawer format directly */}
-                    {link.dropdown && (
-                      <div className="flex flex-col gap-2 pl-4 border-l border-neutral-100 mt-1">
-                        {link.dropdown.map((subItem) => (
-                          <Link
-                            key={subItem.name}
-                            href={subItem.href}
-                            onClick={closeMobileMenu}
-                            className="text-[10px] text-neutral-500 uppercase tracking-widest hover:text-black transition-colors"
-                          >
-                            {subItem.name}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-                
-                {/* Dynamic user links */}
-                <div className="border-t border-neutral-100 pt-6 mt-2 flex flex-col gap-4">
-                  {user ? (
-                    <>
-                      <Link href="/account" onClick={closeMobileMenu} className="text-xs font-bold text-neutral-600 uppercase tracking-[0.2em]">
-                        My Account
-                      </Link>
-                      <button 
-                        onClick={handleSignOut} 
-                        className="text-xs font-bold text-neutral-400 hover:text-red-500 uppercase tracking-[0.2em] text-left flex items-center gap-2"
-                      >
-                        <LogOut className="w-4 h-4" /> Sign Out
-                      </button>
-                    </>
-                  ) : (
-                    <Link href="/login" onClick={closeMobileMenu} className="text-xs font-bold text-black uppercase tracking-[0.2em]">
-                      Sign In
-                    </Link>
-                  )}
-                </div>
+                    {/* 2b: Logged-in user info — first name, styled */}
+                    <div className="px-6 py-3.5 bg-neutral-50 border-b border-neutral-100">
+                      <p className="text-[9px] text-neutral-400 uppercase tracking-widest">Logged in as</p>
+                      <p style={{
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        color: '#0A0A0A',
+                        fontFamily: "'Barlow Condensed', var(--font-barlow-condensed), sans-serif",
+                        marginTop: '2px',
+                        letterSpacing: '0.05em',
+                      }}>
+                        {getDisplayName()}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <Link
+                    href={`/login?returnTo=${encodeURIComponent(pathname)}`}
+                    onClick={closeMobileMenu}
+                    className="flex items-center justify-between px-6 py-4"
+                    style={{ borderBottom: '1px solid #1E1E1E', fontSize: '16px', fontWeight: 500, color: '#C8956C', textTransform: 'uppercase' as const, letterSpacing: '0.12em', textDecoration: 'none' }}
+                  >
+                    Sign In
+                    <ArrowRight className="w-4 h-4" style={{ color: '#C8956C' }} />
+                  </Link>
+                )}
               </div>
 
-              {/* Mobile Drawer Bottom Info */}
-              <div className="mt-auto p-5 border-t border-neutral-100 bg-neutral-50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <button onClick={() => { closeMobileMenu(); openSearch(); }} className="p-1">
-                      <Search className="w-4 h-4 text-neutral-500" />
-                    </button>
-                    <Link href="/account?tab=wishlist" onClick={closeMobileMenu} className="p-1">
-                      <Heart className="w-4 h-4 text-neutral-500" />
+              {/* Navigation Links */}
+              <div className="flex-1 overflow-y-auto px-6 py-8 flex flex-col gap-10">
+                
+                {/* SHOP Section */}
+                <div>
+                  <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-400 mb-5">
+                    Shop
+                  </h3>
+                  <div className="flex flex-col gap-4">
+                    <Link
+                      href="/shop?category=t-shirts"
+                      onClick={closeMobileMenu}
+                      className="text-sm text-black hover:text-neutral-500 transition-colors duration-200 tracking-wide"
+                    >
+                      T-Shirts
+                    </Link>
+                    <Link
+                      href="/shop?category=tops"
+                      onClick={closeMobileMenu}
+                      className="text-sm text-black hover:text-neutral-500 transition-colors duration-200 tracking-wide"
+                    >
+                      Tops
+                    </Link>
+                    <Link
+                      href="/shop?category=sweatpants"
+                      onClick={closeMobileMenu}
+                      className="text-sm text-black hover:text-neutral-500 transition-colors duration-200 tracking-wide"
+                    >
+                      Sweatpants
                     </Link>
                   </div>
-                  <span className="text-[10px] font-bold text-black font-sans uppercase tracking-wider">
-                    INR ₹
-                  </span>
                 </div>
+
+                {/* ABOUT Section */}
+                <div>
+                  <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-400 mb-5">
+                    About
+                  </h3>
+                  <div className="flex flex-col gap-4">
+                    <Link
+                      href="/about"
+                      onClick={closeMobileMenu}
+                      className="text-sm text-black hover:text-neutral-500 transition-colors duration-200 tracking-wide"
+                    >
+                      Our Story
+                    </Link>
+                    <Link
+                      href="/shipping"
+                      onClick={closeMobileMenu}
+                      className="text-sm text-black hover:text-neutral-500 transition-colors duration-200 tracking-wide"
+                    >
+                      Shipping
+                    </Link>
+                    <Link
+                      href="/returns"
+                      onClick={closeMobileMenu}
+                      className="text-sm text-black hover:text-neutral-500 transition-colors duration-200 tracking-wide"
+                    >
+                      Returns
+                    </Link>
+                    <Link
+                      href="/contact"
+                      onClick={closeMobileMenu}
+                      className="text-sm text-black hover:text-neutral-500 transition-colors duration-200 tracking-wide"
+                    >
+                      Contact
+                    </Link>
+                  </div>
+                </div>
+
+                {/* 2a: Bottom section — Sign Out only (no duplicate My Account or Sign In) */}
+                {user && (
+                  <div className="border-t border-neutral-100 pt-8 flex flex-col gap-4">
+                    <button 
+                      onClick={handleSignOut} 
+                      className="text-sm font-medium text-neutral-400 hover:text-red-500 transition-colors duration-200 tracking-wide text-left flex items-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
+                  </div>
+                )}
               </div>
             </motion.div>
           </>

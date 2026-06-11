@@ -12,8 +12,11 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden bg-neutral-900">
-      {/* Background Image (User's custom asset) */}
+    <section
+      className="relative w-full flex items-center justify-center overflow-hidden bg-neutral-900"
+      style={{ height: '100svh' }}
+    >
+      {/* Background Image */}
       <Image
         src="/hero-bg.png"
         alt="AUTHOR Streetwear Campaign"
@@ -22,7 +25,7 @@ export default function HeroSection() {
         className="absolute inset-0 w-full h-full object-cover z-0 object-center"
       />
 
-      {/* Subtle Overlay to make text legible */}
+      {/* Subtle Overlay */}
       <div className="absolute inset-0 bg-black/25 z-10" />
 
       {/* Centered Text Content */}
@@ -36,19 +39,6 @@ export default function HeroSection() {
           Everyday Luxury Essentials
         </motion.p>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={animate ? { opacity: 0.7 } : {}}
-        transition={{ delay: 1.2, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
-      >
-        <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-white/60">Scroll</span>
-        <div className="w-[1px] h-6 bg-white/20">
-          <div className="w-full h-1/2 bg-white/60 animate-pulse-vertical origin-top" />
-        </div>
-      </motion.div>
     </section>
   );
 }

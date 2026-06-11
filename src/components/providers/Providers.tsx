@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
+import { AuthProvider } from './AuthContext';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ export default function Providers({ children }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
       {children}
       <Toaster
         position="bottom-right"
@@ -49,6 +51,7 @@ export default function Providers({ children }: ProvidersProps) {
           },
         }}
       />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

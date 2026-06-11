@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { X, Minus, Plus, ShoppingBag, ArrowRight, Trash2 } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 
 export default function CartDrawer() {
@@ -23,9 +23,7 @@ export default function CartDrawer() {
   const tax = getTax();
   const total = getTotal();
   const itemCount = getItemCount();
-  const freeShippingThreshold = 999;
-  const shippingCost = subtotal >= freeShippingThreshold ? 0 : 99;
-  const amountToFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
+  const shippingCost = subtotal >= 999 ? 0 : 99;
 
   return (
     <AnimatePresence>
@@ -49,159 +47,159 @@ export default function CartDrawer() {
             className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-author-charcoal z-[90] flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/5">
+            <div className="flex items-center justify-between px-8 py-7 border-b border-white/5">
               <div className="flex items-center gap-3">
-                <ShoppingBag className="w-5 h-5" />
-                <span className="font-heading text-lg font-semibold uppercase tracking-wider">
-                  Cart
+                <ShoppingBag className="w-[18px] h-[18px] text-author-mid" strokeWidth={1.2} />
+                <span
+                  className="text-[11px] uppercase tracking-[0.25em] text-author-white/80"
+                  style={{ fontWeight: 300 }}
+                >
+                  Shopping Bag
                 </span>
                 {itemCount > 0 && (
-                  <span className="text-xs bg-author-cream text-author-black px-2 py-0.5 font-heading font-semibold">
-                    {itemCount}
+                  <span
+                    className="text-[10px] text-author-mid tracking-[0.15em] ml-1"
+                    style={{ fontWeight: 300 }}
+                  >
+                    ({itemCount})
                   </span>
                 )}
               </div>
               <button
                 onClick={closeCart}
-                className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                className="p-2 hover:bg-white/5 transition-colors"
                 aria-label="Close cart"
               >
-                <X className="w-5 h-5" />
+                <X className="w-[18px] h-[18px] text-author-mid" strokeWidth={1.2} />
               </button>
             </div>
-
-            {/* Free shipping progress */}
-            {items.length > 0 && amountToFreeShipping > 0 && (
-              <div className="px-6 py-3 bg-author-black/30">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-author-mid">
-                    ₹{amountToFreeShipping.toLocaleString()} away from free shipping
-                  </span>
-                  <span className="text-xs text-author-cream">🚚</span>
-                </div>
-                <div className="w-full h-1 bg-author-grey rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-author-cream rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{
-                      width: `${Math.min(100, (subtotal / freeShippingThreshold) * 100)}%`,
-                    }}
-                    transition={{ duration: 0.5 }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {items.length > 0 && subtotal >= freeShippingThreshold && (
-              <div className="px-6 py-2 bg-green-500/10 text-green-400 text-xs text-center font-heading uppercase tracking-wider">
-                ✓ You&apos;ve unlocked free shipping!
-              </div>
-            )}
 
             {/* Items */}
             <div className="flex-1 overflow-y-auto">
               {items.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-center px-6">
-                  <ShoppingBag className="w-16 h-16 text-author-grey mb-4" />
-                  <p className="font-heading text-lg font-semibold uppercase tracking-wider mb-2">
-                    Your cart is empty
-                  </p>
-                  <p className="text-author-mid text-sm mb-8">
-                    Looks like you haven&apos;t added anything yet.
-                  </p>
-                  <button
-                    onClick={closeCart}
-                    className="btn-primary"
+                <div className="flex flex-col items-center justify-center h-full text-center px-8">
+                  <ShoppingBag className="w-10 h-10 text-author-grey mb-8" strokeWidth={1} />
+                  <p
+                    className="text-[11px] uppercase tracking-[0.25em] text-author-white/60 mb-2"
+                    style={{ fontWeight: 300 }}
                   >
-                    <span>
-                      <Link href="/shop">Start Shopping</Link>
-                    </span>
-                  </button>
+                    Your bag is empty
+                  </p>
+                  <p
+                    className="text-[10px] text-author-mid/50 mb-10 tracking-[0.1em]"
+                    style={{ fontWeight: 300 }}
+                  >
+                    Nothing here yet — go explore.
+                  </p>
+                  <Link
+                    href="/shop"
+                    onClick={closeCart}
+                    className="inline-block border border-white/15 text-author-white/70 hover:text-author-white hover:border-white/30 transition-all duration-500 py-3.5 px-10 text-[10px] uppercase tracking-[0.25em]"
+                    style={{ fontWeight: 300 }}
+                  >
+                    Browse Collection
+                  </Link>
                 </div>
               ) : (
-                <div className="divide-y divide-white/5">
+                <div className="divide-y divide-white/[0.04]">
                   {items.map((item) => {
                     const effectivePrice = item.salePrice ?? item.price;
                     return (
                       <motion.div
-                        key={`${item.productId}-${item.size}-${item.color}`}
+                        key={item.variantId}
                         layout
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: 100 }}
-                        className="flex gap-4 p-6"
+                        className="flex gap-5 px-8 py-6"
                       >
                         {/* Image */}
                         <Link
                           href={`/product/${item.slug}`}
                           onClick={closeCart}
-                          className="relative w-20 h-24 flex-shrink-0 bg-author-black overflow-hidden"
+                          className="relative w-[72px] h-[92px] flex-shrink-0 bg-author-black/40 overflow-hidden"
                         >
                           <Image
                             src={item.image}
                             alt={item.name}
                             fill
                             className="object-cover"
-                            sizes="80px"
+                            sizes="72px"
                           />
                         </Link>
 
                         {/* Details */}
-                        <div className="flex-1 min-w-0">
-                          <Link
-                            href={`/product/${item.slug}`}
-                            onClick={closeCart}
-                            className="font-heading text-xs uppercase tracking-wider text-author-white/90 hover:text-author-white transition-colors line-clamp-2"
-                          >
-                            {item.name}
-                          </Link>
-                          <div className="flex items-center gap-2 mt-1.5">
-                            <div
-                              className="w-3 h-3 rounded-full border border-white/20"
-                              style={{ backgroundColor: item.colorHex }}
-                            />
-                            <span className="text-[10px] text-author-mid uppercase">
-                              {item.color} / {item.size}
-                            </span>
+                        <div className="flex-1 min-w-0 flex flex-col justify-between">
+                          <div>
+                            {/* Product Name — tracked uppercase, lightweight */}
+                            <Link
+                              href={`/product/${item.slug}`}
+                              onClick={closeCart}
+                              className="block text-[10px] uppercase tracking-[0.15em] text-author-white/80 hover:text-author-white transition-colors line-clamp-2 leading-relaxed"
+                              style={{ fontWeight: 400, fontFamily: "var(--font-barlow-condensed), sans-serif" }}
+                            >
+                              {item.name}
+                            </Link>
+                            {/* Variant — smaller, muted */}
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <div
+                                  className="w-2.5 h-2.5 rounded-full border border-white/10"
+                                  style={{ backgroundColor: item.colorHex }}
+                              />
+                              <span
+                                className="text-[9px] text-author-mid/60 uppercase tracking-[0.1em]"
+                                style={{ fontWeight: 300 }}
+                              >
+                                {item.color} / {item.size}
+                              </span>
+                            </div>
                           </div>
+
                           <div className="flex items-center justify-between mt-3">
-                            {/* Quantity */}
-                            <div className="flex items-center border border-white/10">
+                            {/* Quantity stepper — minimal, no fill */}
+                            <div className="flex items-center border border-white/[0.08]">
                               <button
                                 onClick={() =>
-                                  updateQuantity(
-                                    item.productId,
-                                    item.size,
-                                    item.color,
-                                    item.quantity - 1
-                                  )
+                                  updateQuantity(item.variantId, item.quantity - 1)
                                 }
-                                className="w-7 h-7 flex items-center justify-center hover:bg-white/5 transition-colors"
+                                className="w-7 h-7 flex items-center justify-center hover:bg-white/[0.03] transition-colors"
                                 aria-label="Decrease quantity"
                               >
-                                <Minus className="w-3 h-3" />
+                                <Minus className="w-2.5 h-2.5 text-author-mid/60" strokeWidth={1.2} />
                               </button>
-                              <span className="w-8 h-7 flex items-center justify-center text-xs font-heading border-x border-white/10">
-                                {item.quantity}
+                              <span
+                                className="w-7 h-7 flex items-center justify-center text-[10px] border-x border-white/[0.08] text-author-white/70 relative overflow-hidden"
+                              >
+                                <AnimatePresence mode="popLayout" initial={false}>
+                                  <motion.span
+                                    key={item.quantity}
+                                    initial={{ y: 12, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    exit={{ y: -12, opacity: 0 }}
+                                    transition={{ duration: 0.15 }}
+                                    className="absolute"
+                                    style={{ fontWeight: 300 }}
+                                  >
+                                    {item.quantity}
+                                  </motion.span>
+                                </AnimatePresence>
                               </span>
                               <button
                                 onClick={() =>
-                                  updateQuantity(
-                                    item.productId,
-                                    item.size,
-                                    item.color,
-                                    item.quantity + 1
-                                  )
+                                  updateQuantity(item.variantId, item.quantity + 1)
                                 }
-                                className="w-7 h-7 flex items-center justify-center hover:bg-white/5 transition-colors"
+                                className="w-7 h-7 flex items-center justify-center hover:bg-white/[0.03] transition-colors"
                                 aria-label="Increase quantity"
                               >
-                                <Plus className="w-3 h-3" />
+                                <Plus className="w-2.5 h-2.5 text-author-mid/60" strokeWidth={1.2} />
                               </button>
                             </div>
 
-                            {/* Price */}
-                            <span className="font-heading text-sm font-semibold text-author-cream">
+                            {/* Price — right-aligned, serif, lightweight */}
+                            <span
+                              className="text-[11px] text-author-white/70"
+                              style={{ fontWeight: 300, fontFamily: "var(--font-barlow-condensed), sans-serif" }}
+                            >
                               ₹{(effectivePrice * item.quantity).toLocaleString()}
                             </span>
                           </div>
@@ -209,13 +207,11 @@ export default function CartDrawer() {
 
                         {/* Remove */}
                         <button
-                          onClick={() =>
-                            removeItem(item.productId, item.size, item.color)
-                          }
-                          className="p-1 self-start text-author-mid hover:text-red-400 transition-colors"
+                          onClick={() => removeItem(item.variantId)}
+                          className="p-1 self-start text-author-mid/30 hover:text-author-mid/60 transition-colors"
                           aria-label="Remove item"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" strokeWidth={1.2} />
                         </button>
                       </motion.div>
                     );
@@ -224,45 +220,85 @@ export default function CartDrawer() {
               )}
             </div>
 
-            {/* Footer Summary */}
+            {/* Footer Summary — editorial, lightweight */}
             {items.length > 0 && (
-              <div className="border-t border-white/5 p-6 space-y-4">
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between text-author-mid">
-                    <span>Subtotal</span>
-                    <span>₹{subtotal.toLocaleString()}</span>
+              <div className="border-t border-white/[0.06] px-8 py-7 space-y-5">
+                <div className="space-y-2.5">
+                  <div className="flex justify-between">
+                    <span
+                      className="text-[9px] uppercase tracking-[0.12em] text-author-mid/50"
+                      style={{ fontWeight: 300 }}
+                    >
+                      Subtotal
+                    </span>
+                    <span
+                      className="text-[11px] text-author-white/60"
+                      style={{ fontWeight: 300, fontFamily: "var(--font-barlow-condensed), sans-serif" }}
+                    >
+                      ₹{subtotal.toLocaleString()}
+                    </span>
                   </div>
-                  <div className="flex justify-between text-author-mid">
-                    <span>GST (18%)</span>
-                    <span>₹{tax.toLocaleString()}</span>
+                  <div className="flex justify-between">
+                    <span
+                      className="text-[9px] uppercase tracking-[0.12em] text-author-mid/50"
+                      style={{ fontWeight: 300 }}
+                    >
+                      GST (18%)
+                    </span>
+                    <span
+                      className="text-[11px] text-author-white/60"
+                      style={{ fontWeight: 300, fontFamily: "var(--font-barlow-condensed), sans-serif" }}
+                    >
+                      ₹{tax.toLocaleString()}
+                    </span>
                   </div>
-                  <div className="flex justify-between text-author-mid">
-                    <span>Shipping</span>
-                    <span>
+                  <div className="flex justify-between">
+                    <span
+                      className="text-[9px] uppercase tracking-[0.12em] text-author-mid/50"
+                      style={{ fontWeight: 300 }}
+                    >
+                      Shipping
+                    </span>
+                    <span
+                      className="text-[11px] text-author-white/60"
+                      style={{ fontWeight: 300, fontFamily: "var(--font-barlow-condensed), sans-serif" }}
+                    >
                       {shippingCost === 0 ? (
-                        <span className="text-green-400">FREE</span>
+                        <span className="text-author-white/40 uppercase tracking-[0.1em] text-[9px]">Complimentary</span>
                       ) : (
                         `₹${shippingCost}`
                       )}
                     </span>
                   </div>
-                  <div className="flex justify-between font-heading font-semibold text-base pt-2 border-t border-white/5">
-                    <span>Total</span>
-                    <span className="text-author-cream">₹{total.toLocaleString()}</span>
+                  <div className="flex justify-between items-baseline pt-3 border-t border-white/[0.05]">
+                    <span
+                      className="text-[10px] uppercase tracking-[0.12em] text-author-white/60"
+                      style={{ fontWeight: 400 }}
+                    >
+                      Total
+                    </span>
+                    <span
+                      className="text-[14px] text-author-white/90"
+                      style={{ fontWeight: 400, fontFamily: "var(--font-barlow-condensed), sans-serif" }}
+                    >
+                      ₹{total.toLocaleString()}
+                    </span>
                   </div>
                 </div>
 
                 <Link
                   href="/checkout"
                   onClick={closeCart}
-                  className="w-full bg-author-cream text-author-black py-4 font-heading text-sm uppercase tracking-[0.2em] font-semibold hover:bg-author-white transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-author-white/[0.08] hover:bg-author-white/[0.12] text-author-white/80 hover:text-author-white py-4 text-[10px] uppercase tracking-[0.25em] transition-all duration-500 flex items-center justify-center"
+                  style={{ fontWeight: 400 }}
                 >
-                  Checkout <ArrowRight className="w-4 h-4" />
+                  Proceed to Checkout
                 </Link>
 
                 <button
                   onClick={closeCart}
-                  className="w-full text-center text-xs text-author-mid hover:text-author-white transition-colors uppercase tracking-wider font-heading py-2"
+                  className="w-full text-center text-[9px] text-author-mid/40 hover:text-author-mid/60 transition-colors uppercase tracking-[0.2em] py-1"
+                  style={{ fontWeight: 300 }}
                 >
                   Continue Shopping
                 </button>

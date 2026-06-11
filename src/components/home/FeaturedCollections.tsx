@@ -13,16 +13,16 @@ const collections = [
     description: "Statement pieces in heavyweight cotton",
   },
   {
-    name: "Hoodies & Sweats",
-    slug: "hoodies",
+    name: "Tops",
+    slug: "tops",
     image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=85",
     description: "Crafted for comfort, designed for the streets",
   },
   {
-    name: "Cargo & Joggers",
-    slug: "joggers",
+    name: "Sweatpants",
+    slug: "sweatpants",
     image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=85",
-    description: "Functional silhouettes, premium fabrics",
+    description: "Structured silhouettes for everyday luxury",
   },
 ];
 
@@ -41,7 +41,7 @@ export default function FeaturedCollections() {
           className="text-center mb-16 md:mb-24"
         >
           <p className="label-uppercase text-author-mid mb-4">Collections</p>
-          <h2 className="heading-serif text-display-lg text-author-white">
+          <h2 className="font-[family:var(--font-barlow-condensed)] text-display-lg text-author-white">
             Curated Categories
           </h2>
         </motion.div>
@@ -72,7 +72,7 @@ export default function FeaturedCollections() {
 
                   {/* Bottom text overlay */}
                   <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                    <h3 className="heading-serif text-2xl md:text-3xl text-white mb-2">
+                    <h3 className="font-[family:var(--font-barlow-condensed)] text-2xl md:text-3xl text-white mb-2">
                       {collection.name}
                     </h3>
                     <p className="text-white/60 text-xs tracking-wide mb-4">

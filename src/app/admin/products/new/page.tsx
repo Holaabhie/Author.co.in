@@ -211,7 +211,7 @@ export default function NewProductPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success("Product created successfully");
+        /* success toast removed */
         router.push("/admin/products");
       } else {
         throw new Error(json.message || "Failed to create product");

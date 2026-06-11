@@ -125,7 +125,7 @@ export default function AdminCmsPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success("Homepage Hero Banner updated");
+        /* success toast removed */
         fetchCmsContent();
       } else {
         throw new Error(json.message || "Update failed");
@@ -159,7 +159,7 @@ export default function AdminCmsPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success("Announcement Bar updated");
+        /* success toast removed */
         fetchCmsContent();
       } else {
         throw new Error(json.message || "Update failed");
@@ -196,7 +196,7 @@ export default function AdminCmsPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success("Featured Products list updated");
+        /* success toast removed */
         fetchCmsContent();
       } else {
         throw new Error(json.message || "Update failed");
@@ -240,7 +240,7 @@ export default function AdminCmsPage() {
       const json = await resPut.json();
 
       if (json.success) {
-        toast.success(`CMS key '${rawKey}' saved`);
+        /* success toast removed */
         setRawKey("");
         setRawJson("");
         fetchCmsContent();

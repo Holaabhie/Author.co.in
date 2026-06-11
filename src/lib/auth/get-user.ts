@@ -42,7 +42,34 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
     if (!profile) {
       // User exists in Supabase Auth but not in our DB yet
-      // This can happen on first login — create the profile
+      // This can happen on first login — create the profile or sync ID if email already exists
+      const existingUser = await prisma.user.findUnique({
+        where: { email: user.email! },
+      });
+
+      if (existingUser) {
+        console.log(`[getCurrentUser] Syncing user ID for ${user.email} from ${existingUser.id} to ${user.id}`);
+        // Delete any UserRoles linked to the old user ID to avoid FK errors
+        await prisma.userRole.deleteMany({
+          where: { userId: existingUser.id },
+        });
+        // Update user ID
+        await prisma.$executeRawUnsafe('UPDATE "User" SET id = $1 WHERE email = $2', user.id, user.email!);
+
+        // Fetch again after sync
+        const syncedProfile = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+            phone: true,
+          },
+        });
+        if (syncedProfile) return syncedProfile;
+      }
+
       const newProfile = await prisma.user.create({
         data: {
           id: user.id,
@@ -98,7 +125,47 @@ export async function getCurrentUserWithRole(): Promise<AuthUserWithRole | null>
     });
 
     if (!profile) {
-      // Auto-create profile for new Supabase Auth users
+      // Auto-create profile for new Supabase Auth users or sync ID if email already exists
+      const existingUser = await prisma.user.findUnique({
+        where: { email: user.email! },
+      });
+
+      if (existingUser) {
+        console.log(`[getCurrentUserWithRole] Syncing user ID for ${user.email} from ${existingUser.id} to ${user.id}`);
+        // Delete any UserRoles linked to the old user ID to avoid FK errors
+        await prisma.userRole.deleteMany({
+          where: { userId: existingUser.id },
+        });
+        // Update user ID
+        await prisma.$executeRawUnsafe('UPDATE "User" SET id = $1 WHERE email = $2', user.id, user.email!);
+
+        // Fetch again after sync
+        const syncedProfile = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+            phone: true,
+            userRoles: {
+              select: { role: true },
+              take: 1,
+            },
+          },
+        });
+        if (syncedProfile) {
+          return {
+            id: syncedProfile.id,
+            email: syncedProfile.email,
+            name: syncedProfile.name,
+            image: syncedProfile.image,
+            phone: syncedProfile.phone,
+            role: syncedProfile.userRoles[0]?.role ?? null,
+          };
+        }
+      }
+
       const newProfile = await prisma.user.create({
         data: {
           id: user.id,

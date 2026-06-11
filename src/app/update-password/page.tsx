@@ -80,7 +80,6 @@ export default function UpdatePasswordPage() {
         toast.error(error.message);
       } else {
         setIsSuccess(true);
-        toast.success('Password updated successfully!');
         setTimeout(() => {
           router.push('/login');
         }, 2000);

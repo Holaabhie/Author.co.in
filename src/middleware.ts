@@ -77,36 +77,88 @@ export async function middleware(request: NextRequest) {
   // ─── Supabase session refresh ──────────────────────────────────
   const { user, supabaseResponse, supabase } = await updateSession(request);
 
-  // ─── Redirect authenticated users away from auth pages ─────────
+  // ── Redirect authenticated users away from auth pages ─────────
   if (user && authPaths.some((path) => pathname.startsWith(path))) {
-    return NextResponse.redirect(new URL('/', request.url));
+    const returnTo = request.nextUrl.searchParams.get('returnTo');
+    const target = returnTo && returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/';
+    return NextResponse.redirect(new URL(target, request.url));
   }
 
   // ─── Protect authenticated routes ──────────────────────────────
   if (!user && protectedPaths.some((path) => pathname.startsWith(path))) {
     const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
+    loginUrl.searchParams.set('returnTo', pathname + request.nextUrl.search);
     return NextResponse.redirect(loginUrl);
   }
 
   // ─── Protect admin routes ──────────────────────────────────────
   if (pathname.startsWith('/admin')) {
+    if (pathname === '/admin/login') {
+      if (user) {
+        const { data: userRole } = await supabase
+          .from('UserRole')
+          .select('role')
+          .eq('userId', user.id)
+          .in('role', ADMIN_ROLES)
+          .limit(1)
+          .maybeSingle();
+
+        if (userRole) {
+          return NextResponse.redirect(new URL('/admin', request.url));
+        } else {
+          return NextResponse.redirect(new URL('/', request.url));
+        }
+      }
+      return NextResponse.next();
+    }
+
     if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 
     // Check admin role from the database
     // We use a direct Supabase query here since Prisma isn't available in middleware
+    const { data: userRole, error: roleError } = await supabase
+      .from('UserRole')
+      .select('role')
+      .eq('userId', user.id)
+      .in('role', ADMIN_ROLES)
+      .limit(1)
+      .maybeSingle(); // Use maybeSingle to avoid 406/PGRST116 errors if not found
+
+    console.log('MIDDLEWARE ADMIN AUTH CHECK:', {
+      userId: user.id,
+      userRole,
+      roleError: roleError ? { message: roleError.message, details: roleError.details, code: roleError.code } : null
+    });
+
+    if (!userRole) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+  }
+
+  // ─── Protect admin API routes ──────────────────────────────────
+  if (pathname.startsWith('/api/admin')) {
+    if (!user) {
+      return NextResponse.json(
+        { error: true, code: 'UNAUTHORIZED', message: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const { data: userRole } = await supabase
       .from('UserRole')
       .select('role')
       .eq('userId', user.id)
       .in('role', ADMIN_ROLES)
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (!userRole) {
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.json(
+        { error: true, code: 'FORBIDDEN', message: 'Admin access required' },
+        { status: 403 }
+      );
     }
   }
 

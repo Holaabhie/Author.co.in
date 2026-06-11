@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import toast from "react-hot-toast";
 
 export interface CartItem {
   productId: string;
+  variantId: string;
   name: string;
   slug: string;
   price: number;
@@ -19,17 +19,14 @@ export interface CartItem {
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
+  closeTimeout?: any;
 
   // Actions
-  addItem: (item: CartItem) => void;
-  removeItem: (productId: string, size: string, color: string) => void;
-  updateQuantity: (
-    productId: string,
-    size: string,
-    color: string,
-    quantity: number
-  ) => void;
+  addItem: (item: CartItem) => { added: boolean; error?: string };
+  removeItem: (variantId: string) => void;
+  updateQuantity: (variantId: string, quantity: number) => void;
   clearCart: () => void;
+  clearCartAndStorage: () => void;
   toggleCart: () => void;
   openCart: () => void;
   closeCart: () => void;
@@ -46,22 +43,25 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       items: [],
       isOpen: false,
+      closeTimeout: null,
 
       addItem: (newItem: CartItem) => {
-        const { items } = get();
+        const normalizedItem = {
+          ...newItem,
+          variantId:
+            newItem.variantId ||
+            `${newItem.productId}:${newItem.size}:${newItem.color}`,
+        };
+        const { items, closeTimeout } = get();
         const existingIndex = items.findIndex(
-          (item) =>
-            item.productId === newItem.productId &&
-            item.size === newItem.size &&
-            item.color === newItem.color
+          (item) => item.variantId === normalizedItem.variantId
         );
 
         if (existingIndex > -1) {
           const updated = [...items];
-          const newQty = updated[existingIndex].quantity + newItem.quantity;
+          const newQty = updated[existingIndex].quantity + normalizedItem.quantity;
           if (newQty > 10) {
-            toast.error("Maximum 10 items per product");
-            return;
+            return { added: false, error: "Maximum 10 items per product" };
           }
           updated[existingIndex] = {
             ...updated[existingIndex],
@@ -69,55 +69,58 @@ export const useCartStore = create<CartState>()(
           };
           set({ items: updated });
         } else {
-          set({ items: [...items, newItem] });
+          set({ items: [...items, normalizedItem] });
         }
 
-        toast.success(`${newItem.name} added to cart`);
         set({ isOpen: true });
+
+        // Auto-close after 1.5 seconds
+        if (typeof window !== "undefined") {
+          if (closeTimeout) {
+            clearTimeout(closeTimeout);
+          }
+          const timeout = setTimeout(() => {
+            if (get().isOpen) {
+              set({ isOpen: false });
+            }
+          }, 1500);
+          set({ closeTimeout: timeout });
+        }
+
+        return { added: true };
       },
 
-      removeItem: (productId: string, size: string, color: string) => {
+      removeItem: (variantId: string) => {
         set((state) => ({
-          items: state.items.filter(
-            (item) =>
-              !(
-                item.productId === productId &&
-                item.size === size &&
-                item.color === color
-              )
-          ),
+          items: state.items.filter((item) => item.variantId !== variantId),
         }));
-        toast.success("Item removed from cart");
       },
 
-      updateQuantity: (
-        productId: string,
-        size: string,
-        color: string,
-        quantity: number
-      ) => {
+      updateQuantity: (variantId: string, quantity: number) => {
         if (quantity <= 0) {
-          get().removeItem(productId, size, color);
+          get().removeItem(variantId);
           return;
         }
         if (quantity > 10) {
-          toast.error("Maximum 10 items per product");
           return;
         }
 
         set((state) => ({
           items: state.items.map((item) =>
-            item.productId === productId &&
-            item.size === size &&
-            item.color === color
-              ? { ...item, quantity }
-              : item
+            item.variantId === variantId ? { ...item, quantity } : item
           ),
         }));
       },
 
       clearCart: () => {
         set({ items: [] });
+      },
+
+      clearCartAndStorage: () => {
+        set({ items: [] });
+        if (typeof window !== "undefined") {
+          useCartStore.persist.clearStorage();
+        }
       },
 
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
@@ -149,6 +152,22 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "author-cart",
+      version: 2,
+      migrate: (persistedState: any) => {
+        if (!persistedState?.items) {
+          return persistedState;
+        }
+
+        return {
+          ...persistedState,
+          items: persistedState.items.map((item: CartItem) => ({
+            ...item,
+            variantId:
+              item.variantId ||
+              `${item.productId}:${item.size}:${item.color}`,
+          })),
+        };
+      },
       partialize: (state) => ({ items: state.items }),
     }
   )

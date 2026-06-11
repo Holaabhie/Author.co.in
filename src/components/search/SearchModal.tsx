@@ -4,16 +4,27 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, X, ArrowRight, Loader2 } from "lucide-react";
+import { Search, X, ArrowRight } from "lucide-react";
+import { AuthorLoader } from "@/components/ui/AuthorLoader";
 import { useUIStore } from "@/lib/store/ui";
-import { products } from "@/data/products";
+interface SearchedProduct {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  price: number;
+  salePrice: number | null;
+  images: string[];
+}
 
 export default function SearchModal() {
   const { isSearchOpen, closeSearch } = useUIStore();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<typeof products>([]);
+  const [results, setResults] = useState<SearchedProduct[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Focus input when opened
   useEffect(() => {
@@ -24,6 +35,10 @@ export default function SearchModal() {
       setQuery("");
       setResults([]);
     }
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+      if (abortControllerRef.current) abortControllerRef.current.abort();
+    };
   }, [isSearchOpen]);
 
   // Keyboard shortcut: Cmd/Ctrl + K
@@ -42,7 +57,7 @@ export default function SearchModal() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [closeSearch]);
 
-  // Search logic (client-side for now, will be API-driven later)
+  // Search logic (API-driven)
   const handleSearch = useCallback((searchQuery: string) => {
     setQuery(searchQuery);
     if (searchQuery.length < 2) {
@@ -50,21 +65,44 @@ export default function SearchModal() {
       return;
     }
 
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    if (abortControllerRef.current) abortControllerRef.current.abort();
+
     setIsSearching(true);
-    // Simulate API delay
-    setTimeout(() => {
-      const filtered = products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.description.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setResults(filtered);
-      setIsSearching(false);
-    }, 200);
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    
+    debounceTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/products?search=${encodeURIComponent(searchQuery)}`, {
+          signal: controller.signal
+        });
+        if (res.ok) {
+          const resJson = await res.json();
+          if (resJson.success && resJson.data) {
+            const mapped: SearchedProduct[] = resJson.data.map((p: any) => ({
+              id: p.id,
+              name: p.name,
+              slug: p.slug,
+              category: p.category?.name || "",
+              price: p.price / 100,
+              salePrice: p.discountPrice ? p.discountPrice / 100 : null,
+              images: p.images && p.images.length > 0 ? p.images.map((img: any) => img.url) : []
+            }));
+            setResults(mapped);
+          }
+        }
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error("Search API error:", err);
+        }
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
   }, []);
 
-  const popularSearches = ["Oversized Tee", "Hoodie", "Joggers", "Limited Edition"];
+  const popularSearches = ["Essential Tee", "Sweatpants", "Tops", "Premium"];
 
   return (
     <AnimatePresence>
@@ -99,7 +137,11 @@ export default function SearchModal() {
                   placeholder="Search products..."
                   className="flex-1 bg-transparent text-lg font-body text-author-white placeholder:text-author-mid/40 focus:outline-none"
                 />
-                {isSearching && <Loader2 className="w-4 h-4 animate-spin text-author-mid" />}
+                {isSearching && (
+                  <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                    <AuthorLoader size={36} />
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] text-author-mid border border-white/10 rounded font-heading">
                     ESC
@@ -149,13 +191,19 @@ export default function SearchModal() {
                         className="flex items-center gap-4 p-3 hover:bg-white/5 transition-colors group"
                       >
                         <div className="relative w-14 h-16 flex-shrink-0 bg-author-black overflow-hidden">
-                          <Image
-                            src={product.images[0]}
-                            alt={product.name}
-                            fill
-                            className="object-cover"
-                            sizes="56px"
-                          />
+                          {product.images[0] ? (
+                            <Image
+                              src={product.images[0]}
+                              alt={product.name}
+                              fill
+                              className="object-cover"
+                              sizes="56px"
+                            />
+                          ) : (
+                            <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center text-[8px] text-neutral-500 font-bold uppercase tracking-widest">
+                              No Image
+                            </div>
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-heading text-sm uppercase tracking-wider truncate group-hover:text-author-cream transition-colors">
@@ -180,16 +228,19 @@ export default function SearchModal() {
 
               {/* No results */}
               {query.length >= 2 && results.length === 0 && !isSearching && (
-                <div className="mt-8 text-center py-8">
-                  <p className="text-author-mid text-sm">
-                    No products found for &ldquo;{query}&rdquo;
+                <div className="mt-8 text-center py-8 border-t border-white/5">
+                  <p className="font-heading text-base uppercase tracking-widest text-author-white mb-2">
+                    No results for &ldquo;{query}&rdquo;
+                  </p>
+                  <p className="text-author-mid text-xs mb-6 tracking-wide">
+                    Try a different word.
                   </p>
                   <Link
                     href="/shop"
                     onClick={closeSearch}
-                    className="inline-flex items-center gap-2 text-sm text-author-cream hover:underline mt-2"
+                    className="inline-block border border-author-cream text-author-cream hover:bg-author-cream hover:text-author-black transition-all duration-300 py-3 px-8 text-xs font-semibold uppercase tracking-widest"
                   >
-                    Browse all products <ArrowRight className="w-3 h-3" />
+                    Browse all products →
                   </Link>
                 </div>
               )}

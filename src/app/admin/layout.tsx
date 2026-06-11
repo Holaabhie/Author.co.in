@@ -44,6 +44,10 @@ export default function AdminLayout({
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
   return (
     <div className="min-h-screen pt-16 md:pt-20 flex">
       {/* Sidebar */}

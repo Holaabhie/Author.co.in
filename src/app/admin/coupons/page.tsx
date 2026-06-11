@@ -188,7 +188,7 @@ export default function AdminCouponsPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success(`Coupon ${editingCoupon ? "updated" : "created"} successfully`);
+        /* success toast removed */
         setIsModalOpen(false);
         fetchCoupons();
       } else {
@@ -212,7 +212,7 @@ export default function AdminCouponsPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success("Coupon deactivated successfully");
+        /* success toast removed */
         fetchCoupons();
       } else {
         throw new Error(json.message || "Failed to deactivate coupon");
@@ -306,7 +306,7 @@ export default function AdminCouponsPage() {
             <AlertTriangle className="w-10 h-10 text-author-mid mx-auto opacity-50" />
             <h3 className="font-heading text-lg font-bold text-author-white uppercase tracking-wider">No Coupons Found</h3>
             <p className="text-xs text-author-mid max-w-sm mx-auto">
-              We couldn't find any coupons. Try creating a new discount code.
+              We couldn&apos;t find any coupons. Try creating a new discount code.
             </p>
           </div>
         ) : (

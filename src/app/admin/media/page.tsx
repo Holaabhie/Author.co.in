@@ -1,18 +1,19 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Image as ImageIcon,
   Upload,
   Search,
+  Loader2,
   Trash2,
+  ImageIcon,
   Copy,
   Check,
-  Plus,
-  Loader2,
-  AlertTriangle,
-  ExternalLink,
+  X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -27,102 +28,95 @@ interface MediaAsset {
   altText: string;
   tags: string[];
   createdAt: string;
+  folder: { id: string; name: string } | null;
 }
 
 export default function AdminMediaPage() {
   const [assets, setAssets] = useState<MediaAsset[]>([]);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [copiedId, setCopiedId] = useState("");
+  const [totalAssets, setTotalAssets] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Load assets
-  async function fetchAssets() {
+  async function fetchMedia() {
     setLoading(true);
     try {
       const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
-      const res = await fetch(`/api/admin/media?page=${page}&pageSize=12${searchParam}`);
+      const res = await fetch(`/api/admin/media?page=${page}&pageSize=24${searchParam}`);
       const json = await res.json();
-
       if (json.success && Array.isArray(json.data)) {
         setAssets(json.data);
         if (json.meta) {
           setTotalPages(json.meta.totalPages || 1);
+          setTotalAssets(json.meta.total || 0);
         }
-      } else {
-        throw new Error(json.message || "Failed to load media assets");
       }
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Error fetching media files");
+    } catch (err) {
+      toast.error("Failed to load media");
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    fetchAssets();
+    fetchMedia();
   }, [page]);
 
-  // Debounced search
   useEffect(() => {
     const handler = setTimeout(() => {
       setPage(1);
-      fetchAssets();
+      fetchMedia();
     }, 450);
     return () => clearTimeout(handler);
   }, [search]);
 
-  // File Upload Handler
-  const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const file = files[0];
-    // Check size limit: 10MB
-    if (file.size > 10 * 1024 * 1024) {
-      return toast.error("File exceeds 10MB limit");
-    }
-
     setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("altText", file.name.split(".")[0]);
+    let successCount = 0;
 
-    try {
-      const res = await fetch("/api/admin/media", {
-        method: "POST",
-        body: formData,
-      });
-      const json = await res.json();
+    for (const file of Array.from(files)) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
 
-      if (json.success) {
-        toast.success("File uploaded successfully");
-        setPage(1);
-        fetchAssets();
-      } else {
-        throw new Error(json.message || "Upload failed");
-      }
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Failed to upload file");
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+        const res = await fetch("/api/admin/media", {
+          method: "POST",
+          body: formData,
+        });
+        const json = await res.json();
+        if (json.success) {
+          successCount++;
+        } else {
+          toast.error(`Failed to upload ${file.name}: ${json.message || "Unknown error"}`);
+        }
+      } catch (err) {
+        toast.error(`Error uploading ${file.name}`);
       }
     }
-  };
 
-  // Delete media asset
-  const handleDeleteAsset = async (id: string) => {
-    if (!window.confirm("Are you sure you want to permanently delete this file? This will break any products currently using it.")) {
-      return;
+    if (successCount > 0) {
+      /* success toast removed */
+      fetchMedia();
     }
+
+    setUploading(false);
+    e.target.value = "";
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Delete this media asset? This cannot be undone.")) return;
+
+    setDeleting(id);
+
+    // Optimistic remove
+    setAssets((prev) => prev.filter((a) => a.id !== id));
 
     try {
       const res = await fetch("/api/admin/media", {
@@ -131,78 +125,67 @@ export default function AdminMediaPage() {
         body: JSON.stringify({ id }),
       });
       const json = await res.json();
-
-      if (json.success) {
-        toast.success("File deleted");
-        fetchAssets();
-      } else {
-        throw new Error(json.message || "Failed to delete file");
+      if (!json.success) {
+        throw new Error(json.message || "Failed to delete");
       }
+      /* success toast removed */
     } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Failed to delete file");
+      toast.error(err.message || "Failed to delete");
+      fetchMedia(); // Rollback
+    } finally {
+      setDeleting(null);
     }
-  };
+  }
 
-  // Copy to Clipboard helper
-  const handleCopyUrl = (url: string, id: string) => {
+  function copyUrl(url: string, id: string) {
     navigator.clipboard.writeText(url);
-    setCopiedId(id);
-    toast.success("URL copied to clipboard");
-    setTimeout(() => setCopiedId(""), 2000);
-  };
+    setCopied(id);
+    /* success toast removed */
+    setTimeout(() => setCopied(null), 2000);
+  }
 
-  const formatBytes = (bytes: number, decimals = 2) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-  };
+  function formatSize(bytes: number) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-wider text-author-white flex items-center gap-2">
-            <ImageIcon className="w-6 h-6 text-author-cream" /> Media Library
+          <h1 className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-wider text-author-white">
+            Media Library
           </h1>
-          <p className="text-author-mid text-sm mt-1">
-            Upload and copy URLs of images for products, banners, and catalog categories
-          </p>
+          <p className="text-author-mid text-sm mt-1">{totalAssets} assets</p>
         </div>
-        <div className="self-start sm:self-auto">
+
+        <label className="flex items-center gap-2 px-4 py-2 bg-author-cream text-author-black text-xs font-heading uppercase tracking-wider rounded cursor-pointer hover:bg-author-cream/90 transition-colors">
+          {uploading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Upload className="w-4 h-4" />
+          )}
+          {uploading ? "Uploading..." : "Upload Files"}
           <input
             type="file"
-            ref={fileInputRef}
-            onChange={handleUploadFile}
             className="hidden"
-            accept="image/*,video/*"
-          />
-          <button
-            onClick={() => fileInputRef.current?.click()}
+            multiple
+            accept="image/*,video/mp4,video/webm"
+            onChange={handleUpload}
             disabled={uploading}
-            className="bg-author-cream text-author-black px-6 py-2.5 font-heading text-xs uppercase tracking-[0.2em] font-semibold hover:bg-author-white transition-colors flex items-center gap-2 disabled:opacity-50"
-          >
-            {uploading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Upload className="w-4 h-4" />
-            )}
-            Upload File
-          </button>
-        </div>
+          />
+        </label>
       </div>
 
-      {/* Filter Bar */}
+      {/* Search */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-author-mid" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by filename or tags..."
+          placeholder="Search by filename, alt text, or tag..."
           className="w-full bg-author-charcoal/50 border border-white/10 pl-10 pr-4 py-2.5 text-sm text-author-white focus:outline-none focus:border-author-cream/40 transition-colors rounded"
         />
       </div>
@@ -211,88 +194,112 @@ export default function AdminMediaPage() {
       {loading ? (
         <div className="py-20 flex flex-col items-center justify-center gap-3">
           <Loader2 className="w-8 h-8 text-author-cream animate-spin" />
-          <p className="text-sm text-author-mid uppercase tracking-wider font-heading">Loading assets...</p>
+          <p className="text-sm text-author-mid uppercase tracking-wider font-heading">Loading media...</p>
         </div>
       ) : assets.length === 0 ? (
-        <div className="glass rounded-lg py-20 text-center space-y-4 border border-white/5">
-          <AlertTriangle className="w-10 h-10 text-author-mid mx-auto opacity-50" />
-          <h3 className="font-heading text-lg font-bold text-author-white uppercase tracking-wider">No Media Assets</h3>
+        <div className="py-20 text-center space-y-4">
+          <ImageIcon className="w-12 h-12 text-author-mid mx-auto opacity-50" />
+          <h3 className="font-heading text-lg font-bold text-author-white uppercase tracking-wider">No Media Found</h3>
           <p className="text-xs text-author-mid max-w-sm mx-auto">
-            Upload images here to retrieve URLs for your product configurations.
+            Upload images and videos to get started.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
           <AnimatePresence mode="popLayout">
-            {assets.map((asset) => (
+            {assets.map((asset, i) => (
               <motion.div
                 key={asset.id}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="glass rounded-lg border border-white/5 overflow-hidden flex flex-col group relative"
+                transition={{ delay: i * 0.02 }}
+                className="glass rounded-lg overflow-hidden group relative border border-white/5"
               >
-                {/* Image Box */}
-                <div className="relative w-full aspect-square bg-author-black flex items-center justify-center overflow-hidden border-b border-white/5">
-                  <img
-                    src={asset.thumbnailUrl || asset.url}
-                    alt={asset.altText || asset.filename}
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-author-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                {/* Image Preview */}
+                <div className="relative aspect-square bg-author-black">
+                  {asset.mimeType.startsWith("image/") ? (
+                    <Image
+                      src={asset.thumbnailUrl || asset.url}
+                      alt={asset.altText || asset.originalFilename}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 16vw"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="text-center">
+                        <ImageIcon className="w-8 h-8 text-author-mid mx-auto" />
+                        <p className="text-[9px] text-author-mid mt-1 uppercase">{asset.mimeType.split("/")[1]}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <button
-                      onClick={() => handleCopyUrl(asset.url, asset.id)}
-                      className="p-2 bg-author-cream/90 hover:bg-author-white rounded text-author-black transition-colors"
-                      title="Copy public URL"
+                      onClick={() => copyUrl(asset.url, asset.id)}
+                      className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                      title="Copy URL"
                     >
-                      {copiedId === asset.id ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                      {copied === asset.id ? (
+                        <Check className="w-4 h-4 text-green-400" />
+                      ) : (
+                        <Copy className="w-4 h-4 text-white" />
+                      )}
                     </button>
-                    <a
-                      href={asset.url}
-                      target="_blank"
-                      className="p-2 bg-author-cream/90 hover:bg-author-white rounded text-author-black transition-colors"
-                      title="Open in new tab"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
                     <button
-                      onClick={() => handleDeleteAsset(asset.id)}
-                      className="p-2 bg-red-600/90 hover:bg-red-500 rounded text-white transition-colors"
-                      title="Delete asset"
+                      onClick={() => handleDelete(asset.id)}
+                      disabled={deleting === asset.id}
+                      className="p-2 bg-red-500/20 rounded-lg hover:bg-red-500/30 transition-colors"
+                      title="Delete"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      {deleting === asset.id ? (
+                        <Loader2 className="w-4 h-4 text-red-400 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4 text-red-400" />
+                      )}
                     </button>
                   </div>
                 </div>
 
-                {/* Details Footer */}
-                <div className="p-3 text-[10px] space-y-1.5 flex-1 flex flex-col justify-between">
-                  <div className="min-w-0">
-                    <p className="font-heading font-semibold text-author-white uppercase tracking-wider truncate" title={asset.originalFilename}>
-                      {asset.originalFilename}
-                    </p>
-                    <p className="text-author-mid font-mono">{formatBytes(asset.sizeBytes)}</p>
-                  </div>
-
-                  <button
-                    onClick={() => handleCopyUrl(asset.url, asset.id)}
-                    className="w-full text-[9px] font-heading font-semibold uppercase tracking-wider bg-white/5 hover:bg-white/10 p-1.5 rounded transition-colors text-author-cream flex items-center justify-center gap-1"
-                  >
-                    {copiedId === asset.id ? (
-                      <>
-                        <Check className="w-3 h-3 text-green-400" /> Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3 h-3" /> Copy URL
-                      </>
-                    )}
-                  </button>
+                {/* Info */}
+                <div className="p-2.5">
+                  <p className="text-[10px] text-author-white truncate font-semibold uppercase tracking-wider">
+                    {asset.originalFilename}
+                  </p>
+                  <p className="text-[9px] text-author-mid mt-0.5">
+                    {formatSize(asset.sizeBytes)}
+                  </p>
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-xs text-author-mid">
+          <div>
+            Page {page} of {totalPages} ({totalAssets} assets)
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="p-1.5 bg-author-charcoal border border-white/10 rounded hover:bg-white/5 transition-colors disabled:opacity-30"
+            >
+              <ChevronLeft className="w-4 h-4 text-author-white" />
+            </button>
+            <button
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              className="p-1.5 bg-author-charcoal border border-white/10 rounded hover:bg-white/5 transition-colors disabled:opacity-30"
+            >
+              <ChevronRight className="w-4 h-4 text-author-white" />
+            </button>
+          </div>
         </div>
       )}
     </div>

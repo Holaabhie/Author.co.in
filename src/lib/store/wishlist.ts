@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import toast from "react-hot-toast";
 
 export interface WishlistItem {
   productId: string;
@@ -37,14 +36,12 @@ export const useWishlistStore = create<WishlistState>()(
         set((state) => ({
           items: [...state.items, { ...item, addedAt: new Date().toISOString() }],
         }));
-        toast.success(`${item.name} added to wishlist`);
       },
 
       removeItem: (productId: string) => {
         set((state) => ({
           items: state.items.filter((item) => item.productId !== productId),
         }));
-        toast.success("Removed from wishlist");
       },
 
       toggleItem: (item: WishlistItem) => {

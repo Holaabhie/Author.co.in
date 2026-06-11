@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
@@ -11,6 +11,8 @@ import {
   Loader2,
   AlertTriangle,
   FileText,
+  Download,
+  RefreshCw,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -24,7 +26,28 @@ interface Order {
   user: {
     name: string | null;
     email: string;
+    phone: string | null;
   } | null;
+  address: {
+    fullName: string;
+    phone: string;
+    line1: string;
+    line2: string | null;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  } | null;
+  items: {
+    id: string;
+    productName: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+    imageUrl: string | null;
+    size: string | null;
+    color: string | null;
+  }[];
   _count: {
     items: number;
   };
@@ -38,6 +61,11 @@ export default function AdminOrdersPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalOrders, setTotalOrders] = useState(0);
+
+  // Expandable details states
+  const [expandedOrderIds, setExpandedOrderIds] = useState<Record<string, boolean>>({});
+  const [pendingCount, setPendingCount] = useState(0);
+  const initialLoadTimeRef = useRef(new Date());
 
   const statuses = [
     { value: "all", label: "All" },
@@ -56,8 +84,14 @@ export default function AdminOrdersPage() {
     try {
       const statusParam = status === "all" ? "" : `&status=${status}`;
       const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
-      const res = await fetch(`/api/admin/orders?page=${page}&pageSize=10${statusParam}${searchParam}`);
+      
+      const [res, pendingRes] = await Promise.all([
+        fetch(`/api/admin/orders?page=${page}&pageSize=10${statusParam}${searchParam}`),
+        fetch(`/api/admin/orders?pageSize=1&status=PENDING`),
+      ]);
+      
       const json = await res.json();
+      const pendingJson = await pendingRes.json();
 
       if (json.success && Array.isArray(json.data)) {
         setOrders(json.data);
@@ -67,6 +101,10 @@ export default function AdminOrdersPage() {
         }
       } else {
         throw new Error(json.message || "Failed to load orders");
+      }
+
+      if (pendingJson.success && pendingJson.meta) {
+        setPendingCount(pendingJson.meta.total || 0);
       }
     } catch (err: any) {
       console.error(err);
@@ -88,6 +126,23 @@ export default function AdminOrdersPage() {
     }, 450);
     return () => clearTimeout(handler);
   }, [search]);
+
+  // Auto-poll every 15 seconds so new orders appear automatically
+  const fetchRef = useRef(fetchOrders);
+  fetchRef.current = fetchOrders;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchRef.current();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const toggleRow = (orderId: string) => {
+    setExpandedOrderIds((prev) => ({
+      ...prev,
+      [orderId]: !prev[orderId],
+    }));
+  };
 
   // Update order status inline
   async function handleStatusChange(orderId: string, newStatus: string) {
@@ -113,7 +168,7 @@ export default function AdminOrdersPage() {
       if (!json.success) {
         throw new Error(json.message || "Failed to update order status");
       }
-      toast.success(`Order status updated to ${newStatus}`);
+      /* success toast removed */
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Failed to update order status");
@@ -148,13 +203,53 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-wider text-author-white">
-          Orders
-        </h1>
-        <p className="text-author-mid text-sm mt-1">
-          {totalOrders} customer orders placed
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-wider text-author-white">
+              Orders
+            </h1>
+            {pendingCount > 0 && (
+              <span className="bg-author-cream text-author-black text-[10px] font-heading font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
+                {pendingCount} PENDING
+              </span>
+            )}
+          </div>
+          <p className="text-author-mid text-sm mt-1">
+            {totalOrders} customer orders placed
+          </p>
+        </div>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={() => { fetchOrders(); /* success toast removed */ }}
+            className="flex items-center gap-2 px-4 py-2 bg-author-charcoal border border-white/10 text-author-white text-xs font-heading uppercase tracking-wider rounded hover:bg-white/5 transition-colors"
+            title="Refresh orders"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
+          </button>
+          <button
+            onClick={async () => {
+              try {
+                const statusParam = status !== "all" ? `?status=${status}` : "";
+                const res = await fetch(`/api/admin/orders/export${statusParam}`);
+                if (!res.ok) throw new Error("Export failed");
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `orders_export_${new Date().toISOString().slice(0, 10)}.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+                /* success toast removed */
+              } catch (err) {
+                toast.error("Failed to export orders");
+              }
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-author-charcoal border border-white/10 text-author-white text-xs font-heading uppercase tracking-wider rounded hover:bg-white/5 transition-colors"
+          >
+            <Download className="w-4 h-4" /> Export CSV
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -166,13 +261,18 @@ export default function AdminOrdersPage() {
               setStatus(s.value);
               setPage(1);
             }}
-            className={`pb-3 text-xs uppercase tracking-wider font-heading border-b-2 transition-colors whitespace-nowrap ${
+            className={`pb-3 text-xs uppercase tracking-wider font-heading border-b-2 transition-colors whitespace-nowrap flex items-center gap-1.5 ${
               status === s.value
                 ? "border-author-cream text-author-cream font-semibold"
                 : "border-transparent text-author-mid hover:text-author-white"
             }`}
           >
-            {s.label}
+            <span>{s.label}</span>
+            {s.value === "PENDING" && pendingCount > 0 && (
+              <span className="bg-yellow-500 text-black text-[9px] font-bold px-1.5 py-0.2 rounded-full font-mono">
+                {pendingCount}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -221,75 +321,179 @@ export default function AdminOrdersPage() {
               </thead>
               <tbody>
                 <AnimatePresence mode="popLayout">
-                  {orders.map((order, i) => (
-                    <motion.tr
-                      key={order.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ delay: i * 0.02 }}
-                      className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                    >
-                      <td className="p-4 font-mono text-xs font-semibold text-author-cream">
-                        <Link href={`/admin/orders/${order.id}`} className="hover:underline">
-                          {order.orderNumber}
-                        </Link>
-                      </td>
-                      <td className="p-4">
-                        <div className="text-xs font-semibold text-author-white">
-                          {order.user?.name || "Guest Checkout"}
-                        </div>
-                        <div className="text-[10px] text-author-mid">{order.user?.email}</div>
-                      </td>
-                      <td className="p-4 text-xs text-author-white font-medium">
-                        {order._count.items} item(s)
-                      </td>
-                      <td className="p-4 font-semibold text-author-white">
-                        {formatPrice(order.total)}
-                      </td>
-                      <td className="p-4">
-                        <select
-                          value={order.status}
-                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                          className={`text-[10px] px-2 py-0.5 rounded font-heading uppercase tracking-wider font-semibold border bg-author-charcoal border-white/10 text-author-white focus:outline-none`}
+                  {orders.map((order, i) => {
+                    const isNew = new Date(order.createdAt) > initialLoadTimeRef.current;
+                    const isExpanded = !!expandedOrderIds[order.id];
+                    return (
+                      <React.Fragment key={order.id}>
+                        <motion.tr
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ delay: i * 0.02 }}
+                          className={`border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer ${
+                            isNew
+                              ? "border-l-2 border-l-author-cream bg-author-cream/[0.03] animate-pulse"
+                              : ""
+                          } ${isExpanded ? "bg-white/[0.02]" : ""}`}
+                          onClick={() => toggleRow(order.id)}
                         >
-                          <option value="PENDING">Pending</option>
-                          <option value="CONFIRMED">Confirmed</option>
-                          <option value="PACKED">Packed</option>
-                          <option value="SHIPPED">Shipped</option>
-                          <option value="OUT_FOR_DELIVERY">Out For Delivery</option>
-                          <option value="DELIVERED">Delivered</option>
-                          <option value="CANCELLED">Cancelled</option>
-                          <option value="REFUNDED">Refunded</option>
-                        </select>
-                      </td>
-                      <td className="p-4">
-                        <span className={`text-[9px] px-2 py-0.5 rounded-full font-heading uppercase tracking-wider ${getStatusColor(order.paymentStatus)}`}>
-                          {order.paymentStatus}
-                        </span>
-                      </td>
-                      <td className="p-4 text-xs text-author-mid">
-                        {new Date(order.createdAt).toLocaleDateString("en-IN", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </td>
-                      <td className="p-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Link
-                            href={`/admin/orders/${order.id}`}
-                            className="p-1.5 hover:bg-white/5 rounded text-author-mid hover:text-author-white transition-colors"
-                            title="View Details"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Link>
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))}
+                          <td className="p-4 font-mono text-xs font-semibold text-author-cream">
+                            <Link
+                              href={`/admin/orders/${order.id}`}
+                              className="hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {order.orderNumber}
+                            </Link>
+                          </td>
+                          <td className="p-4">
+                            <div className="text-xs font-semibold text-author-white">
+                              {order.user?.name || "Guest Checkout"}
+                            </div>
+                            <div className="text-[10px] text-author-mid">{order.user?.email}</div>
+                          </td>
+                          <td className="p-4 text-xs text-author-white font-medium">
+                            {order._count.items} item(s)
+                          </td>
+                          <td className="p-4 font-semibold text-author-white">
+                            {formatPrice(order.total)}
+                          </td>
+                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                            <select
+                              value={order.status}
+                              onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                              className={`text-[10px] px-2 py-0.5 rounded font-heading uppercase tracking-wider font-semibold border bg-author-charcoal border-white/10 text-author-white focus:outline-none`}
+                            >
+                              <option value="PENDING">Pending</option>
+                              <option value="CONFIRMED">Confirmed</option>
+                              <option value="PACKED">Packed</option>
+                              <option value="SHIPPED">Shipped</option>
+                              <option value="OUT_FOR_DELIVERY">Out For Delivery</option>
+                              <option value="DELIVERED">Delivered</option>
+                              <option value="CANCELLED">Cancelled</option>
+                              <option value="REFUNDED">Refunded</option>
+                            </select>
+                          </td>
+                          <td className="p-4">
+                            <span className={`text-[9px] px-2 py-0.5 rounded-full font-heading uppercase tracking-wider ${getStatusColor(order.paymentStatus)}`}>
+                              {order.paymentStatus}
+                            </span>
+                          </td>
+                          <td className="p-4 text-xs text-author-mid">
+                            {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </td>
+                          <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center justify-end gap-2">
+                              <Link
+                                href={`/admin/orders/${order.id}`}
+                                className="p-1.5 hover:bg-white/5 rounded text-author-mid hover:text-author-white transition-colors"
+                                title="View Details Page"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Link>
+                            </div>
+                          </td>
+                        </motion.tr>
+
+                        {/* Expandable Order Details Row */}
+                        {isExpanded && (
+                          <tr className="bg-author-charcoal/20 border-b border-white/5">
+                            <td colSpan={8} className="p-6">
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-author-mid text-left">
+                                
+                                {/* Customer Details */}
+                                <div className="space-y-3 border-r border-white/5 pr-6">
+                                  <h4 className="font-heading font-bold uppercase tracking-wider text-author-white text-[10px]">Customer Details</h4>
+                                  <div>
+                                    <span className="block text-[9px] uppercase tracking-wider text-author-mid/50 font-medium">Name</span>
+                                    <span className="text-author-white font-medium">{order.user?.name || "Guest Checkout"}</span>
+                                  </div>
+                                  <div>
+                                    <span className="block text-[9px] uppercase tracking-wider text-author-mid/50 font-medium">Email</span>
+                                    <span className="text-author-white font-mono">{order.user?.email}</span>
+                                  </div>
+                                  <div>
+                                    <span className="block text-[9px] uppercase tracking-wider text-author-mid/50 font-medium">Phone</span>
+                                    <span className="text-author-white font-mono">{order.user?.phone || "N/A"}</span>
+                                  </div>
+                                  <div className="pt-2">
+                                    <span className="block text-[9px] uppercase tracking-wider text-author-mid/50 font-medium">Payment Status</span>
+                                    <span className={`inline-block text-[9px] font-bold uppercase px-2.5 py-0.5 rounded-full ${
+                                      order.paymentStatus === "PAID"
+                                        ? "bg-green-500/20 text-green-400 border border-green-500/10"
+                                        : order.paymentStatus === "FAILED"
+                                        ? "bg-red-500/20 text-red-400 border border-red-500/10"
+                                        : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/10"
+                                    }`}>
+                                      {order.paymentStatus}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Shipping Address */}
+                                <div className="space-y-3 border-r border-white/5 pr-6">
+                                  <h4 className="font-heading font-bold uppercase tracking-wider text-author-white text-[10px]">Shipping Address</h4>
+                                  {order.address ? (
+                                    <div className="space-y-1">
+                                      <p className="font-semibold text-author-white">{order.address.fullName}</p>
+                                      <p>{order.address.line1}</p>
+                                      {order.address.line2 && <p>{order.address.line2}</p>}
+                                      <p>{order.address.city}, {order.address.state} — {order.address.postalCode}</p>
+                                      <p>Country: {order.address.country}</p>
+                                      <p className="font-medium pt-1">Contact Phone: {order.address.phone}</p>
+                                    </div>
+                                  ) : (
+                                    <p className="text-author-mid/40 italic">No shipping address provided</p>
+                                  )}
+                                </div>
+
+                                {/* Order Items Grid */}
+                                <div className="space-y-3">
+                                  <h4 className="font-heading font-bold uppercase tracking-wider text-author-white text-[10px]">Items Summary</h4>
+                                  <div className="max-h-[220px] overflow-y-auto space-y-2.5 pr-2">
+                                    {order.items && order.items.length > 0 ? (
+                                      order.items.map((item) => (
+                                        <div key={item.id} className="flex gap-3 items-center border-b border-white/5 pb-2 last:border-b-0 last:pb-0">
+                                          {item.imageUrl && (
+                                            <div className="relative w-8 h-10 bg-black/40 overflow-hidden flex-shrink-0">
+                                              <img src={item.imageUrl} alt={item.productName} className="object-cover w-full h-full" />
+                                            </div>
+                                          )}
+                                          <div className="flex-1 min-w-0">
+                                            <p className="font-medium text-author-white uppercase truncate text-[10px] tracking-wide">
+                                              {item.productName}
+                                            </p>
+                                            <p className="text-[9px] text-author-mid/60 mt-0.5">
+                                              Size: {item.size || "N/A"} | Color: {item.color || "N/A"} | Qty: {item.quantity}
+                                            </p>
+                                          </div>
+                                          <div className="text-right flex-shrink-0">
+                                            <span className="font-mono text-author-white text-[10px]">
+                                              ₹{(item.totalPrice / 100).toLocaleString("en-IN")}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <p className="text-author-mid/40 italic">No items found for this order</p>
+                                    )}
+                                  </div>
+                                </div>
+
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </AnimatePresence>
               </tbody>
             </table>

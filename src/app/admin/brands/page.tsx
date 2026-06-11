@@ -131,7 +131,7 @@ export default function AdminBrandsPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success(`Brand ${editingBrand ? "updated" : "created"} successfully`);
+        /* success toast removed */
         setIsModalOpen(false);
         fetchBrands();
       } else {
@@ -161,7 +161,7 @@ export default function AdminBrandsPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success("Brand deleted successfully");
+        /* success toast removed */
         fetchBrands();
       } else {
         throw new Error(json.message || "Failed to delete brand");
@@ -215,7 +215,7 @@ export default function AdminBrandsPage() {
             <AlertTriangle className="w-10 h-10 text-author-mid mx-auto opacity-50" />
             <h3 className="font-heading text-lg font-bold text-author-white uppercase tracking-wider">No Brands Found</h3>
             <p className="text-xs text-author-mid max-w-sm mx-auto">
-              We couldn't find any brands. Add one to link to products.
+              We couldn&apos;t find any brands. Add one to link to products.
             </p>
           </div>
         ) : (

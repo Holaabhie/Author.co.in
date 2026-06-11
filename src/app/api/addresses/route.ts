@@ -46,6 +46,9 @@ export async function POST(request: NextRequest) {
     if (!phone?.trim()) {
       return apiError('VALIDATION_ERROR', 'Phone number is required', 400);
     }
+    if (!/^\d{10}$/.test(phone.trim())) {
+      return apiError('VALIDATION_ERROR', 'Invalid phone number. Must be a 10-digit number.', 400);
+    }
     if (!line1?.trim()) {
       return apiError('VALIDATION_ERROR', 'Address line 1 is required', 400);
     }
@@ -64,31 +67,49 @@ export async function POST(request: NextRequest) {
       return apiError('VALIDATION_ERROR', 'Invalid postal code. Must be a 6-digit PIN.', 400);
     }
 
-    // If setting as default, unset other defaults
-    if (isDefault) {
-      await prisma.address.updateMany({
-        where: { userId: user.id, isDefault: true },
-        data: { isDefault: false },
-      });
-    }
-
     // If this is the user's first address, auto-set as default
     const addressCount = await prisma.address.count({ where: { userId: user.id } });
+    const shouldBeDefault = isDefault || addressCount === 0;
 
-    const address = await prisma.address.create({
-      data: {
-        userId: user.id,
-        label: label?.trim() || 'Home',
-        fullName: fullName.trim(),
-        phone: phone.trim(),
-        line1: line1.trim(),
-        line2: line2?.trim() || null,
-        city: city.trim(),
-        state: state.trim(),
-        postalCode: postalCode.trim(),
-        isDefault: isDefault || addressCount === 0,
-      },
-    });
+    let address;
+    if (shouldBeDefault) {
+      address = await prisma.$transaction(async (tx) => {
+        await tx.address.updateMany({
+          where: { userId: user.id, isDefault: true },
+          data: { isDefault: false },
+        });
+
+        return tx.address.create({
+          data: {
+            userId: user.id,
+            label: label?.trim() || 'Home',
+            fullName: fullName.trim(),
+            phone: phone.trim(),
+            line1: line1.trim(),
+            line2: line2?.trim() || null,
+            city: city.trim(),
+            state: state.trim(),
+            postalCode: postalCode.trim(),
+            isDefault: true,
+          },
+        });
+      });
+    } else {
+      address = await prisma.address.create({
+        data: {
+          userId: user.id,
+          label: label?.trim() || 'Home',
+          fullName: fullName.trim(),
+          phone: phone.trim(),
+          line1: line1.trim(),
+          line2: line2?.trim() || null,
+          city: city.trim(),
+          state: state.trim(),
+          postalCode: postalCode.trim(),
+          isDefault: false,
+        },
+      });
+    }
 
     return apiSuccess(address);
   } catch (error) {
@@ -128,7 +149,12 @@ export async function PUT(request: NextRequest) {
 
     if (fields.label !== undefined) updateData.label = fields.label.trim();
     if (fields.fullName !== undefined) updateData.fullName = fields.fullName.trim();
-    if (fields.phone !== undefined) updateData.phone = fields.phone.trim();
+    if (fields.phone !== undefined) {
+      if (!/^\d{10}$/.test(fields.phone.trim())) {
+        return apiError('VALIDATION_ERROR', 'Invalid phone number. Must be a 10-digit number.', 400);
+      }
+      updateData.phone = fields.phone.trim();
+    }
     if (fields.line1 !== undefined) updateData.line1 = fields.line1.trim();
     if (fields.line2 !== undefined) updateData.line2 = fields.line2?.trim() || null;
     if (fields.city !== undefined) updateData.city = fields.city.trim();
@@ -141,20 +167,29 @@ export async function PUT(request: NextRequest) {
     }
 
     // Handle default address toggle
+    let address;
     if (fields.isDefault === true) {
-      await prisma.address.updateMany({
-        where: { userId: user.id, isDefault: true },
-        data: { isDefault: false },
-      });
       updateData.isDefault = true;
-    } else if (fields.isDefault === false) {
-      updateData.isDefault = false;
-    }
+      address = await prisma.$transaction(async (tx) => {
+        await tx.address.updateMany({
+          where: { userId: user.id, isDefault: true },
+          data: { isDefault: false },
+        });
 
-    const address = await prisma.address.update({
-      where: { id },
-      data: updateData,
-    });
+        return tx.address.update({
+          where: { id },
+          data: updateData,
+        });
+      });
+    } else {
+      if (fields.isDefault === false) {
+        updateData.isDefault = false;
+      }
+      address = await prisma.address.update({
+        where: { id },
+        data: updateData,
+      });
+    }
 
     return apiSuccess(address);
   } catch (error) {

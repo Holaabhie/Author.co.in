@@ -52,8 +52,11 @@ const config: Config = {
         "author-sand": "#C8BFB6",
       },
       fontFamily: {
-        heading: ["'Cormorant Garamond'", "Georgia", "serif"],
+        // Font A — Display / Headlines: Barlow Condensed
+        display: ["var(--font-barlow-condensed)", "Barlow Condensed", "sans-serif"],
+        // Font B — Body / Product Content: Inter
         body: ["var(--font-inter)", "Inter", "sans-serif"],
+        // sans maps to Inter (body) — used by Tailwind's font-sans utility
         sans: ["var(--font-inter)", "Inter", "sans-serif"],
       },
       fontSize: {

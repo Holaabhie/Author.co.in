@@ -11,11 +11,11 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowUpRight,
-  AlertTriangle,
   Loader2,
   Package,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { RevenueChart } from "@/components/admin/AdminCharts";
 
 interface TopProduct {
   productId: string;
@@ -54,12 +54,20 @@ interface AnalyticsData {
   recentOrders: RecentOrder[];
 }
 
+interface ChartDataPoint {
+  date: string;
+  revenue: number;
+  orders: number;
+}
+
 export default function AdminDashboard() {
   const [period, setPeriod] = useState("30d");
   const [data, setData] = useState<AnalyticsData | null>(null);
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isFallback, setIsFallback] = useState(false);
+  const [chartLoading, setChartLoading] = useState(true);
 
+  // Fetch dashboard analytics
   useEffect(() => {
     async function fetchAnalytics() {
       setLoading(true);
@@ -68,61 +76,25 @@ export default function AdminDashboard() {
         const result = await res.json();
         if (result.success && result.data) {
           setData(result.data);
-          setIsFallback(false);
         } else {
           throw new Error(result.message || "Failed to fetch analytics");
         }
       } catch (err: any) {
         console.error(err);
-        setIsFallback(true);
-        // Load mock data for fallback UI
+        toast.error("Failed to load dashboard data");
+        // Set empty data instead of mock data (no mock data in production)
         setData({
-          totalRevenue: 4528400,
-          revenueGrowth: 12.5,
-          totalOrders: 156,
-          orderGrowth: 8.2,
-          averageOrderValue: 29028,
-          totalCustomers: 1247,
-          newCustomers: 45,
-          conversionRate: 3.2,
-          orderStatusBreakdown: { PENDING: 12, CONFIRMED: 45, DELIVERED: 99 },
-          topProducts: [
-            { productId: "p1", productName: "Signature Cotton Tee", unitsSold: 84, revenue: 1671600 },
-            { productId: "p2", productName: "Heavyweight Box Hoodie", unitsSold: 52, revenue: 2074800 },
-            { productId: "p3", productName: "Tailored Lounge Pants", unitsSold: 35, revenue: 1046500 },
-          ],
-          recentOrders: [
-            {
-              id: "ord-1",
-              orderNumber: "AUTH-00214",
-              status: "CONFIRMED",
-              paymentStatus: "PAID",
-              total: 899800,
-              createdAt: new Date().toISOString(),
-              user: { name: "Aarav Sharma", email: "aarav@example.com" },
-              _count: { items: 2 }
-            },
-            {
-              id: "ord-2",
-              orderNumber: "AUTH-00213",
-              status: "DELIVERED",
-              paymentStatus: "PAID",
-              total: 449900,
-              createdAt: new Date(Date.now() - 86400000).toISOString(),
-              user: { name: "Riya Patel", email: "riya@example.com" },
-              _count: { items: 1 }
-            },
-            {
-              id: "ord-3",
-              orderNumber: "AUTH-00212",
-              status: "PENDING",
-              paymentStatus: "PENDING",
-              total: 299900,
-              createdAt: new Date(Date.now() - 172800000).toISOString(),
-              user: { name: "Kabir Mehta", email: "kabir@example.com" },
-              _count: { items: 1 }
-            }
-          ]
+          totalRevenue: 0,
+          revenueGrowth: 0,
+          totalOrders: 0,
+          orderGrowth: 0,
+          averageOrderValue: 0,
+          totalCustomers: 0,
+          newCustomers: 0,
+          conversionRate: 0,
+          orderStatusBreakdown: {},
+          topProducts: [],
+          recentOrders: [],
         });
       } finally {
         setLoading(false);
@@ -130,6 +102,27 @@ export default function AdminDashboard() {
     }
 
     fetchAnalytics();
+  }, [period]);
+
+  // Fetch chart data separately
+  useEffect(() => {
+    async function fetchChartData() {
+      setChartLoading(true);
+      try {
+        const res = await fetch(`/api/admin/analytics/chart?period=${period}`);
+        const result = await res.json();
+        if (result.success && Array.isArray(result.data)) {
+          setChartData(result.data);
+        }
+      } catch (err) {
+        console.error("Failed to load chart data", err);
+        setChartData([]);
+      } finally {
+        setChartLoading(false);
+      }
+    }
+
+    fetchChartData();
   }, [period]);
 
   const formatPrice = (paise: number) => {
@@ -150,6 +143,8 @@ export default function AdminDashboard() {
       DELIVERED: "bg-green-500/20 text-green-400 border border-green-500/10",
       CANCELLED: "bg-red-500/20 text-red-400 border border-red-500/10",
       REFUNDED: "bg-orange-500/20 text-orange-400 border border-orange-500/10",
+      PAID: "bg-green-500/20 text-green-400 border border-green-500/10",
+      FAILED: "bg-red-500/20 text-red-400 border border-red-500/10",
     };
     return colors[status] || "bg-white/10 text-author-mid";
   };
@@ -194,7 +189,7 @@ export default function AdminDashboard() {
       label: "Average Order Value",
       value: formatPrice(data.averageOrderValue),
       change: "Stable",
-      trend: "up",
+      trend: "up" as const,
       icon: BarChart3,
       color: "bg-purple-500/10 text-purple-400 border border-purple-500/20",
     },
@@ -202,7 +197,7 @@ export default function AdminDashboard() {
       label: "Total Customers",
       value: data.totalCustomers.toLocaleString(),
       change: `+${data.newCustomers} new`,
-      trend: "up",
+      trend: "up" as const,
       icon: Users,
       color: "bg-green-500/10 text-green-400 border border-green-500/20",
     },
@@ -210,20 +205,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      {isFallback && (
-        <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded flex items-center gap-3 text-sm text-yellow-300">
-          <AlertTriangle className="w-5 h-5 flex-shrink-0" />
-          <span>Using sample data. Set up and seed the database to view real-time shop metrics.</span>
-        </div>
-      )}
-
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-wider text-author-white">
             Dashboard
           </h1>
           <p className="text-author-mid text-sm mt-1">
-            Performance overview for the brand Author
+            Performance overview for Author Co
           </p>
         </div>
         <div className="flex bg-author-charcoal border border-white/10 p-1 rounded-lg self-start sm:self-auto">
@@ -279,8 +267,35 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Recent Orders */}
+        {/* Left Column: Recent Orders + Revenue Chart */}
         <div className="xl:col-span-2 space-y-6">
+          {/* Revenue Chart — Real Recharts (Issue 6: separate "use client" component) */}
+          <div className="glass rounded-lg overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-white/5">
+              <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-author-white">
+                Revenue Trend
+              </h2>
+              <span className="text-[10px] text-author-mid uppercase tracking-wider">
+                Last {period === "7d" ? "7 days" : period === "90d" ? "90 days" : "30 days"}
+              </span>
+            </div>
+            <div className="p-4">
+              {chartLoading ? (
+                <div className="h-[300px] flex items-center justify-center">
+                  <Loader2 className="w-6 h-6 text-author-cream animate-spin" />
+                </div>
+              ) : chartData.length === 0 ? (
+                <div className="h-[300px] flex flex-col items-center justify-center">
+                  <BarChart3 className="w-10 h-10 text-author-mid mb-2 opacity-50" />
+                  <p className="text-xs text-author-mid">No revenue data for this period</p>
+                </div>
+              ) : (
+                <RevenueChart data={chartData} />
+              )}
+            </div>
+          </div>
+
+          {/* Recent Orders */}
           <div className="glass rounded-lg">
             <div className="flex items-center justify-between p-6 border-b border-white/5">
               <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-author-white">
@@ -313,7 +328,7 @@ export default function AdminDashboard() {
                       </td>
                     </tr>
                   ) : (
-                    data.recentOrders.map((order, i) => (
+                    data.recentOrders.slice(0, 5).map((order, i) => (
                       <motion.tr
                         key={order.id}
                         initial={{ opacity: 0 }}
@@ -358,20 +373,9 @@ export default function AdminDashboard() {
               </table>
             </div>
           </div>
-
-          {/* Revenue Chart Placeholder */}
-          <div className="glass p-6 rounded-lg h-64 flex flex-col items-center justify-center border border-white/5">
-            <BarChart3 className="w-10 h-10 text-author-mid mb-2 opacity-50" />
-            <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-author-white">
-              Revenue Analytics Trend
-            </h3>
-            <p className="text-xs text-author-mid mt-1 uppercase tracking-wider">
-              Interactive Charts coming soon
-            </p>
-          </div>
         </div>
 
-        {/* Right Sidebar - Top Products & Low Stock Alerts */}
+        {/* Right Sidebar — Top Products & Conversion */}
         <div className="space-y-6">
           {/* Top Products */}
           <div className="glass rounded-lg p-6">
@@ -382,7 +386,7 @@ export default function AdminDashboard() {
               {data.topProducts.length === 0 ? (
                 <p className="text-xs text-author-mid text-center py-4">No product sales in this period</p>
               ) : (
-                data.topProducts.map((product, index) => (
+                data.topProducts.slice(0, 5).map((product, index) => (
                   <div key={product.productId} className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="font-heading text-sm font-bold text-author-cream w-4">
@@ -404,7 +408,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Conversions Card */}
+          {/* Conversions Card - Issue 3: (totalOrders / totalCustomers) * 100 */}
           <div className="glass rounded-lg p-6">
             <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-author-white border-b border-white/5 pb-4 mb-4">
               Store Conversion
@@ -421,8 +425,29 @@ export default function AdminDashboard() {
                 />
               </div>
               <p className="text-[10px] text-author-mid uppercase tracking-wider">
-                Ratio of purchases to total catalog views.
+                Orders / Total Customers × 100
               </p>
+            </div>
+          </div>
+
+          {/* Order Status Breakdown */}
+          <div className="glass rounded-lg p-6">
+            <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-author-white border-b border-white/5 pb-4 mb-4">
+              Orders by Status
+            </h2>
+            <div className="space-y-2">
+              {Object.keys(data.orderStatusBreakdown).length === 0 ? (
+                <p className="text-xs text-author-mid text-center py-4">No orders in this period</p>
+              ) : (
+                Object.entries(data.orderStatusBreakdown).map(([status, count]) => (
+                  <div key={status} className="flex items-center justify-between">
+                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-heading uppercase tracking-wider ${getStatusColor(status)}`}>
+                      {status.replace(/_/g, " ")}
+                    </span>
+                    <span className="text-xs font-semibold text-author-white">{count}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

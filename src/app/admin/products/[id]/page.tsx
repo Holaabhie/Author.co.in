@@ -5,12 +5,16 @@ import { useRouter, useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
+  ArrowRight,
   Save,
   Plus,
   Trash2,
   Image as ImageIcon,
   Loader2,
   AlertTriangle,
+  Upload,
+  Star,
+  Check,
 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -30,6 +34,8 @@ interface ImageInput {
   url: string;
   alt: string;
   isPrimary: boolean;
+  publicId?: string | null;
+  color?: string | null;
 }
 
 interface VariantInput {
@@ -127,9 +133,11 @@ export default function EditProductPage() {
               url: img.url,
               alt: img.alt || "",
               isPrimary: img.isPrimary,
+              publicId: img.publicId,
+              color: img.color,
             })));
           } else {
-            setImages([{ url: "", alt: "", isPrimary: true }]);
+            setImages([{ url: "", alt: "", isPrimary: true, publicId: null, color: null }]);
           }
 
           // Format variants
@@ -201,6 +209,166 @@ export default function EditProductPage() {
     );
   };
 
+  const [uploadingImageId, setUploadingImageId] = useState<string | null>(null);
+  const [isUploadingNew, setIsUploadingNew] = useState(false);
+
+  const handleUploadImageFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingNew(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`/api/admin/products/${productId}/images`, {
+        method: "POST",
+        body: formData,
+      });
+      const json = await res.json();
+      if (json.success) {
+        const newImg = {
+          id: json.data.id,
+          url: json.data.url,
+          alt: json.data.alt || "",
+          isPrimary: json.data.isPrimary,
+        };
+        // Remove empty placeholder url if present
+        const filtered = images.filter(img => img.url.trim() !== "");
+        setImages([...filtered, newImg]);
+      } else {
+        toast.error(json.message || "Failed to upload image");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error uploading image");
+    } finally {
+      setIsUploadingNew(false);
+      e.target.value = ""; // reset file input
+    }
+  };
+
+  const handleReplaceImageFile = async (imageId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImageId(imageId);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("replaceImageId", imageId);
+      const res = await fetch(`/api/admin/products/${productId}/images`, {
+        method: "POST",
+        body: formData,
+      });
+      const json = await res.json();
+      if (json.success) {
+        setImages(images.map(img => img.id === imageId ? { ...img, url: json.data.url, alt: json.data.alt || "" } : img));
+      } else {
+        toast.error(json.message || "Failed to replace image");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error replacing image");
+    } finally {
+      setUploadingImageId(null);
+      e.target.value = ""; // reset file input
+    }
+  };
+
+  const handleDeleteImageImmediate = async (imageId: string) => {
+    if (images.length <= 1) {
+      toast.error("A product must have at least one image");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to delete this image?")) return;
+
+    try {
+      const res = await fetch(`/api/admin/products/${productId}/images`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageId }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        const filtered = images.filter(img => img.id !== imageId);
+        // If deleted was primary, set first remaining as primary
+        const deletedImg = images.find(img => img.id === imageId);
+        if (deletedImg?.isPrimary && filtered.length > 0) {
+          filtered[0].isPrimary = true;
+        }
+        setImages(filtered);
+      } else {
+        toast.error(json.message || "Failed to delete image");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error deleting image");
+    }
+  };
+
+  const handleMoveImageImmediate = async (index: number, direction: "left" | "right") => {
+    const targetIndex = direction === "left" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= images.length) return;
+
+    const copy = [...images];
+    const temp = copy[index];
+    copy[index] = copy[targetIndex];
+    copy[targetIndex] = temp;
+
+    const payload = copy.map((img, idx) => ({
+      id: img.id,
+      sortOrder: idx,
+      isPrimary: img.isPrimary,
+    }));
+
+    try {
+      const res = await fetch(`/api/admin/products/${productId}/images`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ images: payload }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setImages(copy);
+      } else {
+        toast.error(json.message || "Failed to reorder images");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error updating image positions");
+    }
+  };
+
+  const handleSetPrimaryImmediate = async (imageId: string) => {
+    const updated = images.map((img) => ({
+      ...img,
+      isPrimary: img.id === imageId,
+    }));
+
+    const payload = updated.map((img, idx) => ({
+      id: img.id,
+      sortOrder: idx,
+      isPrimary: img.isPrimary,
+    }));
+
+    try {
+      const res = await fetch(`/api/admin/products/${productId}/images`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ images: payload }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setImages(updated);
+      } else {
+        toast.error(json.message || "Failed to set primary image");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error setting primary image");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return toast.error("Product name is required");
@@ -256,7 +424,7 @@ export default function EditProductPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success("Product updated successfully");
+        /* success toast removed */
         router.push("/admin/products");
       } else {
         throw new Error(json.message || "Failed to update product");
@@ -279,7 +447,7 @@ export default function EditProductPage() {
       const json = await res.json();
 
       if (json.success) {
-        toast.success("Product deleted successfully");
+        /* success toast removed */
         router.push("/admin/products");
       } else {
         throw new Error(json.message || "Failed to delete product");
@@ -513,66 +681,201 @@ export default function EditProductPage() {
           <div className="glass p-6 rounded-lg space-y-4">
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-author-white">
-                Media Library URLs
+                Product Image Gallery
               </h2>
-              <button
-                type="button"
-                onClick={handleAddImage}
-                className="text-xs text-author-cream hover:underline flex items-center gap-1 font-heading uppercase tracking-wider"
-              >
-                <Plus className="w-3.5 h-3.5" /> Add URL
-              </button>
+              <span className="text-[10px] text-author-mid uppercase tracking-wider font-heading">
+                Updates database immediately
+              </span>
             </div>
-            <div className="space-y-3">
-              {images.map((img, index) => (
-                <div key={index} className="flex gap-3 items-end">
-                  <div className="flex-1">
-                    <label className="text-[10px] text-author-mid uppercase tracking-wider block mb-0.5">
-                      Image URL #{index + 1}
-                    </label>
-                    <input
-                      type="text"
-                      value={img.url}
-                      onChange={(e) => handleImageChange(index, "url", e.target.value)}
-                      placeholder="https://example.com/assets/image.jpg"
-                      className="w-full bg-author-charcoal/50 border border-white/10 px-4 py-2.5 text-xs text-author-white focus:outline-none focus:border-author-cream/40 rounded transition-colors"
-                    />
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {images.filter(img => img.url.trim() !== "").map((img, index) => (
+                <div key={img.id || index} className="relative group border border-white/10 bg-author-charcoal/30 rounded overflow-hidden flex flex-col justify-between p-2">
+                  
+                  {/* Thumbnail */}
+                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-black/40 rounded">
+                    {img.url && (
+                      <img
+                        src={img.url}
+                        alt={img.alt || "Product image"}
+                        className="object-cover w-full h-full"
+                      />
+                    )}
+                    {uploadingImageId === img.id && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                        <Loader2 className="w-6 h-6 text-author-cream animate-spin" />
+                      </div>
+                    )}
+                    
+                    {/* Primary Badge */}
+                    {img.isPrimary && (
+                      <div className="absolute top-2 left-2 z-10">
+                        <span className="text-[9px] bg-author-cream text-author-black px-2 py-0.5 tracking-wider uppercase font-bold rounded-sm">
+                          Cover
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <div className="w-1/3">
-                    <label className="text-[10px] text-author-mid uppercase tracking-wider block mb-0.5">
-                      Alt text
-                    </label>
+
+                  {/* Alt Text Input */}
+                  <div className="mt-2">
                     <input
                       type="text"
                       value={img.alt}
                       onChange={(e) => handleImageChange(index, "alt", e.target.value)}
-                      placeholder="Product angle"
-                      className="w-full bg-author-charcoal/50 border border-white/10 px-4 py-2.5 text-xs text-author-white focus:outline-none focus:border-author-cream/40 rounded transition-colors"
+                      placeholder="Alt text"
+                      className="w-full bg-author-charcoal/70 border border-white/5 px-2 py-1 text-[10px] text-author-white focus:outline-none focus:border-author-cream/20 rounded"
                     />
                   </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <label className="flex items-center gap-1.5 cursor-pointer select-none text-xs text-author-mid">
+
+                  {/* Gallery Actions */}
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5 gap-1">
+                    {/* Primary Star button */}
+                    <button
+                      type="button"
+                      onClick={() => handleSetPrimaryImmediate(img.id!)}
+                      className={`p-1.5 rounded transition-colors ${
+                        img.isPrimary
+                          ? "text-author-cream bg-white/5"
+                          : "text-author-mid hover:text-author-white hover:bg-white/5"
+                      }`}
+                      title={img.isPrimary ? "Primary Cover Image" : "Make Primary"}
+                    >
+                      <Star className={`w-3.5 h-3.5 ${img.isPrimary ? "fill-author-cream" : ""}`} />
+                    </button>
+
+                    {/* Move Left */}
+                    <button
+                      type="button"
+                      disabled={index === 0}
+                      onClick={() => handleMoveImageImmediate(index, "left")}
+                      className="p-1.5 rounded text-author-mid hover:text-author-white hover:bg-white/5 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                      title="Move Left"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Move Right */}
+                    <button
+                      type="button"
+                      disabled={index === images.length - 1}
+                      onClick={() => handleMoveImageImmediate(index, "right")}
+                      className="p-1.5 rounded text-author-mid hover:text-author-white hover:bg-white/5 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                      title="Move Right"
+                    >
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Replace Image */}
+                    <label
+                      className="p-1.5 rounded text-author-mid hover:text-author-white hover:bg-white/5 cursor-pointer transition-colors"
+                      title="Replace Image"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
                       <input
-                        type="checkbox"
-                        checked={img.isPrimary}
-                        onChange={(e) => handleImageChange(index, "isPrimary", e.target.checked)}
-                        className="rounded bg-author-charcoal border-white/10 text-author-cream focus:ring-0 focus:ring-offset-0"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleReplaceImageFile(img.id!, e)}
+                        className="hidden"
                       />
-                      Primary
                     </label>
-                    {images.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(index)}
-                        className="p-2 hover:bg-red-500/10 rounded text-red-400/70 hover:text-red-400 transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+
+                    {/* Delete Image */}
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteImageImmediate(img.id!)}
+                      className="p-1.5 rounded text-red-400/70 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                      title="Delete Image"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
               ))}
+
+              {/* Upload Card */}
+              <label className="relative border border-dashed border-white/10 hover:border-author-cream/30 bg-author-charcoal/10 hover:bg-author-charcoal/20 rounded aspect-[3/4] flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group p-4">
+                {isUploadingNew ? (
+                  <Loader2 className="w-8 h-8 text-author-cream animate-spin" />
+                ) : (
+                  <>
+                    <Plus className="w-8 h-8 text-author-mid group-hover:text-author-white mb-2 transition-colors" />
+                    <span className="text-[10px] text-author-mid group-hover:text-author-white uppercase tracking-wider font-semibold text-center transition-colors">
+                      Upload Image
+                    </span>
+                  </>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleUploadImageFile}
+                  disabled={isUploadingNew}
+                  className="hidden"
+                />
+              </label>
             </div>
+
+            {/* Read-only color grouping section */}
+            {(() => {
+              const imagesByColor = images
+                .filter(img => img.url.trim() !== "")
+                .reduce((acc: Record<string, any[]>, img, index) => {
+                  const colorGroup = img.color || "Unassigned";
+                  if (!acc[colorGroup]) {
+                    acc[colorGroup] = [];
+                  }
+                  acc[colorGroup].push({ ...img, sortOrder: index });
+                  return acc;
+                }, {});
+
+              return (
+                <div className="border-t border-white/5 pt-6 mt-6">
+                  <h3 className="text-xs text-author-cream uppercase tracking-wider font-heading mb-4">
+                    Images Grouped By Color (Read-Only)
+                  </h3>
+                  {Object.keys(imagesByColor).length === 0 ? (
+                    <p className="text-xs text-author-mid italic uppercase tracking-wider">No images uploaded yet.</p>
+                  ) : (
+                    <div className="space-y-6">
+                      {Object.entries(imagesByColor).map(([color, imgs]) => (
+                        <div key={color} className="space-y-2">
+                          <div className="text-[11px] text-author-white font-bold uppercase tracking-widest border-b border-white/5 pb-1 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-author-cream inline-block" />
+                            Color: {color}
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                            {imgs.map((img, i) => (
+                              <div key={img.id || i} className="border border-white/5 bg-author-charcoal/20 rounded p-2 flex flex-col gap-2">
+                                <div className="relative aspect-[3/4] w-full overflow-hidden bg-black/40 rounded">
+                                  {img.url && (
+                                    <img
+                                      src={img.url}
+                                      alt={img.alt || "Grouped view"}
+                                      className="object-cover w-full h-full"
+                                    />
+                                  )}
+                                </div>
+                                <div className="text-[9px] text-author-mid uppercase space-y-0.5 tracking-wider font-mono">
+                                  <div className="truncate" title={img.publicId || ""}>
+                                    <strong className="text-author-white">ID:</strong> {img.publicId || "None"}
+                                  </div>
+                                  <div>
+                                    <strong className="text-author-white">Color:</strong> {img.color || "None"}
+                                  </div>
+                                  <div>
+                                    <strong className="text-author-white">Sort:</strong> {img.sortOrder}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Variants Configuration */}
