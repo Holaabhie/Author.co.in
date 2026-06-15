@@ -33,7 +33,16 @@ export async function GET(_request: NextRequest, context: RouteContext) {
         items: {
           include: {
             product: {
-              select: { id: true, slug: true, isActive: true },
+              select: {
+                id: true,
+                slug: true,
+                isActive: true,
+                images: {
+                  select: { url: true, color: true, isPrimary: true },
+                  orderBy: { sortOrder: 'asc' as const },
+                  take: 3,
+                },
+              },
             },
             variant: {
               select: { id: true, size: true, color: true, colorHex: true },

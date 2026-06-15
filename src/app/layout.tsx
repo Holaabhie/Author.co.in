@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Barlow_Condensed, Inter } from "next/font/google";
+import { Barlow_Condensed, Inter, Archivo_Black } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Providers from "@/components/providers/Providers";
 import CartDrawer from "@/components/cart/CartDrawer";
 import SearchModal from "@/components/search/SearchModal";
+import InitialPageLoader from "@/components/common/InitialPageLoader";
 
 const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
@@ -17,6 +18,13 @@ const barlowCondensed = Barlow_Condensed({
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const archivoBlack = Archivo_Black({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-archivo-black",
   display: "swap",
 });
 
@@ -49,9 +57,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${barlowCondensed.variable} ${inter.variable}`}>
+    <html lang="en" className={`${barlowCondensed.variable} ${inter.variable} ${archivoBlack.variable}`}>
       <body className="bg-ink text-light font-sans antialiased">
         <Providers>
+          <InitialPageLoader />
           <Navbar />
           <main>{children}</main>
           <Footer />

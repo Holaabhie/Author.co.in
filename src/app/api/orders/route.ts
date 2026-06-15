@@ -33,8 +33,22 @@ export async function GET(request: NextRequest) {
             quantity: true,
             unitPrice: true,
             totalPrice: true,
+            imageUrl: true,
+            size: true,
+            color: true,
           },
-          take: 2, // Take first 2 items to show a quick summary
+        },
+        address: {
+          select: {
+            fullName: true,
+            phone: true,
+            line1: true,
+            line2: true,
+            city: true,
+            state: true,
+            postalCode: true,
+            country: true,
+          },
         },
       },
     });

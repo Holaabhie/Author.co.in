@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Search, X, ArrowRight } from "lucide-react";
 import { AuthorLoader } from "@/components/ui/AuthorLoader";
 import { useUIStore } from "@/lib/store/ui";
+import { usePathname } from "next/navigation";
 interface SearchedProduct {
   id: string;
   name: string;
@@ -19,12 +20,19 @@ interface SearchedProduct {
 
 export default function SearchModal() {
   const { isSearchOpen, closeSearch } = useUIStore();
+  const pathname = usePathname();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchedProduct[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Close search on route change
+  useEffect(() => {
+    closeSearch();
+  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+
 
   // Focus input when opened
   useEffect(() => {
@@ -107,54 +115,44 @@ export default function SearchModal() {
   return (
     <AnimatePresence>
       {isSearchOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[80]"
-            onClick={closeSearch}
-          />
-
-          {/* Search Panel */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-0 left-0 right-0 z-[90] bg-author-charcoal border-b border-white/5"
-          >
-            <div className="max-w-4xl mx-auto p-6">
-              {/* Search Input */}
-              <div className="flex items-center gap-4">
-                <Search className="w-5 h-5 text-author-mid flex-shrink-0" />
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={query}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  placeholder="Search products..."
-                  className="flex-1 bg-transparent text-lg font-body text-author-white placeholder:text-author-mid/40 focus:outline-none"
-                />
-                {isSearching && (
-                  <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
-                    <AuthorLoader size={36} />
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] text-author-mid border border-white/10 rounded font-heading">
-                    ESC
-                  </kbd>
-                  <button
-                    onClick={closeSearch}
-                    className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-                    aria-label="Close search"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed top-0 left-0 right-0 z-[9100] bg-author-charcoal border-b border-white/5 pointer-events-auto pt-[72px] md:pt-[80px]"
+        >
+          <div className="max-w-4xl mx-auto p-6 pt-0">
+            {/* Search Input */}
+            <div className="flex items-center gap-4">
+              <Search className="w-5 h-5 text-author-mid flex-shrink-0" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder="Search products..."
+                className="flex-1 bg-transparent text-lg font-body text-author-white placeholder:text-author-mid/40 focus:outline-none"
+              />
+              {isSearching && (
+                <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
+                  <AuthorLoader size={36} />
                 </div>
+              )}
+              <div className="flex items-center gap-2">
+                <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] text-author-mid border border-white/10 rounded font-heading">
+                  ESC
+                </kbd>
+                <button
+                  onClick={closeSearch}
+                  className="p-2 hover:bg-white/5 rounded-lg transition-colors pointer-events-auto z-[9999]"
+                  style={{ pointerEvents: 'auto', zIndex: 9999 }}
+                  aria-label="Close search"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
+            </div>
 
               {/* Popular Searches */}
               {query.length === 0 && (
@@ -246,7 +244,6 @@ export default function SearchModal() {
               )}
             </div>
           </motion.div>
-        </>
       )}
     </AnimatePresence>
   );

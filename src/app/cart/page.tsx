@@ -174,31 +174,13 @@ export default function CartPage() {
                 </h3>
 
                 <div className="space-y-4 text-sm mb-8">
-                  <div className="flex justify-between text-black/70">
-                    <span>Subtotal</span>
-                    <span className="text-black">₹{subtotal.toLocaleString()}</span>
+                  <div className="flex justify-between text-base">
+                    <span className="font-medium text-black">Total</span>
+                    <span className="font-medium text-black">₹{total.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-black/70">
-                    <span>GST (18%)</span>
-                    <span className="text-black">₹{tax.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-black/70">
-                    <span>Shipping</span>
-                    <span>
-                      {shippingCost === 0 ? (
-                        <span className="text-black font-medium text-xs tracking-wider uppercase">Free</span>
-                      ) : (
-                        <span className="text-black">₹{shippingCost}</span>
-                      )}
-                    </span>
-                  </div>
-                  
-                  <div className="border-t border-black/10 pt-4 mt-6">
-                    <div className="flex justify-between text-base">
-                      <span className="font-medium text-black">Total</span>
-                      <span className="font-medium text-black">₹{total.toLocaleString()}</span>
-                    </div>
-                  </div>
+                  <p className="text-[10px] uppercase tracking-wider text-black/60 text-right mt-2">
+                    Inclusive of all charges.
+                  </p>
                 </div>
 
                 <Link
@@ -207,12 +189,6 @@ export default function CartPage() {
                 >
                   <span>Checkout</span>
                 </Link>
-
-                {subtotal < 999 && (
-                  <p className="text-[10px] uppercase tracking-wider text-black/60 text-center mt-6">
-                    Add <span className="font-medium text-black">₹{(999 - subtotal).toLocaleString()}</span> more for free shipping
-                  </p>
-                )}
               </div>
             </div>
           </div>

@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { X, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 
@@ -19,6 +21,14 @@ export default function CartDrawer() {
     getTotal,
   } = useCartStore();
 
+  const pathname = usePathname();
+
+  // Close cart on route change
+  useEffect(() => {
+    closeCart();
+  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+
+
   const subtotal = getSubtotal();
   const tax = getTax();
   const total = getTotal();
@@ -28,51 +38,45 @@ export default function CartDrawer() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80]"
-            onClick={closeCart}
-          />
-
-          {/* Drawer */}
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "tween", duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-author-charcoal z-[90] flex flex-col"
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between px-8 py-7 border-b border-white/5">
-              <div className="flex items-center gap-3">
-                <ShoppingBag className="w-[18px] h-[18px] text-author-mid" strokeWidth={1.2} />
+        <motion.div
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "100%" }}
+          transition={{ type: "tween", duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed right-0 bottom-0 w-full max-w-md bg-author-charcoal z-[9998] flex flex-col pointer-events-auto"
+          style={{
+            top: 0,
+            height: "100dvh",
+          }}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-8 py-7 border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <ShoppingBag className="w-[18px] h-[18px] text-author-mid" strokeWidth={1.2} />
+              <span
+                className="text-[11px] uppercase tracking-[0.25em] text-author-white/80"
+                style={{ fontWeight: 300 }}
+              >
+                Shopping Bag
+              </span>
+              {itemCount > 0 && (
                 <span
-                  className="text-[11px] uppercase tracking-[0.25em] text-author-white/80"
+                  className="text-[10px] text-author-mid tracking-[0.15em] ml-1"
                   style={{ fontWeight: 300 }}
                 >
-                  Shopping Bag
+                  ({itemCount})
                 </span>
-                {itemCount > 0 && (
-                  <span
-                    className="text-[10px] text-author-mid tracking-[0.15em] ml-1"
-                    style={{ fontWeight: 300 }}
-                  >
-                    ({itemCount})
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={closeCart}
-                className="p-2 hover:bg-white/5 transition-colors"
-                aria-label="Close cart"
-              >
-                <X className="w-[18px] h-[18px] text-author-mid" strokeWidth={1.2} />
-              </button>
+              )}
             </div>
+            <button
+              onClick={closeCart}
+              className="p-2 hover:bg-white/5 transition-colors pointer-events-auto z-[9999]"
+              style={{ pointerEvents: 'auto', zIndex: 9999 }}
+              aria-label="Close cart"
+            >
+              <X className="w-[18px] h-[18px] text-author-mid" strokeWidth={1.2} />
+            </button>
+          </div>
 
             {/* Items */}
             <div className="flex-1 overflow-y-auto">
@@ -224,53 +228,7 @@ export default function CartDrawer() {
             {items.length > 0 && (
               <div className="border-t border-white/[0.06] px-8 py-7 space-y-5">
                 <div className="space-y-2.5">
-                  <div className="flex justify-between">
-                    <span
-                      className="text-[9px] uppercase tracking-[0.12em] text-author-mid/50"
-                      style={{ fontWeight: 300 }}
-                    >
-                      Subtotal
-                    </span>
-                    <span
-                      className="text-[11px] text-author-white/60"
-                      style={{ fontWeight: 300, fontFamily: "var(--font-barlow-condensed), sans-serif" }}
-                    >
-                      ₹{subtotal.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span
-                      className="text-[9px] uppercase tracking-[0.12em] text-author-mid/50"
-                      style={{ fontWeight: 300 }}
-                    >
-                      GST (18%)
-                    </span>
-                    <span
-                      className="text-[11px] text-author-white/60"
-                      style={{ fontWeight: 300, fontFamily: "var(--font-barlow-condensed), sans-serif" }}
-                    >
-                      ₹{tax.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span
-                      className="text-[9px] uppercase tracking-[0.12em] text-author-mid/50"
-                      style={{ fontWeight: 300 }}
-                    >
-                      Shipping
-                    </span>
-                    <span
-                      className="text-[11px] text-author-white/60"
-                      style={{ fontWeight: 300, fontFamily: "var(--font-barlow-condensed), sans-serif" }}
-                    >
-                      {shippingCost === 0 ? (
-                        <span className="text-author-white/40 uppercase tracking-[0.1em] text-[9px]">Complimentary</span>
-                      ) : (
-                        `₹${shippingCost}`
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-baseline pt-3 border-t border-white/[0.05]">
+                  <div className="flex justify-between items-baseline pt-1">
                     <span
                       className="text-[10px] uppercase tracking-[0.12em] text-author-white/60"
                       style={{ fontWeight: 400 }}
@@ -284,6 +242,9 @@ export default function CartDrawer() {
                       ₹{total.toLocaleString()}
                     </span>
                   </div>
+                  <p className="text-[9px] uppercase tracking-[0.1em] text-author-mid/40 text-right">
+                    Inclusive of all charges.
+                  </p>
                 </div>
 
                 <Link
@@ -305,7 +266,6 @@ export default function CartDrawer() {
               </div>
             )}
           </motion.div>
-        </>
       )}
     </AnimatePresence>
   );

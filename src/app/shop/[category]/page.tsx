@@ -5,26 +5,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { AuthorLoader } from "@/components/ui/AuthorLoader";
+import { optimizeCloudinaryUrl } from "@/lib/shop/catalog";
+import { getProductVideo } from "@/lib/shop/videos";
+import { ProductVideoCard } from "@/components/common/ProductVideoCard";
 
 // ── Slug → DB category slug mapping ──────────────────────────────────
 const CATEGORY_SLUG_MAP: Record<string, string[]> = {
-  tshirts: ["t-shirts", "tshirts"],
+  tshirts: ["tshirts"],
   tops: ["tops"],
+  top: ["tops"],
   sweatpants: ["sweatpants"],
 };
 
 const CATEGORY_DISPLAY: Record<string, string> = {
   tshirts: "T-Shirts",
   tops: "Tops",
+  top: "Tops",
   sweatpants: "Sweatpants",
 };
-
-const CATEGORY_TABS = [
-  { label: "T-Shirts", slug: "tshirts" },
-  { label: "Tops", slug: "tops" },
-  { label: "Sweatpants", slug: "sweatpants" },
-];
 
 type SortOption = "newest" | "price-asc" | "price-desc";
 
@@ -104,6 +104,15 @@ export default function CategoryPage() {
         setError("No products found in this category.");
       }
 
+      // Dev verification logs as requested in PART 6
+      if (categorySlug === "tshirts") {
+        console.log("TSHIRTS PRODUCTS:", fetchedProducts.map(p => p.name));
+      } else if (categorySlug === "tops") {
+        console.log("TOPS PRODUCTS:", fetchedProducts.map(p => p.name));
+      } else if (categorySlug === "sweatpants") {
+        console.log("SWEATPANTS PRODUCTS:", fetchedProducts.map(p => p.name));
+      }
+
       setProducts(fetchedProducts);
       setLoading(false);
     }
@@ -152,23 +161,6 @@ export default function CategoryPage() {
             <h1 className="text-2xl md:text-3xl uppercase tracking-[0.25em] font-bold text-black font-display">
               {displayName}
             </h1>
-          </div>
-
-          {/* Category Tabs */}
-          <div className="flex items-center justify-center gap-6 md:gap-10 mb-10 border-b border-neutral-100 pb-4">
-            {CATEGORY_TABS.map((tab) => (
-              <Link
-                key={tab.slug}
-                href={`/shop/${tab.slug}`}
-                className={`text-[10px] uppercase tracking-[0.2em] font-semibold pb-3 border-b-2 transition-colors duration-300 ${
-                  categorySlug === tab.slug
-                    ? "border-black text-black"
-                    : "border-transparent text-neutral-400 hover:text-black"
-                }`}
-              >
-                {tab.label}
-              </Link>
-            ))}
           </div>
 
           {/* Sort & Count Bar */}
@@ -222,7 +214,7 @@ export default function CategoryPage() {
           {/* Loading State */}
           {loading && (
             <div className="flex items-center justify-center py-32">
-              <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
+              <AuthorLoader size={100} />
             </div>
           )}
 
@@ -247,6 +239,7 @@ export default function CategoryPage() {
                 const imageUrl = getPrimaryImage(product);
                 const hasDiscount =
                   product.discountPrice !== null && product.discountPrice < product.price;
+                const videoUrl = getProductVideo(product.slug);
 
                 return (
                   <motion.div
@@ -259,31 +252,37 @@ export default function CategoryPage() {
                       href={`/product/${product.slug}`}
                       className="group block"
                     >
-                      {/* Image */}
-                      <div className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-4">
-                        <Image
-                          src={imageUrl}
-                          alt={product.name}
-                          fill
-                          className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105"
-                          sizes="(max-width: 768px) 50vw, 33vw"
+                       {videoUrl ? (
+                        <ProductVideoCard
+                          imageUrl={imageUrl}
+                          videoUrl={videoUrl}
+                          productName={product.name}
                         />
-
-                        {/* Badge */}
-                        {product.badge && (
-                          <div className="absolute top-3 left-3 z-10">
-                            <span className="text-[8px] bg-black text-white px-2 py-1 tracking-[0.2em] uppercase font-bold">
-                              {product.badge === "best-seller"
-                                ? "Best Seller"
-                                : product.badge === "limited"
-                                ? "Limited"
-                                : product.badge === "new"
-                                ? "New"
-                                : product.badge}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                      ) : (
+                        <div className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-4">
+                          <Image
+                            src={optimizeCloudinaryUrl(imageUrl, 600)}
+                            alt={product.name}
+                            fill
+                            className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            quality={85}
+                          />
+                          {product.badge && (
+                            <div className="absolute top-3 left-3 z-10">
+                              <span className="text-[8px] bg-black text-white px-2 py-1 tracking-[0.2em] uppercase font-bold">
+                                {product.badge === "best-seller"
+                                  ? "Best Seller"
+                                  : product.badge === "limited"
+                                  ? "Limited"
+                                  : product.badge === "new"
+                                  ? "New"
+                                  : product.badge}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {/* Info */}
                       <div className="space-y-1.5 px-0.5">

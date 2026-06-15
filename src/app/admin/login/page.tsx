@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Loader2, ShieldCheck, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
 
-export default function AdminLoginPage() {
+function AdminLoginPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo") ?? "/admin";
   const supabase = createClient();
 
   const [email, setEmail] = useState("");
@@ -29,7 +31,7 @@ export default function AdminLoginPage() {
     try {
       // 1. Authenticate with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim().toLowerCase(),
         password,
       });
 
@@ -70,7 +72,8 @@ export default function AdminLoginPage() {
 
         // 3. Welcome message and redirect
         /* success toast removed */
-        router.push("/admin");
+        const target = returnTo && returnTo.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/admin";
+        router.push(target);
         router.refresh();
       }
     } catch (err) {
@@ -330,5 +333,34 @@ export default function AdminLoginPage() {
         </motion.div>
       </div>
     </>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="admin-login-body">
+        <style dangerouslySetInnerHTML={{ __html: `
+          .admin-login-body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #F5F0EB;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 24px;
+          }
+        `}} />
+        <div className="flex flex-col items-center justify-center gap-4">
+          <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#C8BFB6' }} />
+          <span className="text-xs tracking-widest uppercase" style={{ color: '#C8BFB6', opacity: 0.5 }}>Loading Secure Access...</span>
+        </div>
+      </div>
+    }>
+      <AdminLoginPageContent />
+    </Suspense>
   );
 }

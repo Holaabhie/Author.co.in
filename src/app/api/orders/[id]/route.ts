@@ -23,6 +23,17 @@ export async function GET(request: NextRequest, context: RouteContext) {
       include: {
         items: {
           include: {
+            product: {
+              select: {
+                id: true,
+                slug: true,
+                images: {
+                  select: { url: true, color: true, isPrimary: true },
+                  orderBy: { sortOrder: 'asc' as const },
+                  take: 3,
+                },
+              },
+            },
             variant: {
               select: { size: true, color: true, colorHex: true },
             },

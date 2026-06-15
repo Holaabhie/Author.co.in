@@ -6,6 +6,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 import { useWishlistStore } from "@/lib/store/wishlist";
+import { optimizeCloudinaryUrl } from "@/lib/shop/catalog";
+import { getProductVideo } from "@/lib/shop/videos";
+import { ProductVideoCard } from "@/components/common/ProductVideoCard";
 
 interface DBProduct {
   id: string;
@@ -27,6 +30,7 @@ function ProductCard({ product }: ProductCardProps) {
   const isWishlisted = isInWishlist(product.id);
 
   const images = product.images.map((img: any) => img.url);
+  const videoUrl = getProductVideo(product.slug);
   const colors = Array.from(
     new Map(
       product.variants.map((v: any) => [v.color, { name: v.color, hex: v.colorHex }])
@@ -53,40 +57,61 @@ function ProductCard({ product }: ProductCardProps) {
     <div className="group font-sans">
       <Link href={`/product/${product.slug}`} className="block">
         {/* Image wrapper - no borders, no shadow, clean aspect-ratio */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-5 transition-all duration-500">
-          {images[0] ? (
-            <Image
-              src={images[0]}
-              alt={product.name}
-              fill
-              className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105"
-              sizes="(max-width: 768px) 50vw, 25vw"
-              priority
-            />
-          ) : (
-            <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center text-[10px] text-neutral-400 font-bold uppercase tracking-widest">
-              No Image
-            </div>
-          )}
-          {images[1] && (
-            <Image
-              src={images[1]}
-              alt={`${product.name} alternate`}
-              fill
-              className="object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-              sizes="(max-width: 768px) 50vw, 25vw"
-            />
-          )}
-
-          {/* Quick Actions (Wishlist heart icon) */}
-          <button
-            onClick={handleWishlist}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black hover:text-white"
-            aria-label="Add to wishlist"
+        {/* Image wrapper - no borders, no shadow, clean aspect-ratio */}
+        {videoUrl ? (
+          <ProductVideoCard
+            imageUrl={images[0] || ""}
+            videoUrl={videoUrl}
+            productName={product.name}
+            aspectRatioClassName="aspect-[3/4]"
+            marginClassName="mb-5"
           >
-            <Heart className={`w-3.5 h-3.5 ${isWishlisted ? "fill-black text-black group-hover:fill-white group-hover:text-white" : ""}`} />
-          </button>
-        </div>
+            {/* Quick Actions (Wishlist heart icon) */}
+            <button
+              onClick={handleWishlist}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black hover:text-white z-10"
+              aria-label="Add to wishlist"
+            >
+              <Heart className={`w-3.5 h-3.5 ${isWishlisted ? "fill-black text-black group-hover:fill-white group-hover:text-white" : ""}`} />
+            </button>
+          </ProductVideoCard>
+        ) : (
+          <div className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-5 transition-all duration-500">
+            {images[0] ? (
+              <Image
+                src={optimizeCloudinaryUrl(images[0], 600)}
+                alt={product.name}
+                fill
+                className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                quality={85}
+              />
+            ) : (
+              <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center text-[10px] text-neutral-400 font-bold uppercase tracking-widest">
+                No Image
+              </div>
+            )}
+            {images[1] && (
+              <Image
+                src={optimizeCloudinaryUrl(images[1], 600)}
+                alt={`${product.name} alternate`}
+                fill
+                className="object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                quality={85}
+              />
+            )}
+
+            {/* Quick Actions (Wishlist heart icon) */}
+            <button
+              onClick={handleWishlist}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black hover:text-white"
+              aria-label="Add to wishlist"
+            >
+              <Heart className={`w-3.5 h-3.5 ${isWishlisted ? "fill-black text-black group-hover:fill-white group-hover:text-white" : ""}`} />
+            </button>
+          </div>
+        )}
 
         {/* Product Details - luxury brand spacing and typography */}
         <div className="space-y-1 text-left px-1">

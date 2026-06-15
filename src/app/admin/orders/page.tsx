@@ -311,7 +311,8 @@ export default function AdminOrdersPage() {
                 <tr className="text-xs text-author-mid uppercase tracking-wider border-b border-white/5 bg-author-black/20">
                   <th className="text-left p-4">Order Number</th>
                   <th className="text-left p-4">Customer</th>
-                  <th className="text-left p-4">Items Count</th>
+                  <th className="text-left p-4">Phone</th>
+                  <th className="text-left p-4">Products</th>
                   <th className="text-left p-4">Total Amount</th>
                   <th className="text-left p-4">Order Status</th>
                   <th className="text-left p-4">Payment</th>
@@ -353,8 +354,17 @@ export default function AdminOrdersPage() {
                             </div>
                             <div className="text-[10px] text-author-mid">{order.user?.email}</div>
                           </td>
-                          <td className="p-4 text-xs text-author-white font-medium">
-                            {order._count.items} item(s)
+                          <td className="p-4 text-xs text-author-white font-mono">
+                            {order.address?.phone || order.user?.phone || "N/A"}
+                          </td>
+                          <td className="p-4">
+                            <div className="text-[10px] text-author-mid max-w-[200px]">
+                              {order.items && order.items.length > 0
+                                ? order.items
+                                    .map((item: any) => `${item.productName} × ${item.quantity}`)
+                                    .join(", ")
+                                : `${order._count.items} item(s)`}
+                            </div>
                           </td>
                           <td className="p-4 font-semibold text-author-white">
                             {formatPrice(order.total)}
@@ -405,7 +415,7 @@ export default function AdminOrdersPage() {
                         {/* Expandable Order Details Row */}
                         {isExpanded && (
                           <tr className="bg-author-charcoal/20 border-b border-white/5">
-                            <td colSpan={8} className="p-6">
+                          <td colSpan={9} className="p-6">
                               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-author-mid text-left">
                                 
                                 {/* Customer Details */}
@@ -461,11 +471,13 @@ export default function AdminOrdersPage() {
                                     {order.items && order.items.length > 0 ? (
                                       order.items.map((item) => (
                                         <div key={item.id} className="flex gap-3 items-center border-b border-white/5 pb-2 last:border-b-0 last:pb-0">
-                                          {item.imageUrl && (
-                                            <div className="relative w-8 h-10 bg-black/40 overflow-hidden flex-shrink-0">
+                                          <div className="relative w-8 h-10 bg-black/40 overflow-hidden flex-shrink-0">
+                                            {item.imageUrl ? (
                                               <img src={item.imageUrl} alt={item.productName} className="object-cover w-full h-full" />
-                                            </div>
-                                          )}
+                                            ) : (
+                                              <div className="w-full h-full flex items-center justify-center text-[6px] text-author-mid uppercase">IMG</div>
+                                            )}
+                                          </div>
                                           <div className="flex-1 min-w-0">
                                             <p className="font-medium text-author-white uppercase truncate text-[10px] tracking-wide">
                                               {item.productName}

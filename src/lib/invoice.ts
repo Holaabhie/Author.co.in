@@ -73,7 +73,8 @@ export async function generateInvoice(orderId: string): Promise<string | null> {
     let y = 790;
 
     // ─── Header ────────────────────────────────────────────────
-    page.drawText('TAX INVOICE', {
+    const titleText = order.tax > 0 ? 'TAX INVOICE' : 'INVOICE';
+    page.drawText(titleText, {
       x: 50, y, font: helveticaBold, size: 18, color: black,
     });
     y -= 20;
@@ -90,9 +91,11 @@ export async function generateInvoice(orderId: string): Promise<string | null> {
     page.drawText(`Date: ${new Date().toLocaleDateString('en-IN')}`, {
       x: rightX, y: 776, font: helvetica, size: 9, color: gray,
     });
-    page.drawText(`GSTIN: ${settings.gstin}`, {
-      x: rightX, y: 762, font: helvetica, size: 9, color: gray,
-    });
+    if (order.tax > 0) {
+      page.drawText(`GSTIN: ${settings.gstin}`, {
+        x: rightX, y: 762, font: helvetica, size: 9, color: gray,
+      });
+    }
 
     // Business address
     const addressLines = settings.address.split('\n');
@@ -106,10 +109,14 @@ export async function generateInvoice(orderId: string): Promise<string | null> {
       x: 50, y, font: helvetica, size: 9, color: gray,
     });
     y -= 13;
-    page.drawText(`GSTIN: ${settings.gstin}`, {
-      x: 50, y, font: helvetica, size: 9, color: gray,
-    });
-    y -= 25;
+    if (order.tax > 0) {
+      page.drawText(`GSTIN: ${settings.gstin}`, {
+        x: 50, y, font: helvetica, size: 9, color: gray,
+      });
+      y -= 25;
+    } else {
+      y -= 12;
+    }
 
     // Divider
     page.drawLine({ start: { x: 50, y }, end: { x: 545, y }, thickness: 0.5, color: lightGray });
@@ -168,8 +175,8 @@ export async function generateInvoice(orderId: string): Promise<string | null> {
     y -= 15;
 
     // ─── Table Header ───────────────────────────────────────────
-    const cols = [50, 250, 300, 360, 420, 490];
-    const headers = ['Item', 'HSN', 'Qty', 'Rate', 'Tax', 'Amount'];
+    const cols = order.tax > 0 ? [50, 250, 300, 360, 420, 490] : [50, 250, 320, 400, 490];
+    const headers = order.tax > 0 ? ['Item', 'HSN', 'Qty', 'Rate', 'Tax', 'Amount'] : ['Item', 'HSN', 'Qty', 'Rate', 'Amount'];
 
     page.drawRectangle({ x: 48, y: y - 3, width: 499, height: 18, color: rgb(0.95, 0.95, 0.95) });
 
@@ -205,16 +212,22 @@ export async function generateInvoice(orderId: string): Promise<string | null> {
       });
 
       // Tax per item
-      const itemTax = isIntraState
-        ? (item.totalPrice * (cgstRate + sgstRate))
-        : (item.totalPrice * igstRate);
-      page.drawText(`₹${(itemTax / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, {
-        x: cols[4], y, font: helvetica, size: 9, color: gray,
-      });
+      if (order.tax > 0) {
+        const itemTax = isIntraState
+          ? (item.totalPrice * (cgstRate + sgstRate))
+          : (item.totalPrice * igstRate);
+        page.drawText(`₹${(itemTax / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, {
+          x: cols[4], y, font: helvetica, size: 9, color: gray,
+        });
 
-      page.drawText(`₹${lineTotalRupees.toLocaleString('en-IN')}`, {
-        x: cols[5], y, font: helvetica, size: 9, color: black,
-      });
+        page.drawText(`₹${lineTotalRupees.toLocaleString('en-IN')}`, {
+          x: cols[5], y, font: helvetica, size: 9, color: black,
+        });
+      } else {
+        page.drawText(`₹${lineTotalRupees.toLocaleString('en-IN')}`, {
+          x: cols[4], y, font: helvetica, size: 9, color: black,
+        });
+      }
 
       y -= 16;
     }
@@ -247,19 +260,21 @@ export async function generateInvoice(orderId: string): Promise<string | null> {
     }
 
     // Tax breakdown
-    if (isIntraState) {
-      const cgst = Math.round(order.tax / 2) / 100;
-      page.drawText(`CGST (${Number(settings.cgstRate)}%)`, { x: summaryX, y, font: helvetica, size: 9, color: gray });
-      page.drawText(`₹${cgst.toLocaleString('en-IN')}`, { x: valueX, y, font: helvetica, size: 9, color: black });
-      y -= 15;
-      page.drawText(`SGST (${Number(settings.sgstRate)}%)`, { x: summaryX, y, font: helvetica, size: 9, color: gray });
-      page.drawText(`₹${cgst.toLocaleString('en-IN')}`, { x: valueX, y, font: helvetica, size: 9, color: black });
-      y -= 15;
-    } else {
-      const igst = order.tax / 100;
-      page.drawText(`IGST (${Number(settings.igstRate)}%)`, { x: summaryX, y, font: helvetica, size: 9, color: gray });
-      page.drawText(`₹${igst.toLocaleString('en-IN')}`, { x: valueX, y, font: helvetica, size: 9, color: black });
-      y -= 15;
+    if (order.tax > 0) {
+      if (isIntraState) {
+        const cgst = Math.round(order.tax / 2) / 100;
+        page.drawText(`CGST (${Number(settings.cgstRate)}%)`, { x: summaryX, y, font: helvetica, size: 9, color: gray });
+        page.drawText(`₹${cgst.toLocaleString('en-IN')}`, { x: valueX, y, font: helvetica, size: 9, color: black });
+        y -= 15;
+        page.drawText(`SGST (${Number(settings.sgstRate)}%)`, { x: summaryX, y, font: helvetica, size: 9, color: gray });
+        page.drawText(`₹${cgst.toLocaleString('en-IN')}`, { x: valueX, y, font: helvetica, size: 9, color: black });
+        y -= 15;
+      } else {
+        const igst = order.tax / 100;
+        page.drawText(`IGST (${Number(settings.igstRate)}%)`, { x: summaryX, y, font: helvetica, size: 9, color: gray });
+        page.drawText(`₹${igst.toLocaleString('en-IN')}`, { x: valueX, y, font: helvetica, size: 9, color: black });
+        y -= 15;
+      }
     }
 
     y -= 5;

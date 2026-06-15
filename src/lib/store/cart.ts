@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useUIStore, registerCloseCart } from "./ui";
 
 export interface CartItem {
   productId: string;
@@ -72,6 +73,9 @@ export const useCartStore = create<CartState>()(
           set({ items: [...items, normalizedItem] });
         }
 
+        // Close other overlays when opening cart via addItem
+        useUIStore.getState().closeSearch();
+        useUIStore.getState().closeMobileMenu();
         set({ isOpen: true });
 
         // Auto-close after 1.5 seconds
@@ -123,8 +127,21 @@ export const useCartStore = create<CartState>()(
         }
       },
 
-      toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
-      openCart: () => set({ isOpen: true }),
+      toggleCart: () => {
+        const nextIsOpen = !get().isOpen;
+        if (nextIsOpen) {
+          // Close other overlays when opening cart
+          useUIStore.getState().closeSearch();
+          useUIStore.getState().closeMobileMenu();
+        }
+        set({ isOpen: nextIsOpen });
+      },
+      openCart: () => {
+        // Close other overlays when opening cart
+        useUIStore.getState().closeSearch();
+        useUIStore.getState().closeMobileMenu();
+        set({ isOpen: true });
+      },
       closeCart: () => set({ isOpen: false }),
 
       getItemCount: () => {
@@ -139,15 +156,11 @@ export const useCartStore = create<CartState>()(
       },
 
       getTax: () => {
-        // 18% GST
-        return Math.round(get().getSubtotal() * 0.18);
+        return 0;
       },
 
       getTotal: () => {
-        const subtotal = get().getSubtotal();
-        const tax = get().getTax();
-        const shipping = subtotal >= 999 ? 0 : 99;
-        return subtotal + tax + shipping;
+        return get().getSubtotal();
       },
     }),
     {
@@ -172,3 +185,10 @@ export const useCartStore = create<CartState>()(
     }
   )
 );
+
+// Register closeCart in UI store to avoid circular imports
+if (typeof window !== "undefined") {
+  registerCloseCart(() => useCartStore.getState().closeCart());
+} else {
+  registerCloseCart(() => {});
+}

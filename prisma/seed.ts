@@ -44,14 +44,23 @@ async function main() {
     },
   });
 
+  // Check if there is an old category with slug "t-shirts". If so, rename its slug to "tshirts".
+  const oldTshirtsCategory = await prisma.category.findUnique({ where: { slug: "t-shirts" } });
+  if (oldTshirtsCategory) {
+    await prisma.category.update({
+      where: { id: oldTshirtsCategory.id },
+      data: { slug: "tshirts" },
+    });
+  }
+
   const catTshirts = await prisma.category.upsert({
-    where: { slug: "t-shirts" },
+    where: { slug: "tshirts" },
     update: {
       name: "T-Shirts",
     },
     create: {
       name: "T-Shirts",
-      slug: "t-shirts",
+      slug: "tshirts",
     },
   });
 
@@ -79,12 +88,20 @@ async function main() {
 
   // Map category slug to DB Category ID
   const categoryMap: Record<string, string> = {
-    "t-shirts": catTshirts.id,
+    "tshirts": catTshirts.id,
     "sweatpants": catSweatpants.id,
     "tops": catTops.id,
   };
 
-  // 3. Seed active products and their variants & images
+  // 3. Deactivate products not active in the seed file
+  const activeSlugs = products.filter((p) => p.isActive).map((p) => p.slug);
+  const deactivateResult = await prisma.product.updateMany({
+    where: { slug: { notIn: activeSlugs } },
+    data: { isActive: false },
+  });
+  console.log(`Deactivated ${deactivateResult.count} old/inactive products.`);
+
+  // 4. Seed active products and their variants & images
   const activeProducts = products.filter((p) => p.isActive);
 
   for (const p of activeProducts) {
@@ -127,16 +144,17 @@ async function main() {
 
     console.log(`Seeded product: ${seededProduct.name} (ID: ${seededProduct.id})`);
 
-    // Clean & Re-create product images
+    // Clean & Re-create product images — now with color mapping
     await prisma.productImage.deleteMany({
       where: { productId: seededProduct.id },
     });
 
     await prisma.productImage.createMany({
-      data: p.images.map((url, idx) => ({
+      data: p.images.map((img, idx) => ({
         productId: seededProduct.id,
-        url,
+        url: img.url,
         alt: p.name,
+        color: img.color || null,
         isPrimary: idx === 0,
         sortOrder: idx,
       })),

@@ -95,6 +95,17 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/admin')) {
     if (pathname === '/admin/login') {
       if (user) {
+        const roles = user.app_metadata?.roles || user.app_metadata?.role;
+        const hasAdminClaim = Array.isArray(roles)
+          ? roles.some((r: any) => ADMIN_ROLES.includes(r))
+          : typeof roles === 'string' && ADMIN_ROLES.includes(roles);
+
+        if (hasAdminClaim) {
+          const returnTo = request.nextUrl.searchParams.get('returnTo');
+          const target = returnTo && returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/admin';
+          return NextResponse.redirect(new URL(target, request.url));
+        }
+
         const { data: userRole } = await supabase
           .from('UserRole')
           .select('role')
@@ -104,7 +115,9 @@ export async function middleware(request: NextRequest) {
           .maybeSingle();
 
         if (userRole) {
-          return NextResponse.redirect(new URL('/admin', request.url));
+          const returnTo = request.nextUrl.searchParams.get('returnTo');
+          const target = returnTo && returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/admin';
+          return NextResponse.redirect(new URL(target, request.url));
         } else {
           return NextResponse.redirect(new URL('/', request.url));
         }
@@ -113,27 +126,36 @@ export async function middleware(request: NextRequest) {
     }
 
     if (!user) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+      const loginUrl = new URL('/admin/login', request.url);
+      loginUrl.searchParams.set('returnTo', pathname + request.nextUrl.search);
+      return NextResponse.redirect(loginUrl);
     }
 
-    // Check admin role from the database
-    // We use a direct Supabase query here since Prisma isn't available in middleware
-    const { data: userRole, error: roleError } = await supabase
-      .from('UserRole')
-      .select('role')
-      .eq('userId', user.id)
-      .in('role', ADMIN_ROLES)
-      .limit(1)
-      .maybeSingle(); // Use maybeSingle to avoid 406/PGRST116 errors if not found
+    // Check JWT custom role claims for quick bypass
+    const roles = user.app_metadata?.roles || user.app_metadata?.role;
+    const hasAdminClaim = Array.isArray(roles)
+      ? roles.some((r: any) => ADMIN_ROLES.includes(r))
+      : typeof roles === 'string' && ADMIN_ROLES.includes(roles);
 
-    console.log('MIDDLEWARE ADMIN AUTH CHECK:', {
-      userId: user.id,
-      userRole,
-      roleError: roleError ? { message: roleError.message, details: roleError.details, code: roleError.code } : null
-    });
+    if (!hasAdminClaim) {
+      // Fallback database check
+      const { data: userRole, error: roleError } = await supabase
+        .from('UserRole')
+        .select('role')
+        .eq('userId', user.id)
+        .in('role', ADMIN_ROLES)
+        .limit(1)
+        .maybeSingle(); // Use maybeSingle to avoid 406/PGRST116 errors if not found
 
-    if (!userRole) {
-      return NextResponse.redirect(new URL('/', request.url));
+      console.log('MIDDLEWARE ADMIN AUTH CHECK (DB FALLBACK):', {
+        userId: user.id,
+        userRole,
+        roleError: roleError ? { message: roleError.message } : null
+      });
+
+      if (!userRole) {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
     }
   }
 
@@ -146,19 +168,27 @@ export async function middleware(request: NextRequest) {
       );
     }
 
-    const { data: userRole } = await supabase
-      .from('UserRole')
-      .select('role')
-      .eq('userId', user.id)
-      .in('role', ADMIN_ROLES)
-      .limit(1)
-      .maybeSingle();
+    // Quick claims check first
+    const roles = user.app_metadata?.roles || user.app_metadata?.role;
+    const hasAdminClaim = Array.isArray(roles)
+      ? roles.some((r: any) => ADMIN_ROLES.includes(r))
+      : typeof roles === 'string' && ADMIN_ROLES.includes(roles);
 
-    if (!userRole) {
-      return NextResponse.json(
-        { error: true, code: 'FORBIDDEN', message: 'Admin access required' },
-        { status: 403 }
-      );
+    if (!hasAdminClaim) {
+      const { data: userRole } = await supabase
+        .from('UserRole')
+        .select('role')
+        .eq('userId', user.id)
+        .in('role', ADMIN_ROLES)
+        .limit(1)
+        .maybeSingle();
+
+      if (!userRole) {
+        return NextResponse.json(
+          { error: true, code: 'FORBIDDEN', message: 'Admin access required' },
+          { status: 403 }
+        );
+      }
     }
   }
 

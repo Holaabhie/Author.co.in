@@ -67,6 +67,29 @@ export async function POST(request: NextRequest) {
       return apiError('VALIDATION_ERROR', 'Invalid postal code. Must be a 6-digit PIN.', 400);
     }
 
+    // Duplicate check
+    const normalizeStr = (s: string | null | undefined) => (s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const normalizePhoneNum = (s: string | null | undefined) => (s || '').replace(/\s+/g, '');
+
+    const isDuplicateAddress = (addr1: any, addr2: any) => {
+      return (
+        normalizeStr(addr1.fullName) === normalizeStr(addr2.fullName) &&
+        normalizePhoneNum(addr1.phone) === normalizePhoneNum(addr2.phone) &&
+        normalizeStr(addr1.line1) === normalizeStr(addr2.line1) &&
+        normalizeStr(addr1.line2) === normalizeStr(addr2.line2) &&
+        normalizeStr(addr1.city) === normalizeStr(addr2.city) &&
+        normalizeStr(addr1.state) === normalizeStr(addr2.state) &&
+        normalizePhoneNum(addr1.postalCode) === normalizePhoneNum(addr2.postalCode) &&
+        normalizeStr(addr1.country || 'India') === normalizeStr(addr2.country || 'India')
+      );
+    };
+
+    const existingAddresses = await prisma.address.findMany({ where: { userId: user.id } });
+    const incomingAddress = { fullName, phone, line1, line2, city, state, postalCode, country: body.country || 'India' };
+    if (existingAddresses.some(addr => isDuplicateAddress(addr, incomingAddress))) {
+      return apiError('DUPLICATE_ADDRESS', 'This address already exists.', 400);
+    }
+
     // If this is the user's first address, auto-set as default
     const addressCount = await prisma.address.count({ where: { userId: user.id } });
     const shouldBeDefault = isDefault || addressCount === 0;
@@ -137,7 +160,6 @@ export async function PUT(request: NextRequest) {
     // Verify ownership
     const existing = await prisma.address.findUnique({
       where: { id },
-      select: { userId: true },
     });
 
     if (!existing || existing.userId !== user.id) {
@@ -164,6 +186,46 @@ export async function PUT(request: NextRequest) {
         return apiError('VALIDATION_ERROR', 'Invalid postal code. Must be a 6-digit PIN.', 400);
       }
       updateData.postalCode = fields.postalCode.trim();
+    }
+    if (fields.country !== undefined) updateData.country = fields.country.trim();
+
+    // Duplicate check on PUT
+    const normalizeStr = (s: string | null | undefined) => (s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const normalizePhoneNum = (s: string | null | undefined) => (s || '').replace(/\s+/g, '');
+
+    const isDuplicateAddress = (addr1: any, addr2: any) => {
+      return (
+        normalizeStr(addr1.fullName) === normalizeStr(addr2.fullName) &&
+        normalizePhoneNum(addr1.phone) === normalizePhoneNum(addr2.phone) &&
+        normalizeStr(addr1.line1) === normalizeStr(addr2.line1) &&
+        normalizeStr(addr1.line2) === normalizeStr(addr2.line2) &&
+        normalizeStr(addr1.city) === normalizeStr(addr2.city) &&
+        normalizeStr(addr1.state) === normalizeStr(addr2.state) &&
+        normalizePhoneNum(addr1.postalCode) === normalizePhoneNum(addr2.postalCode) &&
+        normalizeStr(addr1.country || 'India') === normalizeStr(addr2.country || 'India')
+      );
+    };
+
+    const otherAddresses = await prisma.address.findMany({
+      where: {
+        userId: user.id,
+        id: { not: id }
+      }
+    });
+
+    const updatedAddress = {
+      fullName: updateData.fullName !== undefined ? updateData.fullName : existing.fullName,
+      phone: updateData.phone !== undefined ? updateData.phone : existing.phone,
+      line1: updateData.line1 !== undefined ? updateData.line1 : existing.line1,
+      line2: updateData.line2 !== undefined ? updateData.line2 : existing.line2,
+      city: updateData.city !== undefined ? updateData.city : existing.city,
+      state: updateData.state !== undefined ? updateData.state : existing.state,
+      postalCode: updateData.postalCode !== undefined ? updateData.postalCode : existing.postalCode,
+      country: updateData.country !== undefined ? updateData.country : existing.country
+    };
+
+    if (otherAddresses.some(addr => isDuplicateAddress(addr, updatedAddress))) {
+      return apiError('DUPLICATE_ADDRESS', 'This address already exists.', 400);
     }
 
     // Handle default address toggle

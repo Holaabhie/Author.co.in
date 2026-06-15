@@ -15,14 +15,13 @@ import {
   Plus,
   Check,
   Info,
-  Loader2,
 } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode } from "swiper/modules";
-import "swiper/css";
 import toast from "react-hot-toast";
+import { AuthorLoader } from "@/components/ui/AuthorLoader";
+import { optimizeCloudinaryUrl } from "@/lib/shop/catalog";
+import { getProductVideo } from "@/lib/shop/videos";
 
 // ── Types matching the API response shape ─────────────────────────────
 interface ProductImage {
@@ -91,13 +90,12 @@ export default function ProductPage() {
   const [openAccordion, setOpenAccordion] = useState<string | null>("details");
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const [showVideo, setShowVideo] = useState(false);
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const videoDetailRef = useRef<HTMLVideoElement>(null);
 
   const addToCart = useCartStore((state) => state.addItem);
   const { toggleItem, isInWishlist } = useWishlistStore();
-
-  // Related products
-  const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
 
   // Fetch product from API
   useEffect(() => {
@@ -115,20 +113,6 @@ export default function ProductPage() {
           if (p.variants.length > 0) {
             const firstColor = p.variants[0].color;
             setSelectedColor(firstColor);
-          }
-
-          // Fetch related products from same category
-          if (p.category?.slug) {
-            fetch(`/api/products?category=${encodeURIComponent(p.category.slug)}&pageSize=7`)
-              .then((r) => r.json())
-              .then((rJson) => {
-                if (rJson.success && Array.isArray(rJson.data)) {
-                  setRelatedProducts(
-                    rJson.data.filter((rp: ProductData) => rp.id !== p.id).slice(0, 6)
-                  );
-                }
-              })
-              .catch(() => {});
           }
         } else {
           setError("Product not found");
@@ -156,28 +140,35 @@ export default function ProductPage() {
     return Array.from(seen.values());
   }, [product]);
 
+  const SIZE_ORDER: Record<string, number> = { XS: 0, S: 1, M: 2, L: 3, XL: 4, XXL: 5 };
   const sizesForColor = useMemo(() => {
     if (!product) return [];
     return product.variants
       .filter((v) => v.color === selectedColor)
-      .map((v) => ({ size: v.size, stock: v.stock, id: v.id }));
+      .map((v) => ({ size: v.size, stock: v.stock, id: v.id }))
+      .sort((a, b) => (SIZE_ORDER[a.size] ?? 99) - (SIZE_ORDER[b.size] ?? 99));
   }, [product, selectedColor]);
 
   // ── Images filtered by selected color ───────────────────────────────
+  // Image order is now correct at the data/DB level (front first), so no frontend swap needed.
+  // (Old swap logic removed — previously swapped indices 0↔1 as a workaround.)
   const colorImages = useMemo(() => {
     if (!product) return [];
     // Filter images by the selected color
     const filtered = product.images.filter(
       (img) => img.color && img.color.toLowerCase() === selectedColor.toLowerCase()
     );
-    // If no color-tagged images exist, show all images
     return filtered.length > 0 ? filtered : product.images;
   }, [product, selectedColor]);
 
-  // Reset selected image when color changes
+  // Reset selected image and video when color changes
   useEffect(() => {
     setSelectedImage(0);
+    setShowVideo(false);
   }, [selectedColor]);
+
+  // Compute video URL for this product
+  const videoUrl = product ? getProductVideo(product.slug) : null;
 
   // Reset selected size when color changes (size availability may differ)
   useEffect(() => {
@@ -282,11 +273,7 @@ export default function ProductPage() {
 
   // ── Loading & Error States ──────────────────────────────────────────
   if (loading) {
-    return (
-      <div className="min-h-screen pt-20 md:pt-28 bg-white flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
-      </div>
-    );
+    return <AuthorLoader fullscreen />;
   }
 
   if (error || !product) {
@@ -345,11 +332,13 @@ export default function ProductPage() {
             <Truck className="w-4 h-4 text-black flex-shrink-0 mt-0.5" />
             <div>
               <span className="uppercase block text-[9px] tracking-wider text-neutral-400">Estimated Delivery</span>
-              <span>3–5 Business Days</span>
+              <span>2–4 Business Days (After Fulfillment)</span>
             </div>
           </div>
-          <p>Orders are processed and dispatched within 24 hours via premium air shipping (DHL Express / Blue Dart).</p>
-          <p>Free express delivery on all orders above ₹4,000.</p>
+          <p><strong>Processing & Dispatch:</strong> Please allow 1–5 business days for our team to process and dispatch your order.</p>
+          <p><strong>Shipping Provider:</strong> DDT Powered Delivery</p>
+          <p>Shipping may be delayed due to destination, courier conditions, and national holidays.</p>
+          <p>Please allow up to <strong>15 business days</strong> before contacting us in regards to your order.</p>
           <p>Standard return & exchange policy: 14 days from date of delivery.</p>
         </div>
       ),
@@ -381,60 +370,63 @@ export default function ProductPage() {
               transition={{ duration: 0.5 }}
               className="lg:sticky lg:top-32 h-fit"
             >
-              {/* Main image */}
+              {/* Main image / video viewer */}
               <div
                 ref={imageContainerRef}
-                className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-4 cursor-zoom-in"
-                onMouseEnter={() => setIsZoomed(true)}
+                className="relative w-full aspect-[3/4] md:aspect-[4/5] lg:aspect-[4/5] xl:aspect-[4/5] overflow-hidden bg-white mb-4 flex items-center justify-center"
+                onMouseEnter={() => !showVideo && setIsZoomed(true)}
                 onMouseLeave={() => setIsZoomed(false)}
-                onMouseMove={handleMouseMove}
+                onMouseMove={!showVideo ? handleMouseMove : undefined}
+                style={{ cursor: showVideo ? "default" : "zoom-in" }}
               >
-                {colorImages[selectedImage] && (
-                  <Image
-                    src={colorImages[selectedImage].url}
-                    alt={colorImages[selectedImage].alt || product.name}
-                    fill
-                    className="object-cover"
-                    style={{
-                      transform: isZoomed ? `scale(1.8)` : "scale(1)",
-                      transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                      transition: isZoomed ? "none" : "transform 0.4s ease-out",
-                    }}
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority
+                {showVideo && videoUrl ? (
+                  /* ── Video player ── */
+                  <video
+                    ref={videoDetailRef}
+                    key={videoUrl}
+                    src={videoUrl}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls
+                    className="w-full h-full object-cover"
                   />
-                )}
-
-                {/* Badge */}
-                {product.badge && (
-                  <div className="absolute top-4 left-4 z-10">
-                    <span className="text-[9px] bg-black text-white px-2.5 py-1 tracking-[0.2em] uppercase font-bold">
-                      {product.badge === "best-seller"
-                        ? "Best Seller"
-                        : product.badge === "limited"
-                        ? "Limited"
-                        : product.badge === "new"
-                        ? "New"
-                        : product.badge}
-                    </span>
-                  </div>
+                ) : (
+                  /* ── Static image with zoom ── */
+                  colorImages[selectedImage] && (
+                    <Image
+                      src={optimizeCloudinaryUrl(colorImages[selectedImage].url, 1200)}
+                      alt={colorImages[selectedImage].alt || product.name}
+                      fill
+                      className="w-full h-full object-cover md:object-contain object-center"
+                      style={{
+                        transform: isZoomed ? `scale(1.8)` : "scale(1)",
+                        transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                        transition: isZoomed ? "none" : "transform 0.4s ease-out",
+                      }}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      quality={85}
+                      priority
+                    />
+                  )
                 )}
               </div>
 
-              {/* Thumbnails — only images for the selected color */}
+              {/* Thumbnails — images + optional video */}
               <div className="flex gap-3 overflow-x-auto pb-2">
                 {colorImages.map((img, i) => (
                   <button
                     key={img.id}
-                    onClick={() => setSelectedImage(i)}
+                    onClick={() => { setSelectedImage(i); setShowVideo(false); }}
                     className={`relative w-20 h-24 overflow-hidden bg-neutral-50 transition-all duration-300 flex-shrink-0 ${
-                      selectedImage === i
+                      !showVideo && selectedImage === i
                         ? "opacity-100 border border-black"
                         : "opacity-60 hover:opacity-100"
                     }`}
                   >
                     <Image
-                      src={img.url}
+                      src={optimizeCloudinaryUrl(img.url, 200)}
                       alt={img.alt || `${product.name} thumbnail ${i + 1}`}
                       fill
                       className="object-cover"
@@ -442,6 +434,21 @@ export default function ProductPage() {
                     />
                   </button>
                 ))}
+
+                {/* Video thumbnail — only shown if a video is available */}
+                {videoUrl && (
+                  <button
+                    onClick={() => setShowVideo(true)}
+                    className={`relative w-20 h-24 overflow-hidden bg-neutral-900 transition-all duration-300 flex-shrink-0 flex flex-col items-center justify-center gap-1.5 ${
+                      showVideo
+                        ? "opacity-100 border border-black"
+                        : "opacity-60 hover:opacity-100"
+                    }`}
+                  >
+                    <span className="text-white text-xl leading-none">▶</span>
+                    <span className="text-white text-[8px] uppercase tracking-widest font-bold">Reel</span>
+                  </button>
+                )}
               </div>
             </motion.div>
 
@@ -494,7 +501,9 @@ export default function ProductPage() {
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  {uniqueColors.map((c) => (
+                  {uniqueColors
+                    .filter((c) => c.color === selectedColor)
+                    .map((c) => (
                     <button
                       key={c.color}
                       onClick={() => setSelectedColor(c.color)}
@@ -557,7 +566,7 @@ export default function ProductPage() {
 
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 h-12 bg-black text-white text-[11px] uppercase tracking-[0.25em] font-bold flex items-center justify-center gap-2 hover:bg-neutral-900 transition-all duration-300"
+                  className="add-to-cart-btn flex-1 bg-[#111111] text-white text-[11px] sm:text-xs uppercase tracking-[0.25em] font-bold flex items-center justify-center gap-2 hover:bg-[#333333] transition-all duration-300 min-h-[54px] px-6 py-3.5 rounded-[6px] cursor-pointer"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>Add to Cart</span>
@@ -624,61 +633,6 @@ export default function ProductPage() {
             </motion.div>
           </div>
 
-          {/* Related Products */}
-          {relatedProducts.length > 0 && (
-            <div className="mt-24 md:mt-32 pt-16 border-t border-neutral-100">
-              <div className="text-left mb-12">
-                <span className="text-[9px] uppercase tracking-[0.3em] text-neutral-400 block mb-2 font-bold">RECOMMENDED</span>
-                <h2 className="text-lg md:text-xl uppercase tracking-[0.2em] font-bold text-black">
-                  Complete the Look
-                </h2>
-              </div>
-
-              <Swiper
-                modules={[FreeMode]}
-                spaceBetween={20}
-                slidesPerView={1.5}
-                freeMode={true}
-                breakpoints={{
-                  640: { slidesPerView: 2.5 },
-                  1024: { slidesPerView: 4 },
-                }}
-              >
-                {relatedProducts.map((rp) => {
-                  const rpColors = rp.variants
-                    .filter((v, i, arr) => arr.findIndex((a) => a.color === v.color) === i)
-                    .map((v) => v.color);
-                  const rpImage = rp.images.find((img) => img.isPrimary)?.url || rp.images[0]?.url || "";
-                  return (
-                    <SwiperSlide key={rp.id}>
-                      <Link href={`/product/${rp.slug}`} className="group block">
-                        <div className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-4">
-                          <Image
-                            src={rpImage}
-                            alt={rp.name}
-                            fill
-                            className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105"
-                            sizes="(max-width: 768px) 60vw, 25vw"
-                          />
-                        </div>
-                        <div className="space-y-1 text-left px-1">
-                          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-900 group-hover:text-neutral-500 transition-colors">
-                            {rp.name}
-                          </h3>
-                          <span className="text-xs font-bold text-black block font-sans">
-                            ₹{Math.round(rp.price / 100).toLocaleString("en-IN")}
-                          </span>
-                          <p className="text-[9px] text-neutral-400 uppercase tracking-widest font-semibold">
-                            {rpColors.join(" / ")}
-                          </p>
-                        </div>
-                      </Link>
-                    </SwiperSlide>
-                  );
-                })}
-              </Swiper>
-            </div>
-          )}
         </div>
       </div>
     </div>

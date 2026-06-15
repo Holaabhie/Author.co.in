@@ -26,7 +26,12 @@ interface OrderItem {
   imageUrl: string | null;
   size: string | null;
   color: string | null;
-  product: { id: string; slug: string; isActive: boolean } | null;
+  product: {
+    id: string;
+    slug: string;
+    isActive: boolean;
+    images?: { url: string; color: string | null; isPrimary: boolean }[];
+  } | null;
   variant: { id: string; size: string; color: string; colorHex: string } | null;
 }
 
@@ -87,6 +92,28 @@ const ORDER_STATUSES = [
   "PENDING", "CONFIRMED", "PACKED", "SHIPPED",
   "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED", "REFUNDED",
 ];
+
+/** Resolve display image for an order item — snapshot first, then product fallback */
+function resolveItemDisplayImage(item: OrderItem): string | null {
+  if (item.imageUrl) return item.imageUrl;
+
+  // Fallback: resolve from product images (for old orders with null imageUrl)
+  const images = item.product?.images;
+  if (!images || images.length === 0) return null;
+
+  const itemColor = item.color || item.variant?.color;
+  if (itemColor) {
+    const colorMatch = images.find(
+      (img) => img.color && img.color.toLowerCase() === itemColor.toLowerCase()
+    );
+    if (colorMatch) return colorMatch.url;
+  }
+
+  const primary = images.find((img) => img.isPrimary);
+  if (primary) return primary.url;
+
+  return images[0]?.url ?? null;
+}
 
 export default function OrderDetailPage() {
   const params = useParams();
@@ -247,19 +274,22 @@ export default function OrderDetailPage() {
               {order.items.map((item) => (
                 <div key={item.id} className="flex items-center gap-4 p-4">
                   <div className="relative w-16 h-20 flex-shrink-0 bg-author-black overflow-hidden rounded border border-white/10">
-                    {item.imageUrl ? (
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.productName}
-                        fill
-                        className="object-cover"
-                        sizes="64px"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[8px] text-author-mid uppercase font-heading">
-                        No Img
-                      </div>
-                    )}
+                    {(() => {
+                      const displayImage = resolveItemDisplayImage(item);
+                      return displayImage ? (
+                        <Image
+                          src={displayImage}
+                          alt={item.productName}
+                          fill
+                          className="object-cover"
+                          sizes="64px"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[8px] text-author-mid uppercase font-heading">
+                          No Img
+                        </div>
+                      );
+                    })()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-author-white uppercase tracking-wider truncate">
@@ -295,10 +325,12 @@ export default function OrderDetailPage() {
                   <span>-{formatPrice(order.discount)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-xs text-author-mid">
-                <span>Shipping</span>
-                <span>{order.shippingFee > 0 ? formatPrice(order.shippingFee) : "Free"}</span>
-              </div>
+              {order.shippingFee > 0 && (
+                <div className="flex justify-between text-xs text-author-mid">
+                  <span>Shipping</span>
+                  <span>{formatPrice(order.shippingFee)}</span>
+                </div>
+              )}
               {order.tax > 0 && (
                 <div className="flex justify-between text-xs text-author-mid">
                   <span>Tax</span>

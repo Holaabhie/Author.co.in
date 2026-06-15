@@ -1,0 +1,3278 @@
+[
+  {
+    "asset_id": "ceea471823dc0632f7e94f708a54c4e3",
+    "public_id": "DSCF5699.JPG_jrf74z",
+    "format": "jpg",
+    "version": 1781342118,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-13T09:15:18Z",
+    "bytes": 354813,
+    "width": 1682,
+    "height": 2109,
+    "asset_folder": "",
+    "display_name": "DSCF5699.JPG_jrf74z",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781342118/DSCF5699.JPG_jrf74z.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781342118/DSCF5699.JPG_jrf74z.jpg",
+    "next_cursor": "59abd2b8fd72fb46cf96a2c06173ff409bff96c5dd1805a76c08d9c5d1068766",
+    "derived": [
+      {
+        "transformation": "w_1920,c_scale,q_auto:best,f_webp,fl_awebp/",
+        "transformation_signature": "82a22e33-f8fd-38b6-af58-b7da1917619e",
+        "format": "webp",
+        "bytes": 288154,
+        "id": "c74e6db51508c3e7cb5f6789638f25dc",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1920,c_scale,q_auto:best,f_webp,fl_awebp/v1781342118/DSCF5699.JPG_jrf74z",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1920,c_scale,q_auto:best,f_webp,fl_awebp/v1781342118/DSCF5699.JPG_jrf74z",
+        "extension": ""
+      },
+      {
+        "transformation": "f_webp,fl_awebp,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "37215c64-655f-3059-8fea-778fdcfa76a3",
+        "format": "webp",
+        "bytes": 77602,
+        "id": "bb0780efaa3a6fa2d20371bac1ed99a3",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_webp,fl_awebp,q_auto,dpr_1.0,c_fill,w_1200/v1781342118/DSCF5699.JPG_jrf74z",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_webp,fl_awebp,q_auto,dpr_1.0,c_fill,w_1200/v1781342118/DSCF5699.JPG_jrf74z",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0.8549213409423828,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "ExposureTime": "1/105",
+      "FNumber": "4.4",
+      "ExposureProgram": "Portrait",
+      "ISO": "320",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 22:41:43",
+      "CreateDate": "2026:06:08 22:41:43",
+      "ShutterSpeedValue": "1/108",
+      "ApertureValue": "4.4",
+      "BrightnessValue": "5.63",
+      "ExposureCompensation": "+0.33",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Multi-segment",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "FocalLength": "24.2 mm",
+      "SubSecTimeOriginal": "05",
+      "SubSecTimeDigitized": "05",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "36 mm",
+      "Sharpness": "Normal",
+      "SerialNumber": "5C036847",
+      "LensMake": "FUJIFILM",
+      "LensModel": "XC15-45mmF3.5-5.6 OIS PZ",
+      "About": "uuid:faf5bdd5-ba3d-11da-ad31-d33d75182f1b",
+      "CameraSerialNumber": "5C036847",
+      "LensManufacturer": "FUJIFILM",
+      "JFIFVersion": "1.01",
+      "ResolutionUnit": "inches",
+      "XResolution": "72",
+      "YResolution": "72",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#CBC9CF",
+        30.4
+      ],
+      [
+        "#302D32",
+        27.9
+      ],
+      [
+        "#C2BDC3",
+        13.1
+      ],
+      [
+        "#1E1C1C",
+        6.6
+      ],
+      [
+        "#895644",
+        5.9
+      ],
+      [
+        "#CC8769",
+        4.4
+      ],
+      [
+        "#958C8C",
+        3.4
+      ],
+      [
+        "#BFB7B8",
+        2.9
+      ],
+      [
+        "#928C91",
+        1.8
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "gray",
+          51.5
+        ],
+        [
+          "black",
+          34.6
+        ],
+        [
+          "red",
+          5.9
+        ],
+        [
+          "orange",
+          4.4
+        ]
+      ],
+      "cloudinary": [
+        [
+          "black",
+          34.6
+        ],
+        [
+          "white",
+          30.4
+        ],
+        [
+          "gray",
+          21.2
+        ],
+        [
+          "red",
+          10.3
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "7cadb030eaffd61098c9dedc902b83a4",
+    "usage": {},
+    "original_filename": "DSCF5699.JPG",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 477
+  },
+  {
+    "asset_id": "345d7e2c3617d08f548a2a3e7b39d903",
+    "public_id": "IMG_7677.JPG_rrtgih",
+    "format": "jpg",
+    "version": 1781294696,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-12T20:04:56Z",
+    "bytes": 851012,
+    "width": 1760,
+    "height": 3120,
+    "asset_folder": "",
+    "display_name": "IMG_7677.JPG_rrtgih",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781294696/IMG_7677.JPG_rrtgih.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781294696/IMG_7677.JPG_rrtgih.jpg",
+    "next_cursor": "8d14bcf3500668a2696821493578fb9b6e0ad9c839456a8c16917eddcd2c0b16",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "jpg",
+        "bytes": 338543,
+        "id": "a41d24a84a756ca98910f3f5159da6c0",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781294696/IMG_7677.JPG_rrtgih",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781294696/IMG_7677.JPG_rrtgih",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "jpg",
+        "bytes": 138025,
+        "id": "56d3464c723d338091a3ef752712b34e",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781294696/IMG_7677.JPG_rrtgih",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781294696/IMG_7677.JPG_rrtgih",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0.7137523293495178,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "CodedCharacterSet": "UTF8",
+      "ApplicationRecordVersion": "2",
+      "By-line": "",
+      "DigitalCreationDate": "2026:06:08",
+      "DigitalCreationTime": "21:21:31",
+      "DateCreated": "2026:06:08",
+      "TimeCreated": "21:21:31",
+      "CopyrightNotice": "",
+      "Orientation": "Horizontal (normal)",
+      "XResolution": "72",
+      "YResolution": "72",
+      "ResolutionUnit": "inches",
+      "Software": "Snapseed 4.0.928852777",
+      "ModifyDate": "2026:06:08 21:21:31",
+      "Artist": "",
+      "YCbCrPositioning": "Centered",
+      "Copyright": "",
+      "SensitivityType": "Standard Output Sensitivity",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 21:21:31",
+      "CreateDate": "2026:06:08 21:21:31",
+      "OffsetTime": "+05:30",
+      "OffsetTimeOriginal": "+05:30",
+      "OffsetTimeDigitized": "+05:30",
+      "ComponentsConfiguration": "Y, Cb, Cr, -",
+      "ApertureValue": "21.9",
+      "BrightnessValue": "6.44",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Average",
+      "LightSource": "Unknown",
+      "SubSecTime": "64",
+      "SubSecTimeOriginal": "64",
+      "SubSecTimeDigitized": "64",
+      "FlashpixVersion": "0100",
+      "ColorSpace": "sRGB",
+      "ExifImageWidth": "1760",
+      "ExifImageHeight": "3120",
+      "FocalPlaneXResolution": "1330",
+      "FocalPlaneYResolution": "1330",
+      "FocalPlaneResolutionUnit": "cm",
+      "SensingMethod": "One-chip color area",
+      "FileSource": "Digital Camera",
+      "SceneType": "Directly photographed",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "51 mm",
+      "SceneCaptureType": "Standard",
+      "Sharpness": "Normal",
+      "SubjectDistanceRange": "Unknown",
+      "SerialNumber": "5C036847",
+      "LensSerialNumber": "5CC34449",
+      "CompositeImage": "Not a Composite Image",
+      "Compression": "JPEG (old-style)",
+      "ThumbnailOffset": "1368",
+      "ThumbnailLength": "5276",
+      "LensInfo": "15-45mm f/3.5-5.6",
+      "XMPToolkit": "XMP Core 6.0.0",
+      "Lens": "15.0-45.0 mm f/3.5-5.6",
+      "Rating": "0",
+      "CreatorTool": "Snapseed 4.0.928852777",
+      "Creator": "",
+      "Rights": "",
+      "JFIFVersion": "1.01",
+      "IPTCDigest": "4c237930f250e8cf023afde4fcfad01b",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#D5D4DB",
+        75.4
+      ],
+      [
+        "#73747B",
+        7.2
+      ],
+      [
+        "#36383E",
+        4
+      ],
+      [
+        "#D38A6F",
+        3
+      ],
+      [
+        "#292E30",
+        2.2
+      ],
+      [
+        "#CEC4C1",
+        1.7
+      ],
+      [
+        "#8F8582",
+        1.6
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          75.4
+        ],
+        [
+          "gray",
+          10.5
+        ],
+        [
+          "black",
+          6.2
+        ],
+        [
+          "orange",
+          3
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          75.4
+        ],
+        [
+          "gray",
+          10.5
+        ],
+        [
+          "black",
+          6.2
+        ],
+        [
+          "red",
+          3
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "6735ba40a73fb89662faee8a2c298639",
+    "usage": {},
+    "original_filename": "IMG_7677.JPG",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 477
+  },
+  {
+    "asset_id": "8ad81deac7db4c00dfcbd846c4524138",
+    "public_id": "DSCF5641.JPG_rz60rf",
+    "format": "jpg",
+    "version": 1781294694,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-12T20:04:54Z",
+    "bytes": 1018950,
+    "width": 1760,
+    "height": 3120,
+    "asset_folder": "",
+    "display_name": "DSCF5641.JPG_rz60rf",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781294694/DSCF5641.JPG_rz60rf.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781294694/DSCF5641.JPG_rz60rf.jpg",
+    "next_cursor": "967dc79598cd37c532dd9944345f9259572bb5d30cce4de8dcc057e6069bc7c4",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "jpg",
+        "bytes": 193462,
+        "id": "0b9a9321f81e6d94dca57c4b4e07a805",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781294694/DSCF5641.JPG_rz60rf",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781294694/DSCF5641.JPG_rz60rf",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "jpg",
+        "bytes": 89223,
+        "id": "cd7e986fd175f0791f4556b77aa493ee",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781294694/DSCF5641.JPG_rz60rf",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781294694/DSCF5641.JPG_rz60rf",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "Orientation": "Rotate 270 CW",
+      "XResolution": "72",
+      "YResolution": "72",
+      "ResolutionUnit": "inches",
+      "Software": "Digital Camera X-M5 Ver1.20",
+      "ModifyDate": "2026:06:08 22:10:09",
+      "Artist": "",
+      "YCbCrPositioning": "Co-sited",
+      "Copyright": "",
+      "ExposureTime": "1/150",
+      "FNumber": "4.5",
+      "ExposureProgram": "Portrait",
+      "ISO": "320",
+      "SensitivityType": "Standard Output Sensitivity",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 22:10:09",
+      "CreateDate": "2026:06:08 22:10:09",
+      "OffsetTime": "+05:30",
+      "OffsetTimeOriginal": "+05:30",
+      "OffsetTimeDigitized": "+05:30",
+      "ComponentsConfiguration": "Y, Cb, Cr, -",
+      "CompressedBitsPerPixel": "3.2",
+      "ShutterSpeedValue": "1/149",
+      "ApertureValue": "4.4",
+      "BrightnessValue": "5.02",
+      "ExposureCompensation": "+0.33",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Multi-segment",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "FocalLength": "28.8 mm",
+      "UserComment": "",
+      "SubSecTime": "03",
+      "SubSecTimeOriginal": "03",
+      "SubSecTimeDigitized": "03",
+      "CameraElevationAngle": "-6.9",
+      "FlashpixVersion": "0100",
+      "ColorSpace": "sRGB",
+      "ExifImageWidth": "3120",
+      "ExifImageHeight": "1760",
+      "InteropIndex": "R98 - DCF basic file (sRGB)",
+      "InteropVersion": "0100",
+      "FocalPlaneXResolution": "1330",
+      "FocalPlaneYResolution": "1330",
+      "FocalPlaneResolutionUnit": "cm",
+      "SensingMethod": "One-chip color area",
+      "FileSource": "Digital Camera",
+      "SceneType": "Directly photographed",
+      "CustomRendered": "Normal",
+      "ExposureMode": "Auto",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "43 mm",
+      "SceneCaptureType": "Portrait",
+      "Sharpness": "Normal",
+      "SubjectDistanceRange": "Unknown",
+      "SerialNumber": "5C036847",
+      "LensInfo": "15-45mm f/3.5-5.6",
+      "LensMake": "FUJIFILM",
+      "LensModel": "XC15-45mmF3.5-5.6 OIS PZ",
+      "LensSerialNumber": "5CC34449",
+      "CompositeImage": "Not a Composite Image",
+      "Compression": "JPEG (old-style)",
+      "ThumbnailOffset": "4448",
+      "ThumbnailLength": "7193",
+      "Rating": "0",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#CBC5CA",
+        54.8
+      ],
+      [
+        "#0D0D0C",
+        13.3
+      ],
+      [
+        "#181719",
+        11.8
+      ],
+      [
+        "#CECCD1",
+        11.1
+      ],
+      [
+        "#C8BFC1",
+        3
+      ],
+      [
+        "#895541",
+        2.5
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "gray",
+          57.7
+        ],
+        [
+          "black",
+          25.1
+        ],
+        [
+          "white",
+          11.1
+        ],
+        [
+          "red",
+          2.5
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          65.9
+        ],
+        [
+          "black",
+          25.1
+        ],
+        [
+          "gray",
+          3
+        ],
+        [
+          "red",
+          2.5
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "51c5a2d37f779c31bcf4ee9a223986bd",
+    "usage": {},
+    "original_filename": "DSCF5641.JPG",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 477
+  },
+  {
+    "asset_id": "9879326ef3819b3d9675a1bd08abba27",
+    "public_id": "5e863912-1833-49b5-9c8e-b80f52e2f1bc_1_kwwi1v",
+    "format": "jpg",
+    "version": 1781294692,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-12T20:04:52Z",
+    "bytes": 2186634,
+    "width": 1760,
+    "height": 3120,
+    "asset_folder": "",
+    "display_name": "5e863912-1833-49b5-9c8e-b80f52e2f1bc_1_kwwi1v",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781294692/5e863912-1833-49b5-9c8e-b80f52e2f1bc_1_kwwi1v.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781294692/5e863912-1833-49b5-9c8e-b80f52e2f1bc_1_kwwi1v.jpg",
+    "next_cursor": "530f9a8ef5e287a7610410b69733a1b5af2c698b54c95519707603f7b02c7c08",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "jpg",
+        "bytes": 342724,
+        "id": "6fe5090b8d7ef82b92ad65af7c3bcf31",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781294692/5e863912-1833-49b5-9c8e-b80f52e2f1bc_1_kwwi1v",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781294692/5e863912-1833-49b5-9c8e-b80f52e2f1bc_1_kwwi1v",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "jpg",
+        "bytes": 166927,
+        "id": "304ef44cab1c5571ff2477038d9a43f9",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781294692/5e863912-1833-49b5-9c8e-b80f52e2f1bc_1_kwwi1v",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781294692/5e863912-1833-49b5-9c8e-b80f52e2f1bc_1_kwwi1v",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0.4939538240432739,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "Orientation": "Horizontal (normal)",
+      "XResolution": "72",
+      "YResolution": "72",
+      "ResolutionUnit": "inches",
+      "Software": "Snapseed 2.0",
+      "ModifyDate": "2026:06:13 01:22:38",
+      "Artist": "",
+      "YCbCrPositioning": "Co-sited",
+      "Copyright": "",
+      "ExposureTime": "1/15",
+      "FNumber": "22.0",
+      "ExposureProgram": "Manual",
+      "ISO": "800",
+      "SensitivityType": "Standard Output Sensitivity",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 20:58:13",
+      "CreateDate": "2026:06:08 20:58:13",
+      "OffsetTime": "+05:30",
+      "OffsetTimeOriginal": "+05:30",
+      "OffsetTimeDigitized": "+05:30",
+      "ComponentsConfiguration": "Y, Cb, Cr, -",
+      "CompressedBitsPerPixel": "3.2",
+      "ShutterSpeedValue": "1/16",
+      "ApertureValue": "21.9",
+      "BrightnessValue": "6.34",
+      "ExposureCompensation": "0",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Average",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "FocalLength": "45.0 mm",
+      "UserComment": "",
+      "SubSecTime": "59",
+      "SubSecTimeOriginal": "59",
+      "SubSecTimeDigitized": "59",
+      "CameraElevationAngle": "-1",
+      "FlashpixVersion": "0100",
+      "ColorSpace": "sRGB",
+      "ExifImageWidth": "1760",
+      "ExifImageHeight": "3120",
+      "InteropIndex": "R98 - DCF basic file (sRGB)",
+      "InteropVersion": "0100",
+      "FocalPlaneXResolution": "1330",
+      "FocalPlaneYResolution": "1330",
+      "FocalPlaneResolutionUnit": "cm",
+      "SensingMethod": "One-chip color area",
+      "FileSource": "Digital Camera",
+      "SceneType": "Directly photographed",
+      "CustomRendered": "Normal",
+      "ExposureMode": "Manual",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "68 mm",
+      "SceneCaptureType": "Standard",
+      "Sharpness": "Normal",
+      "SubjectDistanceRange": "Unknown",
+      "SerialNumber": "5C036847",
+      "LensInfo": "15-45mm f/3.5-5.6",
+      "LensMake": "FUJIFILM",
+      "LensModel": "XC15-45mmF3.5-5.6 OIS PZ",
+      "LensSerialNumber": "5CC34449",
+      "CompositeImage": "Not a Composite Image",
+      "Rating": "0",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#D4D3D9",
+        73.3
+      ],
+      [
+        "#2F3033",
+        9.6
+      ],
+      [
+        "#BC836C",
+        5.9
+      ],
+      [
+        "#936352",
+        3.3
+      ],
+      [
+        "#77767D",
+        1.5
+      ],
+      [
+        "#D3CBCA",
+        1.4
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          74.7
+        ],
+        [
+          "black",
+          9.6
+        ],
+        [
+          "orange",
+          5.9
+        ],
+        [
+          "red",
+          3.3
+        ],
+        [
+          "gray",
+          1.5
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          74.7
+        ],
+        [
+          "black",
+          9.6
+        ],
+        [
+          "red",
+          9.2
+        ],
+        [
+          "gray",
+          1.5
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "9925ebe064c227597e87941657411280",
+    "usage": {},
+    "original_filename": "5e863912-1833-49b5-9c8e-b80f52e2f1bc (1)",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 477
+  },
+  {
+    "asset_id": "4564ea370df329087bb5f67297e8bf0c",
+    "public_id": "DSCF5604.JPG_jwlpqv",
+    "format": "jpg",
+    "version": 1781294692,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-12T20:04:52Z",
+    "bytes": 1067386,
+    "width": 1760,
+    "height": 3120,
+    "asset_folder": "",
+    "display_name": "DSCF5604.JPG_jwlpqv",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781294692/DSCF5604.JPG_jwlpqv.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781294692/DSCF5604.JPG_jwlpqv.jpg",
+    "next_cursor": "845a83118f19edf34d03d55f7d83d960b89f7cb86f41d0e1c1c081fa92cbc48c",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "jpg",
+        "bytes": 198081,
+        "id": "7b7c0be9240332f283cc4bcade832abb",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781294692/DSCF5604.JPG_jwlpqv",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781294692/DSCF5604.JPG_jwlpqv",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "jpg",
+        "bytes": 84928,
+        "id": "024de757a9f2088c72a79cebc40ad0db",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781294692/DSCF5604.JPG_jwlpqv",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781294692/DSCF5604.JPG_jwlpqv",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "Orientation": "Rotate 270 CW",
+      "XResolution": "72",
+      "YResolution": "72",
+      "ResolutionUnit": "inches",
+      "Software": "Digital Camera X-M5 Ver1.20",
+      "ModifyDate": "2026:06:08 22:07:22",
+      "Artist": "",
+      "YCbCrPositioning": "Co-sited",
+      "Copyright": "",
+      "ExposureTime": "1/150",
+      "FNumber": "4.5",
+      "ExposureProgram": "Portrait",
+      "ISO": "320",
+      "SensitivityType": "Standard Output Sensitivity",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 22:07:22",
+      "CreateDate": "2026:06:08 22:07:22",
+      "OffsetTime": "+05:30",
+      "OffsetTimeOriginal": "+05:30",
+      "OffsetTimeDigitized": "+05:30",
+      "ComponentsConfiguration": "Y, Cb, Cr, -",
+      "CompressedBitsPerPixel": "3.2",
+      "ShutterSpeedValue": "1/154",
+      "ApertureValue": "4.4",
+      "BrightnessValue": "4.99",
+      "ExposureCompensation": "+0.33",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Multi-segment",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "FocalLength": "28.0 mm",
+      "UserComment": "",
+      "SubSecTime": "40",
+      "SubSecTimeOriginal": "40",
+      "SubSecTimeDigitized": "40",
+      "CameraElevationAngle": "-1.7",
+      "FlashpixVersion": "0100",
+      "ColorSpace": "sRGB",
+      "ExifImageWidth": "3120",
+      "ExifImageHeight": "1760",
+      "InteropIndex": "R98 - DCF basic file (sRGB)",
+      "InteropVersion": "0100",
+      "FocalPlaneXResolution": "1330",
+      "FocalPlaneYResolution": "1330",
+      "FocalPlaneResolutionUnit": "cm",
+      "SensingMethod": "One-chip color area",
+      "FileSource": "Digital Camera",
+      "SceneType": "Directly photographed",
+      "CustomRendered": "Normal",
+      "ExposureMode": "Auto",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "42 mm",
+      "SceneCaptureType": "Portrait",
+      "Sharpness": "Normal",
+      "SubjectDistanceRange": "Unknown",
+      "SerialNumber": "5C036847",
+      "LensInfo": "15-45mm f/3.5-5.6",
+      "LensMake": "FUJIFILM",
+      "LensModel": "XC15-45mmF3.5-5.6 OIS PZ",
+      "LensSerialNumber": "5CC34449",
+      "CompositeImage": "Not a Composite Image",
+      "Compression": "JPEG (old-style)",
+      "ThumbnailOffset": "4320",
+      "ThumbnailLength": "6506",
+      "Rating": "0",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#B8B1B7",
+        44.9
+      ],
+      [
+        "#222023",
+        19.1
+      ],
+      [
+        "#B8AFB2",
+        10.4
+      ],
+      [
+        "#B9B6BC",
+        9.2
+      ],
+      [
+        "#1C1A1A",
+        8.6
+      ],
+      [
+        "#A7A1A8",
+        4.5
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "gray",
+          69
+        ],
+        [
+          "black",
+          27.7
+        ]
+      ],
+      "cloudinary": [
+        [
+          "gray",
+          69
+        ],
+        [
+          "black",
+          27.7
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "61907197de372f19a2fcd9711fdbf51f",
+    "usage": {},
+    "original_filename": "DSCF5604.JPG",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 476
+  },
+  {
+    "asset_id": "d3e57742faa229a6ec459d0d297e087e",
+    "public_id": "ChatGPT_Image_Jun_12_2026_01_32_37_PM_j3i63o",
+    "format": "png",
+    "version": 1781251670,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-12T08:07:50Z",
+    "bytes": 1137036,
+    "width": 1586,
+    "height": 992,
+    "asset_folder": "",
+    "display_name": "ChatGPT_Image_Jun_12_2026_01_32_37_PM_j3i63o",
+    "access_control": [
+      {
+        "access_type": "anonymous"
+      }
+    ],
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781251670/ChatGPT_Image_Jun_12_2026_01_32_37_PM_j3i63o.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781251670/ChatGPT_Image_Jun_12_2026_01_32_37_PM_j3i63o.png",
+    "last_updated": {
+      "access_control_updated_at": "2026-06-12T08:08:33+00:00",
+      "updated_at": "2026-06-12T08:08:33+00:00"
+    },
+    "next_cursor": "29d5413a5693714e85212dfe3e251e17f7d13326bb2b028cb8904a81949b79c9",
+    "derived": [
+      {
+        "transformation": "e_background_removal,f_png,q_auto/",
+        "transformation_signature": "996b7dc8-59e2-36e9-8394-26b51ebd03aa",
+        "format": "png",
+        "bytes": 162384,
+        "id": "d043690f43bd9685cef4b94e7ccbff31",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/e_background_removal,f_png,q_auto/v1781251670/ChatGPT_Image_Jun_12_2026_01_32_37_PM_j3i63o",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/e_background_removal,f_png,q_auto/v1781251670/ChatGPT_Image_Jun_12_2026_01_32_37_PM_j3i63o",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 170885,
+        "id": "d10304bd32578638cffc4810ab23c3b3",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781251670/ChatGPT_Image_Jun_12_2026_01_32_37_PM_j3i63o",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781251670/ChatGPT_Image_Jun_12_2026_01_32_37_PM_j3i63o",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#131313",
+        64.4
+      ],
+      [
+        "#FDFDFD",
+        9.6
+      ],
+      [
+        "#040403",
+        5.5
+      ],
+      [
+        "#040303",
+        4.4
+      ],
+      [
+        "#171818",
+        3.4
+      ],
+      [
+        "#1A1A1B",
+        3
+      ],
+      [
+        "#FDFBFD",
+        2.2
+      ],
+      [
+        "#F9F9FB",
+        1.8
+      ],
+      [
+        "#040304",
+        0.9
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "black",
+          81.6
+        ],
+        [
+          "white",
+          13.6
+        ]
+      ],
+      "cloudinary": [
+        [
+          "black",
+          81.6
+        ],
+        [
+          "white",
+          13.6
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "c07562a54ea02faadd7a62198e8e5b4d",
+    "usage": {},
+    "original_filename": "ChatGPT Image Jun 12, 2026, 01_32_37 PM",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 476
+  },
+  {
+    "asset_id": "2f995477821091799846e3651f7d91af",
+    "public_id": "DSCF5622_e7xihx",
+    "format": "jpg",
+    "version": 1781187795,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T14:23:15Z",
+    "bytes": 248325,
+    "width": 1760,
+    "height": 2298,
+    "asset_folder": "",
+    "display_name": "author-black-sweatpants-back 2nd",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781187795/DSCF5622_e7xihx.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781187795/DSCF5622_e7xihx.jpg",
+    "next_cursor": "927ff8386846615c38dd9934d57712130c0053599db7cabced02f8dfb34fbadf",
+    "derived": [
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "jpg",
+        "bytes": 81138,
+        "id": "d267dd853c3266876096c5229964da9d",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781187795/DSCF5622_e7xihx",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781187795/DSCF5622_e7xihx",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "ExposureProgram": "Portrait",
+      "ISO": "320",
+      "DateTimeOriginal": "2026:06:08 22:09:12",
+      "CreateDate": "2026:06:08 22:09:12",
+      "MeteringMode": "Multi-segment",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "SubSecTimeOriginal": "12",
+      "SubSecTimeDigitized": "12",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "37 mm",
+      "About": "uuid:faf5bdd5-ba3d-11da-ad31-d33d75182f1b",
+      "JFIFVersion": "1.01",
+      "ResolutionUnit": "inches",
+      "XResolution": "72",
+      "YResolution": "72",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#B3ABB1",
+        44.6
+      ],
+      [
+        "#201D21",
+        17.1
+      ],
+      [
+        "#A69FA6",
+        15.3
+      ],
+      [
+        "#131212",
+        11.7
+      ],
+      [
+        "#B3A9AC",
+        4.6
+      ],
+      [
+        "#B1ACB3",
+        2.7
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "gray",
+          67.1
+        ],
+        [
+          "black",
+          28.8
+        ]
+      ],
+      "cloudinary": [
+        [
+          "gray",
+          67.1
+        ],
+        [
+          "black",
+          28.8
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "122375ed2f69b799c92aee35533b4aae",
+    "usage": {},
+    "original_filename": "DSCF5622",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 473
+  },
+  {
+    "asset_id": "8399096cf0671673712f4017a0072116",
+    "public_id": "DSCF5541_plog3s",
+    "format": "jpg",
+    "version": 1781187794,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T14:23:14Z",
+    "bytes": 329317,
+    "width": 1760,
+    "height": 2464,
+    "asset_folder": "",
+    "display_name": "author-white-sweatpants-back 2nd",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781187794/DSCF5541_plog3s.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781187794/DSCF5541_plog3s.jpg",
+    "next_cursor": "74f74cdbd5288cf85ef6eaf1ce1f6ad7da155e4121685dbb7030a392f19bd346",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "jpg",
+        "bytes": 211111,
+        "id": "d124c7e6ba46c8ccaf77c476868b0ef0",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781187794/DSCF5541_plog3s",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781187794/DSCF5541_plog3s",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "jpg",
+        "bytes": 90513,
+        "id": "456ad110a8375fb2593ad8c27a82ffe3",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781187794/DSCF5541_plog3s",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781187794/DSCF5541_plog3s",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "ExposureTime": "1/110",
+      "FNumber": "4.4",
+      "ExposureProgram": "Portrait",
+      "ISO": "160",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 21:58:13",
+      "CreateDate": "2026:06:08 21:58:13",
+      "ShutterSpeedValue": "1/115",
+      "ApertureValue": "4.4",
+      "BrightnessValue": "6.8",
+      "ExposureCompensation": "+0.33",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Multi-segment",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "FocalLength": "27.1 mm",
+      "SubSecTimeOriginal": "34",
+      "SubSecTimeDigitized": "34",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "41 mm",
+      "Sharpness": "Normal",
+      "SerialNumber": "5C036847",
+      "LensMake": "FUJIFILM",
+      "LensModel": "XC15-45mmF3.5-5.6 OIS PZ",
+      "About": "uuid:faf5bdd5-ba3d-11da-ad31-d33d75182f1b",
+      "CameraSerialNumber": "5C036847",
+      "LensManufacturer": "FUJIFILM",
+      "JFIFVersion": "1.01",
+      "ResolutionUnit": "inches",
+      "XResolution": "72",
+      "YResolution": "72",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#B7B4BE",
+        76.4
+      ],
+      [
+        "#97959C",
+        9.8
+      ],
+      [
+        "#BDB8BD",
+        6
+      ],
+      [
+        "#845445",
+        3.4
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "gray",
+          92.2
+        ],
+        [
+          "red",
+          3.4
+        ]
+      ],
+      "cloudinary": [
+        [
+          "gray",
+          92.2
+        ],
+        [
+          "red",
+          3.4
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "c5f8ea47c870dab68fb049b4c2509656",
+    "usage": {},
+    "original_filename": "DSCF5541",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 473
+  },
+  {
+    "asset_id": "76e3c1327a91a94fe72b949c8745cdaa",
+    "public_id": "DSCF5649_jzhirj",
+    "format": "jpg",
+    "version": 1781187209,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T14:13:29Z",
+    "bytes": 1146575,
+    "width": 1760,
+    "height": 3120,
+    "asset_folder": "",
+    "display_name": "DSCF5649_jzhirj",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781187209/DSCF5649_jzhirj.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781187209/DSCF5649_jzhirj.jpg",
+    "next_cursor": "b3c37db509bbbb8801c02f3a07d215edc32951fd1efd5a0626944e3e3cc7e25b",
+    "derived": [
+      {
+        "transformation": "w_1920,c_scale,q_auto:best,f_auto",
+        "transformation_signature": "5d40cc6a-f471-3e3a-82aa-dc7ae174535a",
+        "format": "jpg",
+        "bytes": 442459,
+        "id": "3641c78d1d5b84faa6f13ba3a134b99a",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1920,c_scale,q_auto:best,f_auto/v1781187209/DSCF5649_jzhirj.jpg",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1920,c_scale,q_auto:best,f_auto/v1781187209/DSCF5649_jzhirj.jpg"
+      },
+      {
+        "transformation": "f_auto,q_auto",
+        "transformation_signature": "684cfdbc-ffd9-3229-9bbb-4c1e43b54833",
+        "format": "jpg",
+        "bytes": 200277,
+        "id": "55a13fc1b7a3eaeca553c7c5965be8d3",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781187209/DSCF5649_jzhirj.jpg",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781187209/DSCF5649_jzhirj.jpg"
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "Orientation": "Rotate 270 CW",
+      "XResolution": "72",
+      "YResolution": "72",
+      "ResolutionUnit": "inches",
+      "Software": "Digital Camera X-M5 Ver1.20",
+      "ModifyDate": "2026:06:08 22:32:45",
+      "Artist": "",
+      "YCbCrPositioning": "Co-sited",
+      "Copyright": "",
+      "ExposureTime": "1/105",
+      "FNumber": "4.7",
+      "ExposureProgram": "Portrait",
+      "ISO": "320",
+      "SensitivityType": "Standard Output Sensitivity",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 22:32:45",
+      "CreateDate": "2026:06:08 22:32:45",
+      "OffsetTime": "+05:30",
+      "OffsetTimeOriginal": "+05:30",
+      "OffsetTimeDigitized": "+05:30",
+      "ComponentsConfiguration": "Y, Cb, Cr, -",
+      "CompressedBitsPerPixel": "3.2",
+      "ShutterSpeedValue": "1/108",
+      "ApertureValue": "4.8",
+      "BrightnessValue": "6.44",
+      "ExposureCompensation": "+0.33",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Multi-segment",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "FocalLength": "30.5 mm",
+      "UserComment": "",
+      "SubSecTime": "36",
+      "SubSecTimeOriginal": "36",
+      "SubSecTimeDigitized": "36",
+      "CameraElevationAngle": "1.8",
+      "FlashpixVersion": "0100",
+      "ColorSpace": "sRGB",
+      "ExifImageWidth": "3120",
+      "ExifImageHeight": "1760",
+      "InteropIndex": "R98 - DCF basic file (sRGB)",
+      "InteropVersion": "0100",
+      "FocalPlaneXResolution": "1330",
+      "FocalPlaneYResolution": "1330",
+      "FocalPlaneResolutionUnit": "cm",
+      "SensingMethod": "One-chip color area",
+      "FileSource": "Digital Camera",
+      "SceneType": "Directly photographed",
+      "CustomRendered": "Normal",
+      "ExposureMode": "Auto",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "46 mm",
+      "SceneCaptureType": "Portrait",
+      "Sharpness": "Normal",
+      "SubjectDistanceRange": "Unknown",
+      "SerialNumber": "5C036847",
+      "LensInfo": "15-45mm f/3.5-5.6",
+      "LensMake": "FUJIFILM",
+      "LensModel": "XC15-45mmF3.5-5.6 OIS PZ",
+      "LensSerialNumber": "5CC34449",
+      "CompositeImage": "Not a Composite Image",
+      "Compression": "JPEG (old-style)",
+      "ThumbnailOffset": "4496",
+      "ThumbnailLength": "8175",
+      "Rating": "0",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#C5C4CB",
+        70.6
+      ],
+      [
+        "#222225",
+        10.1
+      ],
+      [
+        "#DFD9D9",
+        3.8
+      ],
+      [
+        "#875747",
+        3.6
+      ],
+      [
+        "#94949C",
+        3.4
+      ],
+      [
+        "#1F1E1E",
+        2.6
+      ],
+      [
+        "#CBC6CB",
+        2.1
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "gray",
+          76.1
+        ],
+        [
+          "black",
+          12.7
+        ],
+        [
+          "white",
+          3.8
+        ],
+        [
+          "red",
+          3.6
+        ]
+      ],
+      "cloudinary": [
+        [
+          "gray",
+          74
+        ],
+        [
+          "black",
+          12.7
+        ],
+        [
+          "white",
+          6
+        ],
+        [
+          "red",
+          3.6
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "d6033dc336392138ff0a9562983ab672",
+    "usage": {},
+    "original_filename": "DSCF5649",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 473
+  },
+  {
+    "asset_id": "fcf394580cbbcaa6599d3f3abc83d97d",
+    "public_id": "DSCF5582_nycf50",
+    "format": "jpg",
+    "version": 1781187201,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T14:13:21Z",
+    "bytes": 1106001,
+    "width": 1760,
+    "height": 3120,
+    "asset_folder": "",
+    "display_name": "author-black-sweatpants-back 3rd",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781187201/DSCF5582_nycf50.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781187201/DSCF5582_nycf50.jpg",
+    "next_cursor": "07087f9360ee83117e40d688fc9dde0b344bd205da36a0aba838a969e07bc97c",
+    "derived": [
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "jpg",
+        "bytes": 211487,
+        "id": "b88f860ad863e799acb81196a45787db",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781187201/DSCF5582_nycf50",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781187201/DSCF5582_nycf50",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "Orientation": "Rotate 270 CW",
+      "XResolution": "72",
+      "YResolution": "72",
+      "ResolutionUnit": "inches",
+      "Software": "Digital Camera X-M5 Ver1.20",
+      "ModifyDate": "2026:06:08 22:03:53",
+      "Artist": "",
+      "YCbCrPositioning": "Co-sited",
+      "Copyright": "",
+      "ExposureTime": "1/125",
+      "FNumber": "5.6",
+      "ExposureProgram": "Program AE",
+      "ISO": "800",
+      "SensitivityType": "Standard Output Sensitivity",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 22:03:53",
+      "CreateDate": "2026:06:08 22:03:53",
+      "OffsetTime": "+05:30",
+      "OffsetTimeOriginal": "+05:30",
+      "OffsetTimeDigitized": "+05:30",
+      "ComponentsConfiguration": "Y, Cb, Cr, -",
+      "CompressedBitsPerPixel": "3.2",
+      "ShutterSpeedValue": "1/136",
+      "ApertureValue": "5.7",
+      "BrightnessValue": "4.39",
+      "ExposureCompensation": "+0.33",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Multi-segment",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "FocalLength": "44.5 mm",
+      "UserComment": "",
+      "SubSecTime": "66",
+      "SubSecTimeOriginal": "66",
+      "SubSecTimeDigitized": "66",
+      "CameraElevationAngle": "-10.8",
+      "FlashpixVersion": "0100",
+      "ColorSpace": "sRGB",
+      "ExifImageWidth": "3120",
+      "ExifImageHeight": "1760",
+      "InteropIndex": "R98 - DCF basic file (sRGB)",
+      "InteropVersion": "0100",
+      "FocalPlaneXResolution": "1330",
+      "FocalPlaneYResolution": "1330",
+      "FocalPlaneResolutionUnit": "cm",
+      "SensingMethod": "One-chip color area",
+      "FileSource": "Digital Camera",
+      "SceneType": "Directly photographed",
+      "CustomRendered": "Normal",
+      "ExposureMode": "Auto",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "67 mm",
+      "SceneCaptureType": "Standard",
+      "Sharpness": "Normal",
+      "SubjectDistanceRange": "Unknown",
+      "SerialNumber": "5C036847",
+      "LensInfo": "15-45mm f/3.5-5.6",
+      "LensMake": "FUJIFILM",
+      "LensModel": "XC15-45mmF3.5-5.6 OIS PZ",
+      "LensSerialNumber": "5CC34449",
+      "CompositeImage": "Not a Composite Image",
+      "Compression": "JPEG (old-style)",
+      "ThumbnailOffset": "4032",
+      "ThumbnailLength": "6582",
+      "Rating": "0",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#E7E2E6",
+        40.5
+      ],
+      [
+        "#1F1E20",
+        24
+      ],
+      [
+        "#1D1B1B",
+        16.8
+      ],
+      [
+        "#E6E4E9",
+        8.5
+      ],
+      [
+        "#E1DBDC",
+        6.7
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          55.7
+        ],
+        [
+          "black",
+          40.9
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          55.7
+        ],
+        [
+          "black",
+          40.9
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "3dbf6109ffae36f23094b42ed099a072",
+    "usage": {},
+    "original_filename": "DSCF5582",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 472
+  },
+  {
+    "asset_id": "af287380b60fba039433a8e1caef0102",
+    "public_id": "DSCF5576_bgms0v",
+    "format": "jpg",
+    "version": 1781187200,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T14:13:20Z",
+    "bytes": 1152514,
+    "width": 1760,
+    "height": 3120,
+    "asset_folder": "",
+    "display_name": "author-black-sweatpants-back 1st",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781187200/DSCF5576_bgms0v.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781187200/DSCF5576_bgms0v.jpg",
+    "next_cursor": "ea66ce0fbcae9e6afeef8672fe75ba321db2f2deba61463ed4a0005e64ceb709",
+    "derived": [
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "jpg",
+        "bytes": 244302,
+        "id": "1f65d2c2f00a817b18d2e0bcc12fb7e2",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781187200/DSCF5576_bgms0v",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781187200/DSCF5576_bgms0v",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "Orientation": "Rotate 270 CW",
+      "XResolution": "72",
+      "YResolution": "72",
+      "ResolutionUnit": "inches",
+      "Software": "Digital Camera X-M5 Ver1.20",
+      "ModifyDate": "2026:06:08 22:02:48",
+      "Artist": "",
+      "YCbCrPositioning": "Co-sited",
+      "Copyright": "",
+      "ExposureTime": "1/125",
+      "FNumber": "5.6",
+      "ExposureProgram": "Program AE",
+      "ISO": "1250",
+      "SensitivityType": "Standard Output Sensitivity",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 22:02:48",
+      "CreateDate": "2026:06:08 22:02:48",
+      "OffsetTime": "+05:30",
+      "OffsetTimeOriginal": "+05:30",
+      "OffsetTimeDigitized": "+05:30",
+      "ComponentsConfiguration": "Y, Cb, Cr, -",
+      "CompressedBitsPerPixel": "3.2",
+      "ShutterSpeedValue": "1/136",
+      "ApertureValue": "5.7",
+      "BrightnessValue": "3.54",
+      "ExposureCompensation": "+0.33",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Multi-segment",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "FocalLength": "44.5 mm",
+      "UserComment": "",
+      "SubSecTime": "72",
+      "SubSecTimeOriginal": "72",
+      "SubSecTimeDigitized": "72",
+      "CameraElevationAngle": "-9.3",
+      "FlashpixVersion": "0100",
+      "ColorSpace": "sRGB",
+      "ExifImageWidth": "3120",
+      "ExifImageHeight": "1760",
+      "InteropIndex": "R98 - DCF basic file (sRGB)",
+      "InteropVersion": "0100",
+      "FocalPlaneXResolution": "1330",
+      "FocalPlaneYResolution": "1330",
+      "FocalPlaneResolutionUnit": "cm",
+      "SensingMethod": "One-chip color area",
+      "FileSource": "Digital Camera",
+      "SceneType": "Directly photographed",
+      "CustomRendered": "Normal",
+      "ExposureMode": "Auto",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "67 mm",
+      "SceneCaptureType": "Standard",
+      "Sharpness": "Normal",
+      "SubjectDistanceRange": "Unknown",
+      "SerialNumber": "5C036847",
+      "LensInfo": "15-45mm f/3.5-5.6",
+      "LensMake": "FUJIFILM",
+      "LensModel": "XC15-45mmF3.5-5.6 OIS PZ",
+      "LensSerialNumber": "5CC34449",
+      "CompositeImage": "Not a Composite Image",
+      "Compression": "JPEG (old-style)",
+      "ThumbnailOffset": "4032",
+      "ThumbnailLength": "7163",
+      "Rating": "0",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#272528",
+        39.6
+      ],
+      [
+        "#ECEAEF",
+        31.7
+      ],
+      [
+        "#EFEAEE",
+        12.3
+      ],
+      [
+        "#222021",
+        10.9
+      ],
+      [
+        "#D6CBC6",
+        2.7
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "black",
+          50.5
+        ],
+        [
+          "white",
+          46.6
+        ]
+      ],
+      "cloudinary": [
+        [
+          "black",
+          50.5
+        ],
+        [
+          "white",
+          46.6
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "f96b2dd2715b2d4011c43aac33899cf9",
+    "usage": {},
+    "original_filename": "DSCF5576",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 470
+  },
+  {
+    "asset_id": "b318443f91333dcd1c3128e1bb1118ed",
+    "public_id": "DSCF5529_etgtdf",
+    "format": "jpg",
+    "version": 1781187199,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T14:13:19Z",
+    "bytes": 1493334,
+    "width": 1760,
+    "height": 3120,
+    "asset_folder": "",
+    "display_name": "author-white-sweatpants-back 1st",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781187199/DSCF5529_etgtdf.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781187199/DSCF5529_etgtdf.jpg",
+    "next_cursor": "bd0a71e97f5af9788c653759967cab66516e275d56025ac7b97fd82a58008d22",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "jpg",
+        "bytes": 348036,
+        "id": "97314280a22c645058c7e6499062939a",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781187199/DSCF5529_etgtdf",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781187199/DSCF5529_etgtdf",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "jpg",
+        "bytes": 141481,
+        "id": "a16b6e526b0f6b1b15dbaf687c19434f",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781187199/DSCF5529_etgtdf",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781187199/DSCF5529_etgtdf",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0.34381893277168274,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "Orientation": "Rotate 270 CW",
+      "XResolution": "72",
+      "YResolution": "72",
+      "ResolutionUnit": "inches",
+      "Software": "Digital Camera X-M5 Ver1.20",
+      "ModifyDate": "2026:06:08 21:56:36",
+      "Artist": "",
+      "YCbCrPositioning": "Co-sited",
+      "Copyright": "",
+      "ExposureTime": "1/110",
+      "FNumber": "5.2",
+      "ExposureProgram": "Program AE",
+      "ISO": "200",
+      "SensitivityType": "Standard Output Sensitivity",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 21:56:36",
+      "CreateDate": "2026:06:08 21:56:36",
+      "OffsetTime": "+05:30",
+      "OffsetTimeOriginal": "+05:30",
+      "OffsetTimeDigitized": "+05:30",
+      "ComponentsConfiguration": "Y, Cb, Cr, -",
+      "CompressedBitsPerPixel": "3.2",
+      "ShutterSpeedValue": "1/118",
+      "ApertureValue": "5.3",
+      "BrightnessValue": "6.49",
+      "ExposureCompensation": "+0.33",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Multi-segment",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "FocalLength": "38.5 mm",
+      "UserComment": "",
+      "SubSecTime": "09",
+      "SubSecTimeOriginal": "09",
+      "SubSecTimeDigitized": "09",
+      "CameraElevationAngle": "-29.7",
+      "FlashpixVersion": "0100",
+      "ColorSpace": "sRGB",
+      "ExifImageWidth": "3120",
+      "ExifImageHeight": "1760",
+      "InteropIndex": "R98 - DCF basic file (sRGB)",
+      "InteropVersion": "0100",
+      "FocalPlaneXResolution": "1330",
+      "FocalPlaneYResolution": "1330",
+      "FocalPlaneResolutionUnit": "cm",
+      "SensingMethod": "One-chip color area",
+      "FileSource": "Digital Camera",
+      "SceneType": "Directly photographed",
+      "CustomRendered": "Normal",
+      "ExposureMode": "Auto",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "58 mm",
+      "SceneCaptureType": "Standard",
+      "Sharpness": "Normal",
+      "SubjectDistanceRange": "Unknown",
+      "SerialNumber": "5C036847",
+      "LensInfo": "15-45mm f/3.5-5.6",
+      "LensMake": "FUJIFILM",
+      "LensModel": "XC15-45mmF3.5-5.6 OIS PZ",
+      "LensSerialNumber": "5CC34449",
+      "CompositeImage": "Not a Composite Image",
+      "Compression": "JPEG (old-style)",
+      "ThumbnailOffset": "4032",
+      "ThumbnailLength": "8607",
+      "Rating": "0",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#C0C0C7",
+        42
+      ],
+      [
+        "#8F8E95",
+        29.1
+      ],
+      [
+        "#948E93",
+        8.9
+      ],
+      [
+        "#41261F",
+        5.2
+      ],
+      [
+        "#673E32",
+        4.8
+      ],
+      [
+        "#ADA7AE",
+        4.2
+      ],
+      [
+        "#7F7474",
+        3
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "gray",
+          87.2
+        ],
+        [
+          "red",
+          9.9
+        ]
+      ],
+      "cloudinary": [
+        [
+          "gray",
+          87.2
+        ],
+        [
+          "red",
+          9.9
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "1c0ae3f7c12a7cc7c1baef13dcba9b7e",
+    "usage": {},
+    "original_filename": "DSCF5529",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 468
+  },
+  {
+    "asset_id": "e83c86cee07efc822b5216f5c37dd99b",
+    "public_id": "DSCF5515_ocdsro",
+    "format": "jpg",
+    "version": 1781187199,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T14:13:19Z",
+    "bytes": 1438563,
+    "width": 1760,
+    "height": 3120,
+    "asset_folder": "",
+    "display_name": "author-white-sweatpants-back 3rd",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781187199/DSCF5515_ocdsro.jpg",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781187199/DSCF5515_ocdsro.jpg",
+    "next_cursor": "af4f9edd7a00fe2082815a90760dcd0638a7cdf6e69cbfa3ed11a86a313a6d8b",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "jpg",
+        "bytes": 352955,
+        "id": "b840c6942f9b33dca1db1d6769fea943",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781187199/DSCF5515_ocdsro",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781187199/DSCF5515_ocdsro",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "jpg",
+        "bytes": 127399,
+        "id": "be7d75f61d2ed720142906f1db2499f5",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781187199/DSCF5515_ocdsro",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781187199/DSCF5515_ocdsro",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0.2996406853199005,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Make": "FUJIFILM",
+      "Model": "X-M5",
+      "Orientation": "Rotate 270 CW",
+      "XResolution": "72",
+      "YResolution": "72",
+      "ResolutionUnit": "inches",
+      "Software": "Digital Camera X-M5 Ver1.20",
+      "ModifyDate": "2026:06:08 21:52:04",
+      "Artist": "",
+      "YCbCrPositioning": "Co-sited",
+      "Copyright": "",
+      "ExposureTime": "1/25",
+      "FNumber": "20.0",
+      "ExposureProgram": "Manual",
+      "ISO": "800",
+      "SensitivityType": "Standard Output Sensitivity",
+      "ExifVersion": "0232",
+      "DateTimeOriginal": "2026:06:08 21:52:04",
+      "CreateDate": "2026:06:08 21:52:04",
+      "OffsetTime": "+05:30",
+      "OffsetTimeOriginal": "+05:30",
+      "OffsetTimeDigitized": "+05:30",
+      "ComponentsConfiguration": "Y, Cb, Cr, -",
+      "CompressedBitsPerPixel": "3.2",
+      "ShutterSpeedValue": "1/25",
+      "ApertureValue": "19.7",
+      "BrightnessValue": "6.6",
+      "ExposureCompensation": "0",
+      "MaxApertureValue": "3.5",
+      "MeteringMode": "Average",
+      "LightSource": "Unknown",
+      "Flash": "No Flash",
+      "FocalLength": "45.0 mm",
+      "UserComment": "",
+      "SubSecTime": "10",
+      "SubSecTimeOriginal": "10",
+      "SubSecTimeDigitized": "10",
+      "CameraElevationAngle": "-10.4",
+      "FlashpixVersion": "0100",
+      "ColorSpace": "sRGB",
+      "ExifImageWidth": "3120",
+      "ExifImageHeight": "1760",
+      "InteropIndex": "R98 - DCF basic file (sRGB)",
+      "InteropVersion": "0100",
+      "FocalPlaneXResolution": "1330",
+      "FocalPlaneYResolution": "1330",
+      "FocalPlaneResolutionUnit": "cm",
+      "SensingMethod": "One-chip color area",
+      "FileSource": "Digital Camera",
+      "SceneType": "Directly photographed",
+      "CustomRendered": "Normal",
+      "ExposureMode": "Manual",
+      "WhiteBalance": "Auto",
+      "FocalLengthIn35mmFormat": "68 mm",
+      "SceneCaptureType": "Standard",
+      "Sharpness": "Normal",
+      "SubjectDistanceRange": "Unknown",
+      "SerialNumber": "5C036847",
+      "LensInfo": "15-45mm f/3.5-5.6",
+      "LensMake": "FUJIFILM",
+      "LensModel": "XC15-45mmF3.5-5.6 OIS PZ",
+      "LensSerialNumber": "5CC34449",
+      "CompositeImage": "Not a Composite Image",
+      "Compression": "JPEG (old-style)",
+      "ThumbnailOffset": "4064",
+      "ThumbnailLength": "6657",
+      "Rating": "0",
+      "Colorspace": "RGB",
+      "DPI": "72"
+    },
+    "colors": [
+      [
+        "#BDBBC2",
+        65.2
+      ],
+      [
+        "#B9B3B9",
+        16.5
+      ],
+      [
+        "#9A999F",
+        7.4
+      ],
+      [
+        "#A09BA0",
+        3.5
+      ],
+      [
+        "#C1BBBC",
+        2.4
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "gray",
+          95.1
+        ]
+      ],
+      "cloudinary": [
+        [
+          "gray",
+          95.1
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "fa1777821f2ed2d9f58e9525b76eac54",
+    "usage": {},
+    "original_filename": "DSCF5515",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 468
+  },
+  {
+    "asset_id": "e4e5548dab523a62380fd60f94c533bf",
+    "public_id": "tshirt_2nd_ldhr3h",
+    "format": "png",
+    "version": 1781155937,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:17Z",
+    "bytes": 1597908,
+    "width": 1392,
+    "height": 1130,
+    "asset_folder": "",
+    "display_name": "author-black-tee-front",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155937/tshirt_2nd_ldhr3h.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155937/tshirt_2nd_ldhr3h.png",
+    "next_cursor": "930fc68be0b1510ff9afaa2d147dfe7bf754141df041ac74f3c6597b1c29e242",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 115456,
+        "id": "ea7f8dcfab167cdd285f55f20d8c89aa",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155937/tshirt_2nd_ldhr3h",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155937/tshirt_2nd_ldhr3h",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "png",
+        "bytes": 41780,
+        "id": "00347bf5aff05cc03c9178aecb822c5a",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155937/tshirt_2nd_ldhr3h",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155937/tshirt_2nd_ldhr3h",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 66976,
+        "id": "24774f2408fab2293435f80519fd3125",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155937/tshirt_2nd_ldhr3h",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155937/tshirt_2nd_ldhr3h",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0.5233086347579956,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#F7F7F7",
+        41.7
+      ],
+      [
+        "#131313",
+        31.3
+      ],
+      [
+        "#F7F6F7",
+        7.9
+      ],
+      [
+        "#121213",
+        5.8
+      ],
+      [
+        "#131413",
+        5.4
+      ],
+      [
+        "#F7F7F6",
+        3.9
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          53.5
+        ],
+        [
+          "black",
+          42.4
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          53.5
+        ],
+        [
+          "black",
+          42.4
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "2b3fed994a8490c964b925d40aadda73",
+    "usage": {},
+    "original_filename": "tshirt 2nd",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 468
+  },
+  {
+    "asset_id": "396b099a13f0feb407fec9740dce8080",
+    "public_id": "white_tshirt_1_st_bbzsdu",
+    "format": "png",
+    "version": 1781155936,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:16Z",
+    "bytes": 1246569,
+    "width": 1392,
+    "height": 1130,
+    "asset_folder": "",
+    "display_name": "author-white-tee-back",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155936/white_tshirt_1_st_bbzsdu.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155936/white_tshirt_1_st_bbzsdu.png",
+    "next_cursor": "660eb16e9a6a1946f15997743e0579a64fa446dd2a9d7177b8f95cfa7fad1532",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 39742,
+        "id": "c580179a21cdfc70c64380be74cba75d",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155936/white_tshirt_1_st_bbzsdu",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155936/white_tshirt_1_st_bbzsdu",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "png",
+        "bytes": 12614,
+        "id": "bafb323dc83c7681461b018865652beb",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155936/white_tshirt_1_st_bbzsdu",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155936/white_tshirt_1_st_bbzsdu",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 17613,
+        "id": "aa3e9c64bb2dc0378aed7a2be3cc8c01",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155936/white_tshirt_1_st_bbzsdu",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155936/white_tshirt_1_st_bbzsdu",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#F9F8F8",
+        79.3
+      ],
+      [
+        "#F7F6F7",
+        7.7
+      ],
+      [
+        "#F8F8F7",
+        5.5
+      ],
+      [
+        "#F7F6F8",
+        2.8
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          95.3
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          95.3
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "42fca970077ff3046d80c0a978f77836",
+    "usage": {},
+    "original_filename": "white tshirt 1 st",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 468
+  },
+  {
+    "asset_id": "ce9f4e5f5e6729273d924bed52000a47",
+    "public_id": "black_1st_tvrnqs",
+    "format": "png",
+    "version": 1781155935,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:15Z",
+    "bytes": 1821966,
+    "width": 1086,
+    "height": 1448,
+    "asset_folder": "",
+    "display_name": "author-black-sweatpants-back",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155935/black_1st_tvrnqs.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155935/black_1st_tvrnqs.png",
+    "next_cursor": "43740f203d70d2db9cfa65eacdd7eacb9c299352a8ef8535b6d742544238c41f",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 244099,
+        "id": "6af8bfcdc20addb32d37d25aae9bd0e4",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155935/black_1st_tvrnqs",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155935/black_1st_tvrnqs",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "png",
+        "bytes": 117593,
+        "id": "dae961f1245e5e7b3a882f6558067891",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155935/black_1st_tvrnqs",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155935/black_1st_tvrnqs",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 57248,
+        "id": "d8044a232ff20cefd3c035977b70735a",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155935/black_1st_tvrnqs",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155935/black_1st_tvrnqs",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#F0EFEF",
+        35.4
+      ],
+      [
+        "#161615",
+        32
+      ],
+      [
+        "#F0EEEF",
+        13.6
+      ],
+      [
+        "#151415",
+        8
+      ],
+      [
+        "#161716",
+        7.9
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          49
+        ],
+        [
+          "black",
+          47.9
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          49
+        ],
+        [
+          "black",
+          47.9
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "0de78ff00f3ac70295e7c5c01cd05379",
+    "usage": {},
+    "original_filename": "black 1st",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 465
+  },
+  {
+    "asset_id": "a3064877548d1d41df7d8c8923376afb",
+    "public_id": "white_t_shirt_2nd_siebfk",
+    "format": "png",
+    "version": 1781155935,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:15Z",
+    "bytes": 1088658,
+    "width": 1392,
+    "height": 1130,
+    "asset_folder": "",
+    "display_name": "author-white-tee-front",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155935/white_t_shirt_2nd_siebfk.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155935/white_t_shirt_2nd_siebfk.png",
+    "next_cursor": "9816a8ffeea8aca32c5fd441696e2a0edafbb189c6eab204efb97935ce3a04ee",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 56066,
+        "id": "8084eb5912ed5bc65e5236f074fceaf9",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155935/white_t_shirt_2nd_siebfk",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155935/white_t_shirt_2nd_siebfk",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "png",
+        "bytes": 14844,
+        "id": "f3a7b6ad322d65088073f7aafff19d2d",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155935/white_t_shirt_2nd_siebfk",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155935/white_t_shirt_2nd_siebfk",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 36752,
+        "id": "36e4bda33176646ac78234861a3aa9aa",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155935/white_t_shirt_2nd_siebfk",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155935/white_t_shirt_2nd_siebfk",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#F9F9F9",
+        75
+      ],
+      [
+        "#FBFAFB",
+        11
+      ],
+      [
+        "#F5F5F6",
+        5
+      ],
+      [
+        "#F7F8F7",
+        3.1
+      ],
+      [
+        "#F8F9F9",
+        2.9
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          97.1
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          97.1
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "597f0f1490096ff0654fd532d64e47d0",
+    "usage": {},
+    "original_filename": "white t shirt 2nd",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 465
+  },
+  {
+    "asset_id": "e2d66bea267e4ac533bf78b3509df591",
+    "public_id": "top_black_2nd_gegyy3",
+    "format": "png",
+    "version": 1781155935,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:15Z",
+    "bytes": 1239714,
+    "width": 1086,
+    "height": 1448,
+    "asset_folder": "",
+    "display_name": "author-black-top-front",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155935/top_black_2nd_gegyy3.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155935/top_black_2nd_gegyy3.png",
+    "next_cursor": "e46c51ad614a1d88306c818ffdfeff09aa0a4b7a51d24c9f0d0d7ca314653ad3",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 193388,
+        "id": "ab036ff30311f600a18141252b53f3ce",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155935/top_black_2nd_gegyy3",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155935/top_black_2nd_gegyy3",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "png",
+        "bytes": 91632,
+        "id": "f2eb87e0fa0f316dbcf205adc9737851",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155935/top_black_2nd_gegyy3",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155935/top_black_2nd_gegyy3",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 83068,
+        "id": "19a7ef94cc4292a3305098bd372be346",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155935/top_black_2nd_gegyy3",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155935/top_black_2nd_gegyy3",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#FEFEFE",
+        51.8
+      ],
+      [
+        "#1B1B1A",
+        26.2
+      ],
+      [
+        "#1B1C1B",
+        7.6
+      ],
+      [
+        "#1A1A1B",
+        5.3
+      ],
+      [
+        "#FEFDFE",
+        5
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          56.8
+        ],
+        [
+          "black",
+          39.1
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          56.8
+        ],
+        [
+          "black",
+          39.1
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "6f6073b35b4b1ca81ed9750be333d1db",
+    "usage": {},
+    "original_filename": "top black 2nd",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 465
+  },
+  {
+    "asset_id": "d8796050aa0bee7db5fb11df5fe4fd62",
+    "public_id": "sweat_black_2nd_zxtogc",
+    "format": "png",
+    "version": 1781155934,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:14Z",
+    "bytes": 1772450,
+    "width": 1086,
+    "height": 1448,
+    "asset_folder": "",
+    "display_name": "author-black-sweatpants-front",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155934/sweat_black_2nd_zxtogc.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155934/sweat_black_2nd_zxtogc.png",
+    "next_cursor": "7c8930edb4b65a552773b43192dadd3941ba5ea43be15ad709820d6ec53f8618",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 242090,
+        "id": "b8146697b56e6f72bf7b9e540a9baf7c",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155934/sweat_black_2nd_zxtogc",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155934/sweat_black_2nd_zxtogc",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "png",
+        "bytes": 121903,
+        "id": "d2913a100777b939f2136222512bca43",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155934/sweat_black_2nd_zxtogc",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155934/sweat_black_2nd_zxtogc",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 61226,
+        "id": "4fa9305580a68da1d1d8bf34301441bd",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155934/sweat_black_2nd_zxtogc",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155934/sweat_black_2nd_zxtogc",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#F0F0F0",
+        36.4
+      ],
+      [
+        "#151514",
+        29.4
+      ],
+      [
+        "#151615",
+        10.3
+      ],
+      [
+        "#F0EFF0",
+        8.1
+      ],
+      [
+        "#141415",
+        6.5
+      ],
+      [
+        "#EFEFEE",
+        3.7
+      ],
+      [
+        "#EFEFF0",
+        2.3
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          50.5
+        ],
+        [
+          "black",
+          46.2
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          50.5
+        ],
+        [
+          "black",
+          46.2
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "8e6bd4abeefb900448205f6c48718627",
+    "usage": {},
+    "original_filename": "sweat black 2nd",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 465
+  },
+  {
+    "asset_id": "cb64259a3a38c3bd2d117831e03e9e28",
+    "public_id": "gray_sweat_2nd_a1mdog",
+    "format": "png",
+    "version": 1781155934,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:14Z",
+    "bytes": 2084459,
+    "width": 1086,
+    "height": 1448,
+    "asset_folder": "",
+    "display_name": "author-white-sweatpants-front",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155934/gray_sweat_2nd_a1mdog.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155934/gray_sweat_2nd_a1mdog.png",
+    "next_cursor": "91be94ecf2bc2a5f8e2e2ba6045674d13043d3fc3df5068ea22301e2c96675bf",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 188612,
+        "id": "476132fab0ba4ca8b23fe1580daf8b6f",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155934/gray_sweat_2nd_a1mdog",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155934/gray_sweat_2nd_a1mdog",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "png",
+        "bytes": 104628,
+        "id": "b7cfc483723b611993f5e9a88053b89b",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155934/gray_sweat_2nd_a1mdog",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155934/gray_sweat_2nd_a1mdog",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 106995,
+        "id": "49bd0f482ceb722d26eff5c89afeec3a",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155934/gray_sweat_2nd_a1mdog",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155934/gray_sweat_2nd_a1mdog",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#DCDBDA",
+        67.1
+      ],
+      [
+        "#D2D2D0",
+        12.6
+      ],
+      [
+        "#EDECED",
+        12.2
+      ],
+      [
+        "#F2F2F3",
+        3.5
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          95.4
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          95.4
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "4529b920c415f8cabe0630c53782219b",
+    "usage": {},
+    "original_filename": "gray sweat 2nd",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 465
+  },
+  {
+    "asset_id": "6cb8aa79e77fe521096703b77baf35db",
+    "public_id": "top_black_1st_wgsy3e",
+    "format": "png",
+    "version": 1781155933,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:13Z",
+    "bytes": 1192061,
+    "width": 1086,
+    "height": 1448,
+    "asset_folder": "",
+    "display_name": "author-black-top-back",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155933/top_black_1st_wgsy3e.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155933/top_black_1st_wgsy3e.png",
+    "next_cursor": "03ab0a082c917273f785d622c75396370d8444d6971dc1e33b385c4e3fcd89ce",
+    "derived": [
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 78239,
+        "id": "9f609a6735834022902a54e20e1c278c",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155933/top_black_1st_wgsy3e",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155933/top_black_1st_wgsy3e",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#FEFEFE",
+        53.8
+      ],
+      [
+        "#1B1B1B",
+        27.3
+      ],
+      [
+        "#1B1C1B",
+        7.3
+      ],
+      [
+        "#1B1A1B",
+        4.7
+      ],
+      [
+        "#FEFDFE",
+        3.3
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          57.1
+        ],
+        [
+          "black",
+          39.3
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          57.1
+        ],
+        [
+          "black",
+          39.3
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "9598fce650e55284945292558f3ecc89",
+    "usage": {},
+    "original_filename": "top black 1st",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 465
+  },
+  {
+    "asset_id": "d848558e8b01a0e95b58758e77380144",
+    "public_id": "black_t_shirt_1st_aradpv",
+    "format": "png",
+    "version": 1781155933,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:13Z",
+    "bytes": 1434429,
+    "width": 1392,
+    "height": 1130,
+    "asset_folder": "",
+    "display_name": "author-black-tee-back",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155933/black_t_shirt_1st_aradpv.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155933/black_t_shirt_1st_aradpv.png",
+    "next_cursor": "604cc167bc4bb054864ba944d35607da69bc072a9b4799c33dedf79f2b8b3786",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 90562,
+        "id": "126733cb72b423c16c9f0f7f1f310041",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155933/black_t_shirt_1st_aradpv",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155933/black_t_shirt_1st_aradpv",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "png",
+        "bytes": 36069,
+        "id": "5a20460074d2e4325cd4245a4edc59c7",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155933/black_t_shirt_1st_aradpv",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155933/black_t_shirt_1st_aradpv",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 55246,
+        "id": "a084f0cbfdda1c40d1919975989f08c6",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155933/black_t_shirt_1st_aradpv",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155933/black_t_shirt_1st_aradpv",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0.900763988494873,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#F7F7F7",
+        43.7
+      ],
+      [
+        "#121212",
+        34
+      ],
+      [
+        "#F7F6F7",
+        6.8
+      ],
+      [
+        "#121312",
+        5.1
+      ],
+      [
+        "#F7F7F6",
+        4.8
+      ],
+      [
+        "#121112",
+        3.4
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          55.4
+        ],
+        [
+          "black",
+          42.5
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          55.4
+        ],
+        [
+          "black",
+          42.5
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "5ab428713064848ead0a00300cf43573",
+    "usage": {},
+    "original_filename": "black t shirt 1st",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 465
+  },
+  {
+    "asset_id": "89bf552eb3e39e6ca85afa12c697e202",
+    "public_id": "top_1st_l0udlk",
+    "format": "png",
+    "version": 1781155932,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:12Z",
+    "bytes": 1046006,
+    "width": 1086,
+    "height": 1448,
+    "asset_folder": "",
+    "display_name": "author-white-top-front",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155932/top_1st_l0udlk.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155932/top_1st_l0udlk.png",
+    "next_cursor": "6c3e267982ac96ed6b9c0667bae40f3988e79fe45d674a57a2a12f4c5e7f1b17",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 81109,
+        "id": "7999492af037529346430eab556c629c",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155932/top_1st_l0udlk",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155932/top_1st_l0udlk",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "png",
+        "bytes": 26436,
+        "id": "9af1e2ed369f1ddc27bc895dc304220c",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155932/top_1st_l0udlk",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155932/top_1st_l0udlk",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 34332,
+        "id": "c615e11c6b8ea4defdc50b55147706bd",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155932/top_1st_l0udlk",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155932/top_1st_l0udlk",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#F9F9F9",
+        76
+      ],
+      [
+        "#FAF9FA",
+        9.1
+      ],
+      [
+        "#F1F1F2",
+        5
+      ],
+      [
+        "#F5F6F6",
+        3.7
+      ],
+      [
+        "#F3F4F3",
+        3.2
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          97
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          97
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "ed1aa74a2b518f85853445ce77c91969",
+    "usage": {},
+    "original_filename": "top 1st",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 465
+  },
+  {
+    "asset_id": "2470e955fe57ff176f7cb0e2435152cf",
+    "public_id": "top_2nd_kxfr24",
+    "format": "png",
+    "version": 1781155932,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:12Z",
+    "bytes": 1068094,
+    "width": 1086,
+    "height": 1448,
+    "asset_folder": "",
+    "display_name": "author-white-top-back",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155932/top_2nd_kxfr24.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155932/top_2nd_kxfr24.png",
+    "next_cursor": "05e5ad4e278af30977b8aeb2ed8f1a775c4f3095aedf851c15bb30fd6b86ff9a",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 82482,
+        "id": "05c5f26156f6fbdadac94937fccfa2a5",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155932/top_2nd_kxfr24",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155932/top_2nd_kxfr24",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 21914,
+        "id": "af7a52869b75a3396aaf507949788908",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155932/top_2nd_kxfr24",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155932/top_2nd_kxfr24",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 1,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#F8F8F8",
+        75.6
+      ],
+      [
+        "#F7F6F7",
+        10.2
+      ],
+      [
+        "#EFEFF0",
+        4.8
+      ],
+      [
+        "#F1F2F1",
+        3.6
+      ],
+      [
+        "#F3F4F4",
+        3
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          97.1
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          97.1
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "c83091521174c1b9382f4d4b65f9bed1",
+    "usage": {},
+    "original_filename": "top 2nd",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 465
+  },
+  {
+    "asset_id": "a782886818b2c77eb0b2a0563c69f639",
+    "public_id": "gray_sweat_1st_cgspx0",
+    "format": "png",
+    "version": 1781155930,
+    "resource_type": "image",
+    "type": "upload",
+    "created_at": "2026-06-11T05:32:10Z",
+    "bytes": 1806159,
+    "width": 896,
+    "height": 1195,
+    "asset_folder": "",
+    "display_name": "author-white-sweatpants-back",
+    "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/v1781155930/gray_sweat_1st_cgspx0.png",
+    "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/v1781155930/gray_sweat_1st_cgspx0.png",
+    "next_cursor": "ad47125ac70f3d8a7bacecf2a0cb3524274e894a672efe6d9695367490738517",
+    "derived": [
+      {
+        "transformation": "w_1400,c_scale,q_auto:best,f_auto/",
+        "transformation_signature": "045766b9-ea47-370e-bbe2-57e763d65b7d",
+        "format": "png",
+        "bytes": 163607,
+        "id": "9832ce4579a10aea0077b96ea55017a7",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155930/gray_sweat_1st_cgspx0",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto/v1781155930/gray_sweat_1st_cgspx0",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto,dpr_1.0,c_fill,w_1200/",
+        "transformation_signature": "4db2a0a5-13a1-3a11-a22e-5612b5cacd39",
+        "format": "png",
+        "bytes": 81322,
+        "id": "9d7f3a4658142a812dc5d32895f7c658",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155930/gray_sweat_1st_cgspx0",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto,dpr_1.0,c_fill,w_1200/v1781155930/gray_sweat_1st_cgspx0",
+        "extension": ""
+      },
+      {
+        "transformation": "f_auto,q_auto/",
+        "transformation_signature": "644345f9-ee34-33c1-bb3c-415aa6a7e08d",
+        "format": "png",
+        "bytes": 59456,
+        "id": "2fb15740aa2a773e0cffc3a80e6508ab",
+        "url": "http://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155930/gray_sweat_1st_cgspx0",
+        "secure_url": "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/v1781155930/gray_sweat_1st_cgspx0",
+        "extension": ""
+      }
+    ],
+    "illustration_score": 0,
+    "semi_transparent": false,
+    "grayscale": false,
+    "image_metadata": {
+      "Colorspace": "RGB",
+      "DPI": "0"
+    },
+    "colors": [
+      [
+        "#DEDEDD",
+        64.2
+      ],
+      [
+        "#C9C9C6",
+        22.8
+      ],
+      [
+        "#EDEBEC",
+        7.1
+      ],
+      [
+        "#F3F2F5",
+        2.1
+      ]
+    ],
+    "predominant": {
+      "google": [
+        [
+          "white",
+          73.5
+        ],
+        [
+          "gray",
+          22.8
+        ]
+      ],
+      "cloudinary": [
+        [
+          "white",
+          96.2
+        ]
+      ]
+    },
+    "pages": 1,
+    "etag": "6b54e716a012762cff9891a6ae454103",
+    "usage": {},
+    "original_filename": "gray sweat 1st",
+    "rate_limit_allowed": 500,
+    "rate_limit_reset_at": "2026-06-14T08:00:00.000Z",
+    "rate_limit_remaining": 465
+  }
+]

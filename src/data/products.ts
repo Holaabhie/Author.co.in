@@ -1,6 +1,6 @@
 // Product data — AUTHOR Brand
 // Architecture: static TypeScript array, sourced from src/data/products.ts
-// Launch products: Author Essential Tee, Author Sweatpants, Author Signature Top
+// Launch products: separated into Black and White variants per category
 // Archived products: isActive = false (preserved for historical data, not shown in store)
 
 export interface Product {
@@ -11,7 +11,7 @@ export interface Product {
   price: number;
   salePrice?: number;
   category: string;
-  images: string[];
+  images: { url: string; color: string }[];
   // Sizing: current launch = S/M/L; architecture supports XS/S/M/L/XL/XXL for future
   sizes: string[];
   colors: { name: string; hex: string }[];
@@ -54,29 +54,35 @@ export interface Category {
 }
 
 // ============================================================
+// Cloudinary base URL helper
+// ============================================================
+const CLD = "https://res.cloudinary.com/dpxirx0mn/image/upload/w_1400,c_scale,q_auto:best,f_auto";
+
+// ============================================================
 // LAUNCH PRODUCTS (isActive: true)
+// Each color variant is a separate product card
 // ============================================================
 
 export const products: Product[] = [
-  // ── LAUNCH PRODUCT 1: T-SHIRT ────────────────────────────
+  // ── T-SHIRTS ─────────────────────────────────────────────────
+
+  // 1. Black T-Shirt
   {
     id: "1",
-    name: "Author Essential Tee",
+    name: "AUTHOR Black T-Shirt",
     subtitle: "270 GSM Looper Lycra",
-    slug: "author-essential-tee",
+    slug: "black-tshirt",
     price: 949,
-    category: "t-shirts",
+    category: "tshirts",
+    // Image order: front image first (was swapped from back-first)
     images: [
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/tshirt_black_front",
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/tshirt_black_back",
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/tshirt_white_front",
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/tshirt_white_back",
+      { url: `${CLD}/black_t_shirt_1st_aradpv`, color: "Black" },
+      { url: `${CLD}/tshirt_2nd_ldhr3h`, color: "Black" },
+      { url: `${CLD}/DSCF5641.JPG_rz60rf`, color: "Black" },
+      { url: `${CLD}/DSCF5604.JPG_jwlpqv`, color: "Black" },
     ],
     sizes: ["S", "M", "L"],
-    colors: [
-      { name: "Black", hex: "#0A0A0A" },
-      { name: "White", hex: "#FFFFFF" },
-    ],
+    colors: [{ name: "Black", hex: "#0A0A0A" }],
     rating: 4.9,
     reviewCount: 312,
     stock: 25,
@@ -115,25 +121,81 @@ export const products: Product[] = [
     isActive: true,
   },
 
-  // ── LAUNCH PRODUCT 2: SWEATPANTS ─────────────────────────
+  // 2. White T-Shirt
   {
-    id: "2",
-    name: "Author Essential Sweatpants",
-    subtitle: "320 GSM Premium Fleece",
-    slug: "author-essential-sweatpants",
-    price: 2299,
-    category: "sweatpants",
+    id: "1b",
+    name: "AUTHOR White T-Shirt",
+    subtitle: "270 GSM Looper Lycra",
+    slug: "white-tshirt",
+    price: 949,
+    category: "tshirts",
+    // Image order: front image first (was swapped from back-first)
     images: [
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/sweatpants_black_front",
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/sweatpants_black_back",
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/sweatpants_white_front",
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/sweatpants_white_back",
+      { url: `${CLD}/white_tshirt_1_st_bbzsdu`, color: "White" },
+      { url: `${CLD}/white_t_shirt_2nd_siebfk`, color: "White" },
+      { url: `${CLD}/5e863912-1833-49b5-9c8e-b80f52e2f1bc_1_kwwi1v`, color: "White" },
+      { url: `${CLD}/IMG_7677.JPG_rrtgih`, color: "White" },
     ],
     sizes: ["S", "M", "L"],
-    colors: [
-      { name: "Black", hex: "#0A0A0A" },
-      { name: "White", hex: "#FFFFFF" },
+    colors: [{ name: "White", hex: "#FFFFFF" }],
+    rating: 4.9,
+    reviewCount: 278,
+    stock: 22,
+    badge: "new",
+    description:
+      "Premium Looper Lycra T-shirt designed for ultimate comfort and a sleek fit. Wrinkle resistant and shape retaining.",
+    fabric: "Looper Lycra",
+    gsm: "270 GSM",
+    fit: "Relax Fit",
+    neck: "Round Neck",
+    sleeve: "Half Sleeve",
+    details: [
+      "270 GSM Looper Lycra",
+      "Relax Fit",
+      "Round Neck",
+      "Half Sleeve",
+      "Wrinkle Resistant",
+      "Shape Retaining",
     ],
+    careInstructions: [
+      "Machine Wash Cold",
+      "Do Not Bleach",
+      "Line Dry In Shade",
+      "Low Heat Iron",
+      "Do Not Iron On Embroidery",
+      "Do Not Dry Clean",
+    ],
+    modelInfo: "Model is 6'0\" | Wearing Size M",
+    fabricDetails: "270 GSM Looper Lycra | Relax Fit | Round Neck | Half Sleeve",
+    deliveryEstimate: "Mumbai: 2-4 Days | India: 4-7 Days",
+    sizeChart: [
+      { size: "S", chest: "38\"", length: "27\"", shoulder: "17\"" },
+      { size: "M", chest: "40\"", length: "28\"", shoulder: "17.5\"" },
+      { size: "L", chest: "42\"", length: "29\"", shoulder: "18\"" },
+    ],
+    isActive: true,
+  },
+
+  // ── SWEATPANTS ───────────────────────────────────────────────
+
+  // 3. Black Sweatpants
+  {
+    id: "2",
+    name: "AUTHOR Black Sweatpants",
+    subtitle: "320 GSM Premium Fleece",
+    slug: "black-sweatpants",
+    price: 1399,
+    category: "sweatpants",
+    // Image order: front image first (was swapped from back-first)
+    images: [
+      { url: `${CLD}/black_1st_tvrnqs`, color: "Black" },
+      { url: `${CLD}/sweat_black_2nd_zxtogc`, color: "Black" },
+      { url: `${CLD}/author-black-sweatpants-back%201s`, color: "Black" },
+      { url: `${CLD}/author-black-sweatpants-back%202nd`, color: "Black" },
+      { url: `${CLD}/author-black-sweatpants-back%203rd`, color: "Black" },
+    ],
+    sizes: ["S", "M", "L"],
+    colors: [{ name: "Black", hex: "#0A0A0A" }],
     rating: 4.8,
     reviewCount: 204,
     stock: 18,
@@ -178,25 +240,85 @@ export const products: Product[] = [
     isActive: true,
   },
 
-  // ── LAUNCH PRODUCT 3: TOP ─────────────────────────────────
+  // 4. White Sweatpants
   {
-    id: "3",
-    name: "Author Essential Top",
-    subtitle: "320 GSM 1x1 Cotton Lycra",
-    slug: "author-essential-top",
-    price: 1199,
-    category: "tops",
+    id: "2b",
+    name: "AUTHOR White Sweatpants",
+    subtitle: "320 GSM Premium Fleece",
+    slug: "white-sweatpants",
+    price: 1399,
+    category: "sweatpants",
+    // Image order: front image first (was swapped from back-first)
     images: [
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/top_black_front",
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/top_black_back",
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/top_white_front",
-      "https://res.cloudinary.com/dpxirx0mn/image/upload/f_auto,q_auto/products/top_white_back",
+      { url: `${CLD}/gray_sweat_1st_cgspx0`, color: "White" },
+      { url: `${CLD}/gray_sweat_2nd_a1mdog`, color: "White" },
+      { url: `${CLD}/DSCF5541_plog3s`, color: "White" },
+      { url: `${CLD}/DSCF5529_etgtdf`, color: "White" },
+      { url: `${CLD}/DSCF5515_ocdsro`, color: "White" },
     ],
     sizes: ["S", "M", "L"],
-    colors: [
-      { name: "Black", hex: "#0A0A0A" },
-      { name: "White", hex: "#FFFFFF" },
+    colors: [{ name: "White", hex: "#FFFFFF" }],
+    rating: 4.8,
+    reviewCount: 186,
+    stock: 16,
+    badge: undefined,
+    description:
+      "Premium AUTHOR sweatpants with relaxed streetwear comfort.",
+    fabric: "Fleece",
+    gsm: "320 GSM",
+    features: [
+      "Unfinished Hem",
+      "Unfinished Waistband",
+      "Two Back Pockets",
+      "Logo On Right Pocket",
     ],
+    details: [
+      "320 GSM Premium Fleece",
+      "Unfinished Hem",
+      "Unfinished Waistband",
+      "Two Back Pockets",
+      "Logo On Right Pocket",
+    ],
+    careInstructions: [
+      "Machine Wash Cold",
+      "Wash Inside Out",
+      "Wash With Similar Colors",
+      "Use Mild Detergent",
+      "Do Not Bleach",
+      "Do Not Wring",
+      "Tumble Dry Low Or Line Dry",
+      "Cool Iron If Required",
+      "Do Not Iron On Embroidery",
+      "Do Not Dry Clean",
+    ],
+    modelInfo: "Model is 6'0\" | Wearing Size M",
+    fabricDetails: "320 GSM Premium Fleece | Structured Silhouette",
+    deliveryEstimate: "Mumbai: 2-4 Days | India: 4-7 Days",
+    sizeChart: [
+      { size: "S", chest: "30-31\" Waist", length: "30\" Inseam", shoulder: "39\" Outseam" },
+      { size: "M", chest: "32-33\" Waist", length: "31\" Inseam", shoulder: "40\" Outseam" },
+      { size: "L", chest: "34-35\" Waist", length: "31\" Inseam", shoulder: "41\" Outseam" },
+    ],
+    isActive: true,
+  },
+
+  // ── TOPS ─────────────────────────────────────────────────────
+
+  // 5. Black Top
+  {
+    id: "3",
+    name: "AUTHOR Black Top",
+    subtitle: "320 GSM 1x1 Cotton Lycra",
+    slug: "black-top",
+    price: 849,
+    category: "tops",
+    // Image order: front image first (was swapped from back-first)
+    images: [
+      { url: `${CLD}/top_black_1st_wgsy3e`, color: "Black" },
+      { url: `${CLD}/top_black_2nd_gegyy3`, color: "Black" },
+    ],
+    sizes: ["XS", "S", "M", "L"],
+    colors: [{ name: "Black", hex: "#0A0A0A" }],
     rating: 4.9,
     reviewCount: 124,
     stock: 22,
@@ -222,6 +344,54 @@ export const products: Product[] = [
     fabricDetails: "320 GSM 1x1 Cotton Lycra | Skin Tight Stretchable",
     deliveryEstimate: "Mumbai: 2-4 Days | India: 4-7 Days",
     sizeChart: [
+      { size: "XS", chest: "30\"", length: "17\"", shoulder: "14\"" },
+      { size: "S", chest: "32\"", length: "17.5\"", shoulder: "14.5\"" },
+      { size: "M", chest: "34\"", length: "18\"", shoulder: "15\"" },
+      { size: "L", chest: "36\"", length: "18.5\"", shoulder: "15.5\"" },
+    ],
+    isActive: true,
+  },
+
+  // 6. White Top
+  {
+    id: "3b",
+    name: "AUTHOR White Top",
+    subtitle: "320 GSM 1x1 Cotton Lycra",
+    slug: "white-top",
+    price: 849,
+    category: "tops",
+    images: [
+      { url: `${CLD}/top_1st_l0udlk`, color: "White" },
+      { url: `${CLD}/top_2nd_kxfr24`, color: "White" },
+    ],
+    sizes: ["XS", "S", "M", "L"],
+    colors: [{ name: "White", hex: "#FFFFFF" }],
+    rating: 4.9,
+    reviewCount: 98,
+    stock: 20,
+    badge: undefined,
+    description:
+      "Minimal AUTHOR top designed for a premium clean silhouette.",
+    fabric: "1x1 Cotton Lycra",
+    gsm: "320 GSM",
+    details: [
+      "320 GSM 1x1 Cotton Lycra",
+      "Skin Tight Fit",
+      "Square Neck",
+      "Premium Stretch",
+      "Sculpted Silhouette",
+    ],
+    careInstructions: [
+      "Machine Wash Cold",
+      "Do Not Bleach",
+      "Low Heat Iron",
+      "Do Not Dry Clean",
+    ],
+    modelInfo: "Model is 5'9\" | Wearing Size S",
+    fabricDetails: "320 GSM 1x1 Cotton Lycra | Skin Tight Stretchable",
+    deliveryEstimate: "Mumbai: 2-4 Days | India: 4-7 Days",
+    sizeChart: [
+      { size: "XS", chest: "30\"", length: "17\"", shoulder: "14\"" },
       { size: "S", chest: "32\"", length: "17.5\"", shoulder: "14.5\"" },
       { size: "M", chest: "34\"", length: "18\"", shoulder: "15\"" },
       { size: "L", chest: "36\"", length: "18.5\"", shoulder: "15.5\"" },
@@ -234,6 +404,73 @@ export const products: Product[] = [
   // ============================================================
 
   {
+    id: "arch-1-old",
+    name: "Author Essential Tee",
+    subtitle: "270 GSM Looper Lycra",
+    slug: "author-essential-tee",
+    price: 949,
+    category: "t-shirts",
+    images: [
+      { url: `${CLD}/tshirt_2nd_ldhr3h`, color: "Black" },
+      { url: `${CLD}/black_t_shirt_1st_aradpv`, color: "Black" },
+    ],
+    sizes: ["S", "M", "L"],
+    colors: [{ name: "Black", hex: "#0A0A0A" }],
+    rating: 4.9,
+    reviewCount: 312,
+    stock: 25,
+    badge: "new",
+    description: "Premium Looper Lycra T-shirt designed for ultimate comfort and a sleek fit.",
+    details: ["270 GSM Looper Lycra", "Relax Fit", "Round Neck", "Half Sleeve"],
+    careInstructions: ["Machine Wash Cold", "Do Not Bleach"],
+    isActive: false,
+  },
+
+  {
+    id: "arch-2-old",
+    name: "Author Essential Sweatpants",
+    subtitle: "320 GSM Premium Fleece",
+    slug: "author-essential-sweatpants",
+    price: 1399,
+    category: "sweatpants",
+    images: [
+      { url: `${CLD}/sweat_black_2nd_zxtogc`, color: "Black" },
+      { url: `${CLD}/black_1st_tvrnqs`, color: "Black" },
+    ],
+    sizes: ["S", "M", "L"],
+    colors: [{ name: "Black", hex: "#0A0A0A" }],
+    rating: 4.8,
+    reviewCount: 204,
+    stock: 18,
+    description: "Premium AUTHOR sweatpants with relaxed streetwear comfort.",
+    details: ["320 GSM Premium Fleece"],
+    careInstructions: ["Machine Wash Cold"],
+    isActive: false,
+  },
+
+  {
+    id: "arch-3-old",
+    name: "Author Essential Top",
+    subtitle: "320 GSM 1x1 Cotton Lycra",
+    slug: "author-essential-top",
+    price: 849,
+    category: "tops",
+    images: [
+      { url: `${CLD}/top_black_2nd_gegyy3`, color: "Black" },
+      { url: `${CLD}/top_black_1st_wgsy3e`, color: "Black" },
+    ],
+    sizes: ["S", "M", "L"],
+    colors: [{ name: "Black", hex: "#0A0A0A" }],
+    rating: 4.9,
+    reviewCount: 124,
+    stock: 22,
+    description: "Minimal AUTHOR top designed for a premium clean silhouette.",
+    details: ["320 GSM 1x1 Cotton Lycra"],
+    careInstructions: ["Machine Wash Cold"],
+    isActive: false,
+  },
+
+  {
     id: "arch-4",
     name: "AUTHOR SIGNATURE HOODIE",
     subtitle: "400 GSM Heavyweight Fleece",
@@ -241,8 +478,8 @@ export const products: Product[] = [
     price: 2999,
     category: "hoodies",
     images: [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80",
-      "https://images.unsplash.com/photo-1578768079470-f8e01e58e1f4?w=800&q=80",
+      { url: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80", color: "Grey" },
+      { url: "https://images.unsplash.com/photo-1578768079470-f8e01e58e1f4?w=800&q=80", color: "Black" },
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
     colors: [
@@ -267,16 +504,6 @@ export const products: Product[] = [
       "Hang dry recommended",
       "Do not iron on embroidery",
     ],
-    modelInfo: "Model is 6'0\" | Wearing Size L",
-    fabricDetails: "400 GSM Heavyduty Fleece | 80% Organic Cotton, 20% Polyester | Pre-Shrunk | Double-lined Hood",
-    deliveryEstimate: "Mumbai: 2-4 Days | India: 4-7 Days",
-    sizeChart: [
-      { size: "XS", chest: "38\"", length: "26.5\"", shoulder: "17.5\"" },
-      { size: "S", chest: "40\"", length: "27.5\"", shoulder: "18\"" },
-      { size: "M", chest: "42\"", length: "28.5\"", shoulder: "18.5\"" },
-      { size: "L", chest: "44\"", length: "29.5\"", shoulder: "19\"" },
-      { size: "XL", chest: "46\"", length: "30.5\"", shoulder: "19.5\"" },
-    ],
     isActive: false,
   },
 
@@ -288,8 +515,8 @@ export const products: Product[] = [
     price: 3999,
     category: "trousers",
     images: [
-      "https://www.fratelliarena.com/cdn/shop/files/POSATO_f271ecea-165b-44fb-9604-37fb514c8109_2048x2048.jpg?v=1776375390",
-      "https://www.fratelliarena.com/cdn/shop/files/FRONTE_43b4adcc-296b-4b12-8ccc-5dc7abca3ffd_2048x2048.jpg?v=1776375393",
+      { url: "https://www.fratelliarena.com/cdn/shop/files/POSATO_f271ecea-165b-44fb-9604-37fb514c8109_2048x2048.jpg?v=1776375390", color: "Grey" },
+      { url: "https://www.fratelliarena.com/cdn/shop/files/FRONTE_43b4adcc-296b-4b12-8ccc-5dc7abca3ffd_2048x2048.jpg?v=1776375393", color: "Grey" },
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
     colors: [
@@ -301,25 +528,12 @@ export const products: Product[] = [
     stock: 12,
     badge: "limited",
     description:
-      "Sartorial craftsmanship. Crafted from a refined summer-grade fresh wool blend, these trousers combine structured tailoring drape with modern streetwear fit.",
+      "Sartorial craftsmanship. Crafted from a refined summer-grade fresh wool blend.",
     details: [
       "Fresh Wool Tailored Blend",
       "Straight Leg Crop Fit",
-      "Concealed Waist Closure",
-      "Slant Side Pockets",
-      "Buttoned Welt Back Pockets",
     ],
-    careInstructions: ["Dry clean only", "Iron low temperature with pressing cloth"],
-    modelInfo: "Model is 6'1\" | Wearing Size M",
-    fabricDetails: "Fresh Wool Blend | 60% Merino Wool, 40% Viscose | Anti-wrinkle | Hook & eye closure",
-    deliveryEstimate: "Mumbai: 2-4 Days | India: 4-7 Days",
-    sizeChart: [
-      { size: "XS", chest: "28-29\" Waist", length: "30\" Inseam", shoulder: "38\" Outseam" },
-      { size: "S", chest: "30-31\" Waist", length: "30\" Inseam", shoulder: "39\" Outseam" },
-      { size: "M", chest: "32-33\" Waist", length: "31\" Inseam", shoulder: "40\" Outseam" },
-      { size: "L", chest: "34-35\" Waist", length: "31\" Inseam", shoulder: "41\" Outseam" },
-      { size: "XL", chest: "36-37\" Waist", length: "32\" Inseam", shoulder: "42\" Outseam" },
-    ],
+    careInstructions: ["Dry clean only"],
     isActive: false,
   },
 
@@ -331,8 +545,8 @@ export const products: Product[] = [
     price: 1499,
     category: "t-shirts",
     images: [
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80",
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80",
+      { url: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80", color: "Cream" },
+      { url: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80", color: "Black" },
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
     colors: [
@@ -343,29 +557,12 @@ export const products: Product[] = [
     reviewCount: 148,
     stock: 30,
     description:
-      "Relaxed look, robust quality. 300 GSM combed cotton French terry structure that keeps its shape. Featuring dropped shoulders and boxy silhouette.",
+      "Relaxed look, robust quality. 300 GSM combed cotton French terry structure.",
     details: [
       "300 GSM Combed Cotton",
       "Boxy Oversized Fit",
-      "Drop Shoulders",
-      "High Ribbed Neck",
-      "Bio-washed",
     ],
-    careInstructions: [
-      "Machine wash cold",
-      "Dry flat",
-      "Do not iron directly on graphics",
-    ],
-    modelInfo: "Model is 5'11\" | Wearing Size L",
-    fabricDetails: "300 GSM Heavyweight Cotton | 100% French Terry Cotton | Bio-washed | Drop shoulder fit",
-    deliveryEstimate: "Mumbai: 2-4 Days | India: 4-7 Days",
-    sizeChart: [
-      { size: "XS", chest: "38\"", length: "27\"", shoulder: "17.5\"" },
-      { size: "S", chest: "40\"", length: "28\"", shoulder: "18\"" },
-      { size: "M", chest: "42\"", length: "29\"", shoulder: "18.5\"" },
-      { size: "L", chest: "44\"", length: "30\"", shoulder: "19\"" },
-      { size: "XL", chest: "46\"", length: "31\"", shoulder: "19.5\"" },
-    ],
+    careInstructions: ["Machine wash cold", "Dry flat"],
     isActive: false,
   },
 
@@ -377,8 +574,8 @@ export const products: Product[] = [
     price: 3999,
     category: "trousers",
     images: [
-      "https://www.fratelliarena.com/cdn/shop/files/POSATO_f271ecea-165b-44fb-9604-37fb514c8109_2048x2048.jpg?v=1776375390",
-      "https://www.fratelliarena.com/cdn/shop/files/FRONTE_43b4adcc-296b-4b12-8ccc-5dc7abca3ffd_2048x2048.jpg?v=1776375393",
+      { url: "https://www.fratelliarena.com/cdn/shop/files/POSATO_f271ecea-165b-44fb-9604-37fb514c8109_2048x2048.jpg?v=1776375390", color: "Black" },
+      { url: "https://www.fratelliarena.com/cdn/shop/files/FRONTE_43b4adcc-296b-4b12-8ccc-5dc7abca3ffd_2048x2048.jpg?v=1776375393", color: "Grey" },
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
     colors: [
@@ -389,29 +586,12 @@ export const products: Product[] = [
     reviewCount: 96,
     stock: 15,
     description:
-      "Built for the pavement. Structured cuts, heavy street weight, and nothing extra. Engineered for an immaculate tailored drape with a relaxed modern street silhouette.",
+      "Built for the pavement. Structured cuts, heavy street weight, and nothing extra.",
     details: [
       "Premium heavy cotton-poly blend",
       "Relaxed tailored fit",
-      "Hidden drawcords at waistband",
-      "Slanted trouser side pockets",
-      "Reinforced triple needle stitching",
     ],
-    careInstructions: [
-      "Machine wash cold inside out",
-      "Hang dry recommended",
-      "Warm iron if needed",
-    ],
-    modelInfo: "Model is 6'1\" | Wearing Size M",
-    fabricDetails: "70% Cotton, 30% Polyester | Heavyweight Streetwear Blend | Pre-Shrunk",
-    deliveryEstimate: "Mumbai: 2-4 Days | India: 4-7 Days",
-    sizeChart: [
-      { size: "XS", chest: "28-29\" Waist", length: "30\" Inseam", shoulder: "38\" Outseam" },
-      { size: "S", chest: "30-31\" Waist", length: "30\" Inseam", shoulder: "39\" Outseam" },
-      { size: "M", chest: "32-33\" Waist", length: "31\" Inseam", shoulder: "40\" Outseam" },
-      { size: "L", chest: "34-35\" Waist", length: "31\" Inseam", shoulder: "41\" Outseam" },
-      { size: "XL", chest: "36-37\" Waist", length: "32\" Inseam", shoulder: "42\" Outseam" },
-    ],
+    careInstructions: ["Machine wash cold inside out", "Hang dry recommended"],
     isActive: false,
   },
 ];
@@ -442,21 +622,21 @@ export const categories: Category[] = [
     id: "1",
     name: "T-Shirts",
     slug: "t-shirts",
-    image: "https://www.fratelliarena.com/cdn/shop/files/FRONTE_4fa0ed50-c32c-463d-8029-fffa239d8161_2048x2048.jpg?v=1776374474",
-    productCount: 1,
+    image: `${CLD}/tshirt_2nd_ldhr3h`,
+    productCount: 2,
   },
   {
     id: "2",
     name: "Sweatpants",
     slug: "sweatpants",
-    image: "https://www.fratelliarena.com/cdn/shop/files/POSATO_f271ecea-165b-44fb-9604-37fb514c8109_2048x2048.jpg?v=1776375390",
-    productCount: 1,
+    image: `${CLD}/sweat_black_2nd_zxtogc`,
+    productCount: 2,
   },
   {
     id: "3",
     name: "Tops",
     slug: "tops",
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80",
-    productCount: 1,
+    image: `${CLD}/top_black_2nd_gegyy3`,
+    productCount: 2,
   },
 ];

@@ -94,6 +94,27 @@ function getOrderStage(status: string): number {
   return 0; // CANCELLED / REFUNDED
 }
 
+/** Resolve display image for an order item — snapshot first, then product fallback */
+function resolveItemDisplayImage(item: any): string | null {
+  if (item.imageUrl) return item.imageUrl;
+
+  const images = item.product?.images;
+  if (!images || images.length === 0) return null;
+
+  const itemColor = item.color || item.variant?.color;
+  if (itemColor) {
+    const colorMatch = images.find(
+      (img: any) => img.color && img.color.toLowerCase() === itemColor.toLowerCase()
+    );
+    if (colorMatch) return colorMatch.url;
+  }
+
+  const primary = images.find((img: any) => img.isPrimary);
+  if (primary) return primary.url;
+
+  return images[0]?.url ?? null;
+}
+
 // ─── Sidebar nav item config ─────────────────────────────────────────────────
 const tabs = [
   { id: 'profile' as AccountTab, label: 'Profile', icon: User },
@@ -309,7 +330,30 @@ export default function AccountPage() {
       console.log('[ADDRESSES] Response:', { success: json.success, count: json.data?.length });
 
       if (json.success) {
-        setAddresses(json.data || []);
+        const uniqueAddresses: any[] = [];
+        const normalizeStr = (s: string | null | undefined) => (s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+        const normalizePhoneNum = (s: string | null | undefined) => (s || '').replace(/\s+/g, '');
+
+        const isDuplicateAddress = (addr1: any, addr2: any) => {
+          return (
+            normalizeStr(addr1.fullName) === normalizeStr(addr2.fullName) &&
+            normalizePhoneNum(addr1.phone) === normalizePhoneNum(addr2.phone) &&
+            normalizeStr(addr1.line1) === normalizeStr(addr2.line1) &&
+            normalizeStr(addr1.line2) === normalizeStr(addr2.line2) &&
+            normalizeStr(addr1.city) === normalizeStr(addr2.city) &&
+            normalizeStr(addr1.state) === normalizeStr(addr2.state) &&
+            normalizePhoneNum(addr1.postalCode) === normalizePhoneNum(addr2.postalCode) &&
+            normalizeStr(addr1.country || 'India') === normalizeStr(addr2.country || 'India')
+          );
+        };
+
+        (json.data || []).forEach((addr: any) => {
+          if (!uniqueAddresses.some(u => isDuplicateAddress(u, addr))) {
+            uniqueAddresses.push(addr);
+          }
+        });
+
+        setAddresses(uniqueAddresses);
       } else {
         console.error('[ADDRESSES] API error:', json.message || json.code);
       }
@@ -1604,25 +1648,43 @@ export default function AccountPage() {
                                 <div className="acc-detail-card">
                                   <p className="acc-detail-section-head">Items Ordered</p>
                                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                                    {selectedOrder.items.map((item: any) => (
-                                      <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #1A1A1A', fontSize: '12px' }}>
-                                        <div>
-                                          <p style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F5F0E8', fontWeight: 600 }}>{item.productName}</p>
-                                          <p style={{ fontSize: '10px', color: '#555', marginTop: '3px' }}>{item.color ? `${item.color}` : ''}{item.size ? ` · Size ${item.size}` : ''}{!item.color && !item.size ? 'Base SKU' : ''}</p>
+                                    {selectedOrder.items.map((item: any) => {
+                                      const displayImage = resolveItemDisplayImage(item);
+                                      return (
+                                        <div key={item.id} style={{ display: 'flex', gap: '16px', padding: '16px 0', borderBottom: '1px solid #1A1A1A', fontSize: '12px', alignItems: 'center' }}>
+                                          <div style={{ position: 'relative', width: '56px', height: '70px', flexShrink: 0, background: '#0A0A0A', overflow: 'hidden', borderRadius: '2px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                                            {displayImage ? (
+                                              <Image
+                                                src={displayImage}
+                                                alt={item.productName}
+                                                fill
+                                                style={{ objectFit: 'cover' }}
+                                                sizes="56px"
+                                              />
+                                            ) : (
+                                              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', color: '#555', textTransform: 'uppercase', fontFamily: 'monospace' }}>
+                                                No Img
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div style={{ flex: 1, minWidth: 0 }}>
+                                            <p style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F5F0E8', fontWeight: 600, margin: 0 }} className="truncate">{item.productName}</p>
+                                            <p style={{ fontSize: '10px', color: '#555', marginTop: '4px', marginBottom: 0 }}>{item.color ? `${item.color}` : ''}{item.size ? ` · Size ${item.size}` : ''}{!item.color && !item.size ? 'Base SKU' : ''}</p>
+                                          </div>
+                                          <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                                            <p style={{ color: '#F5F0E8', fontWeight: 500, margin: 0 }}>₹{(item.totalPrice / 100).toLocaleString()}</p>
+                                            <p style={{ fontSize: '10px', color: '#555', marginTop: '4px', marginBottom: 0 }}>{item.quantity} × ₹{(item.unitPrice / 100).toLocaleString()}</p>
+                                          </div>
                                         </div>
-                                        <div style={{ textAlign: 'right' }}>
-                                          <p style={{ color: '#F5F0E8', fontWeight: 500 }}>₹{(item.totalPrice / 100).toLocaleString()}</p>
-                                          <p style={{ fontSize: '10px', color: '#555', marginTop: '3px' }}>{item.quantity} × ₹{(item.unitPrice / 100).toLocaleString()}</p>
-                                        </div>
-                                      </div>
-                                    ))}
+                                      );
+                                    })}
                                   </div>
                                   <div style={{ borderTop: '1px solid #1A1A1A', paddingTop: '16px', marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                     {[
                                       { label: 'Subtotal', val: `₹${(selectedOrder.subtotal / 100).toLocaleString()}` },
                                       selectedOrder.discount > 0 ? { label: 'Discount', val: `-₹${(selectedOrder.discount / 100).toLocaleString()}`, accent: true } : null,
-                                      { label: 'Shipping', val: `₹${(selectedOrder.shippingFee / 100).toLocaleString()}` },
-                                      { label: 'GST Tax', val: `₹${(selectedOrder.tax / 100).toLocaleString()}` },
+                                      selectedOrder.shippingFee > 0 ? { label: 'Shipping', val: `₹${(selectedOrder.shippingFee / 100).toLocaleString()}` } : null,
+                                      selectedOrder.tax > 0 ? { label: 'GST Tax', val: `₹${(selectedOrder.tax / 100).toLocaleString()}` } : null,
                                     ].filter(Boolean).map((row: any) => (
                                       <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
                                         <span style={{ color: '#666' }}>{row.label}</span>
@@ -2104,17 +2166,6 @@ export default function AccountPage() {
                           {isChangingPassword ? 'Updating...' : 'Update Password'}
                         </button>
                       </form>
-                    </div>
-
-                    {/* Danger Zone Card */}
-                    <div className="acc-card-danger">
-                      <p className="acc-danger-title">Danger Zone</p>
-                      <p className="acc-danger-desc">
-                        Permanently delete your account and all associated data. This action cannot be undone.
-                      </p>
-                      <button id="acc-delete-account-btn" className="acc-btn-danger">
-                        Delete Account
-                      </button>
                     </div>
                   </div>
                 )}

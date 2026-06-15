@@ -4,8 +4,16 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Phone, Key } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { cloudinaryImageUrl } from '@/lib/shop/catalog';
+
+// Fallback types and declarations for incomplete phone authentication to compile successfully
+type ConfirmationResult = any;
+type RecaptchaVerifier = any;
+const auth: any = typeof window !== 'undefined' ? (window as any).auth : null;
+const signInWithPhoneNumber: any = typeof window !== 'undefined' ? (window as any).signInWithPhoneNumber : null;
+const RecaptchaVerifier: any = typeof window !== 'undefined' ? (window as any).RecaptchaVerifier : null;
 
 // ── Google SVG Icon ───────────────────────────────────────────────────────────
 function GoogleIcon({ size = 18 }: { size?: number }) {
@@ -29,7 +37,7 @@ function FacebookIcon({ size = 18 }: { size?: number }) {
 }
 
 // ── Auth mode toggling ────────────────────────────────────────────────────────
-type AuthMode = 'login' | 'register';
+type AuthMode = 'login' | 'register' | 'phone';
 type PageView = 'auth' | 'check-inbox';
 
 export default function LoginPage() {
@@ -47,12 +55,21 @@ export default function LoginPage() {
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  // Phone OTP fields
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier | null>(null);
+
   // Loading states
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // Error states (inline — no toasts)
-  const [loginError, setLoginError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [inputShake, setInputShake] = useState(false);
 
   // Resend email cooldown
@@ -79,40 +96,214 @@ export default function LoginPage() {
 
   // Clear errors on any keystroke
   const clearErrors = () => {
-    setLoginError('');
+    setEmailError('');
+    setPasswordError('');
     setInputShake(false);
   };
 
-  const triggerShake = (msg: string) => {
-    setLoginError(msg);
+  const triggerEmailError = (msg: string) => {
+    setEmailError(msg);
     setInputShake(true);
     setTimeout(() => setInputShake(false), 500);
+  };
+
+  const triggerPasswordError = (msg: string) => {
+    setPasswordError(msg);
+    setInputShake(true);
+    setTimeout(() => setInputShake(false), 500);
+  };
+
+  // Cleanup recaptcha verifier on unmount
+  useEffect(() => {
+    return () => {
+      if (recaptchaVerifier) {
+        try {
+          recaptchaVerifier.clear();
+        } catch (err) {
+          // Ignore
+        }
+      }
+    };
+  }, [recaptchaVerifier]);
+
+  const setupRecaptcha = () => {
+    if (typeof window === 'undefined' || !auth) return null;
+    if (recaptchaVerifier) return recaptchaVerifier;
+
+    try {
+      const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: () => {
+          console.log('reCAPTCHA solved');
+        },
+        'expired-callback': () => {
+          console.log('reCAPTCHA expired');
+        }
+      });
+      setRecaptchaVerifier(verifier);
+      return verifier;
+    } catch (err) {
+      console.error('reCAPTCHA initialization error:', err);
+      return null;
+    }
+  };
+
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    clearErrors();
+
+    if (!phoneNumber) {
+      triggerEmailError('Phone number required');
+      return;
+    }
+
+    const cleanNum = phoneNumber.replace(/\D/g, '');
+    if (cleanNum.length !== 10) {
+      triggerEmailError('Enter a valid 10-digit number');
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      if (!auth) throw new Error('Firebase Auth is not initialized');
+
+      let verifier = recaptchaVerifier;
+      if (!verifier) {
+        verifier = setupRecaptcha();
+      }
+      if (!verifier) {
+        throw new Error('reCAPTCHA verifier failed to initialize. Please retry.');
+      }
+
+      const formattedPhone = `+91${cleanNum}`;
+      const result = await signInWithPhoneNumber(auth, formattedPhone, verifier);
+      setConfirmationResult(result);
+      setOtpSent(true);
+    } catch (error: any) {
+      console.error('Error sending OTP:', error);
+      triggerEmailError(error.message || 'Failed to send code. Please try again.');
+      if (recaptchaVerifier) {
+        try {
+          recaptchaVerifier.clear();
+        } catch { }
+        setRecaptchaVerifier(null);
+      }
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    clearErrors();
+
+    if (!verificationCode) {
+      triggerPasswordError('Verification code required');
+      return;
+    }
+
+    if (verificationCode.length !== 6) {
+      triggerPasswordError('Verification code must be 6 digits');
+      return;
+    }
+
+    if (!confirmationResult) {
+      triggerPasswordError('No active verification code request. Please request code first.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const userCredential = await confirmationResult.confirm(verificationCode);
+      const firebaseUser = userCredential.user;
+      const idToken = await firebaseUser.getIdToken();
+
+      const res = await fetch('/api/auth/firebase-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+
+      const resJson = await res.json();
+      if (!res.ok || !resJson.success) {
+        throw new Error(resJson.error?.message || 'Failed to authenticate user on server.');
+      }
+
+      const { email: supabaseEmail, password: supabasePassword } = resJson.data;
+
+      const { error: supabaseError, data: authData } = await supabase.auth.signInWithPassword({
+        email: supabaseEmail,
+        password: supabasePassword,
+      });
+
+      if (supabaseError) {
+        throw new Error(supabaseError.message);
+      }
+
+      if (authData.user) {
+        const storedReturnTo = sessionStorage.getItem('returnTo') || returnTo;
+        sessionStorage.removeItem('returnTo');
+        const target = isSafeRedirect(storedReturnTo) ? storedReturnTo : '/';
+
+        router.refresh();
+        setTimeout(() => {
+          router.push(target);
+        }, 150);
+      }
+    } catch (error: any) {
+      console.error('Error verifying OTP:', error);
+      triggerPasswordError(error.message || 'Verification failed. Please check the code.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     clearErrors();
 
-    if (password.length < 8) {
-      triggerShake('Password must be at least 8 characters.');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      triggerEmailError('Please enter a valid email address');
+      return;
+    }
+    if (!password) {
+      triggerPasswordError('Please enter your password');
+      return;
+    }
+    if (mode === 'login' && password.length < 8) {
+      triggerPasswordError('Incorrect email or password');
+      return;
+    }
+    if (mode === 'register' && password.length < 8) {
+      triggerPasswordError('Password must be at least 8 characters');
       return;
     }
 
     setIsLoading(true);
     try {
       if (mode === 'login') {
-        const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+        const { error, data } = await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
         if (error) {
-          triggerShake(
-            error.message === 'Invalid login credentials'
-              ? 'Incorrect email or password.'
-              : error.message
-          );
+          const msg = error.message?.toLowerCase() || '';
+          if (
+            msg.includes('invalid login credentials') ||
+            msg.includes('invalid credentials') ||
+            msg.includes('email not confirmed') ||
+            msg.includes('user not found')
+          ) {
+            triggerPasswordError('Incorrect email or password');
+          } else {
+            triggerPasswordError('Something went wrong. Please try again.');
+          }
         } else if (data.user) {
           const storedReturnTo = sessionStorage.getItem('returnTo') || returnTo;
           sessionStorage.removeItem('returnTo');
           const target = isSafeRedirect(storedReturnTo) ? storedReturnTo : '/';
-          
+
           console.log("returnTo", storedReturnTo);
           console.log("auth success");
           console.log("redirecting to", target);
@@ -133,11 +324,14 @@ export default function LoginPage() {
           },
         });
         if (error) {
-          triggerShake(
-            error.message.includes('already registered')
-              ? 'An account with this email already exists.'
-              : error.message
-          );
+          const errMsg = error.message;
+          if (errMsg.includes('already registered')) {
+            triggerEmailError('An account with this email already exists.');
+          } else if (errMsg.toLowerCase().includes('password')) {
+            triggerPasswordError(errMsg);
+          } else {
+            triggerEmailError(errMsg);
+          }
         } else if (data.user) {
           // Move to "Check Your Inbox" screen
           setView('check-inbox');
@@ -145,7 +339,7 @@ export default function LoginPage() {
         }
       }
     } catch {
-      triggerShake('Something went wrong. Please try again.');
+      triggerPasswordError('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -178,14 +372,15 @@ export default function LoginPage() {
       },
     });
     if (error) {
-      triggerShake('Failed to sign in with Google.');
+      triggerPasswordError('Failed to sign in with Google.');
       setIsGoogleLoading(false);
     }
   };
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         /* ── Shake Animation ──────────────────────────────────────── */
         @keyframes shake {
           0%   { transform: translateX(0); }
@@ -298,7 +493,7 @@ export default function LoginPage() {
           margin-bottom: 6px;
         }
         .lp-tagline-main {
-          font-family: 'Barlow Condensed', sans-serif;
+          font-family: var(--font-archivo-black), sans-serif;
           font-size: clamp(38px, 5vw, 52px);
           font-weight: 700;
           color: #F5F0E8;
@@ -334,31 +529,32 @@ export default function LoginPage() {
 
         /* ── Section label ──────────────────────────────────────── */
         .lp-est-label {
-          font-family: 'Barlow Condensed', sans-serif;
-          font-size: 10px;
-          letter-spacing: 0.4em;
+          font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+          font-size: 12px;
+          letter-spacing: 0.35em;
           color: #B8A07A;
           text-transform: uppercase;
-          font-weight: 500;
+          font-weight: 300;
+          opacity: 0.75;
           display: block;
-          margin-bottom: 18px;
+          margin-bottom: 10px;
         }
 
         /* ── Heading ───────────────────────────────────────────── */
         .lp-heading {
-          font-family: 'Barlow Condensed', sans-serif;
+          font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
           font-size: 28px;
           font-weight: 700;
           color: #F5F0E8;
           text-transform: uppercase;
-          letter-spacing: 0.04em;
+          letter-spacing: 0.02em;
           line-height: 1.1;
-          margin: 0 0 28px 0;
+          margin: 0 0 20px 0;
         }
 
         /* ── Sub text ──────────────────────────────────────────── */
         .lp-sub {
-          font-family: 'Inter', sans-serif;
+          font-family: var(--font-inter), 'Inter', sans-serif;
           font-size: 13px;
           font-weight: 300;
           color: #666;
@@ -369,7 +565,7 @@ export default function LoginPage() {
         /* ── Mode tabs ─────────────────────────────────────────── */
         .lp-mode-tabs {
           display: flex;
-          margin-bottom: 28px;
+          margin-bottom: 20px;
           border-bottom: 1px solid #1E1E1E;
         }
         .lp-mode-tab {
@@ -377,7 +573,7 @@ export default function LoginPage() {
           background: none;
           border: none;
           padding: 10px 0 12px;
-          font-family: 'Barlow Condensed', sans-serif;
+          font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
           font-size: 12px;
           letter-spacing: 0.2em;
           text-transform: uppercase;
@@ -395,11 +591,11 @@ export default function LoginPage() {
 
         /* ── Form fields ───────────────────────────────────────── */
         .lp-field {
-          margin-bottom: 14px;
+          margin-bottom: 18px;
         }
         .lp-label {
           display: block;
-          font-family: 'Barlow Condensed', sans-serif;
+          font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
           font-size: 10px;
           letter-spacing: 0.22em;
           text-transform: uppercase;
@@ -409,11 +605,12 @@ export default function LoginPage() {
         }
         .lp-input {
           width: 100%;
+          height: 56px;
           background: #0F0F0F;
           border: 1px solid #2A2A2A;
           border-radius: 0;
-          padding: 13px 16px;
-          font-family: 'Inter', sans-serif;
+          padding: 0 16px;
+          font-family: var(--font-inter), 'Inter', sans-serif;
           font-size: 16px; /* Prevents auto-zoom on mobile iOS */
           font-weight: 300;
           color: #F5F0E8;
@@ -641,6 +838,9 @@ export default function LoginPage() {
             height: 40vh;
             min-height: 260px;
           }
+          .lp-photo {
+            object-position: center center;
+          }
           .lp-right {
             width: 100%;
             border-left: none;
@@ -681,7 +881,7 @@ export default function LoginPage() {
         <div className="lp-left">
           {/* Brand photo */}
           <img
-            src="/hero-bg.png"
+            src={cloudinaryImageUrl("DSCF5699.JPG_jrf74z", 1920)}
             alt="AUTHOR — Streetwear"
             className="lp-photo"
           />
@@ -734,110 +934,253 @@ export default function LoginPage() {
                     Sign In
                   </button>
                   <button
+                    id="lp-tab-phone"
+                    role="tab"
+                    aria-selected={mode === 'phone'}
+                    className={`lp-mode-tab${mode === 'phone' ? ' active' : ''}`}
+                    onClick={() => { setMode('phone'); clearErrors(); }}
+                  >
+                    Phone
+                  </button>
+                  <button
                     id="lp-tab-register"
                     role="tab"
                     aria-selected={mode === 'register'}
                     className={`lp-mode-tab${mode === 'register' ? ' active' : ''}`}
                     onClick={() => { setMode('register'); clearErrors(); }}
                   >
-                    Create Account
+                    Register
                   </button>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleEmailAuth} noValidate>
+                {mode === 'phone' ? (
+                  <form onSubmit={otpSent ? handleVerifyOtp : handleSendOtp} noValidate>
 
-                  {/* Name field — only on register */}
-                  {mode === 'register' && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.22 }}
-                      className="lp-field"
-                    >
-                      <label htmlFor="lp-name" className="lp-label">Full Name</label>
-                      <input
-                        id="lp-name"
-                        type="text"
-                        value={name}
-                        onChange={(e) => { setName(e.target.value); clearErrors(); }}
-                        required={mode === 'register'}
-                        autoComplete="name"
-                        placeholder="Your name"
-                        className="lp-input"
-                      />
-                    </motion.div>
-                  )}
+                    {!otpSent ? (
+                      <>
+                        {/* Phone Number Input */}
+                        <div className="lp-field">
+                          <label htmlFor="lp-phone" className="lp-label">Phone Number</label>
+                          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                            <span style={{
+                              position: 'absolute',
+                              left: '16px',
+                              fontFamily: "var(--font-inter), 'Inter', sans-serif",
+                              fontSize: '14px',
+                              color: '#B8A07A',
+                              opacity: 0.85
+                            }}>
+                              +91
+                            </span>
+                            <input
+                              id="lp-phone"
+                              type="tel"
+                              value={phoneNumber}
+                              onChange={(e) => {
+                                setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10));
+                                clearErrors();
+                              }}
+                              required
+                              placeholder="Enter 10-digit number"
+                              className={`lp-input${inputShake && emailError ? ' input-error' : ''}`}
+                              style={{ paddingLeft: '52px' }}
+                            />
+                          </div>
+                          {emailError && (
+                            <div className="lp-inline-error">
+                              <span className="lp-inline-error-dot" />
+                              <span className="lp-inline-error-text">{emailError}</span>
+                            </div>
+                          )}
+                        </div>
 
-                  {/* Email */}
-                  <div className="lp-field">
-                    <label htmlFor="lp-email" className="lp-label">Email Address</label>
-                    <input
-                      id="lp-email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => { setEmail(e.target.value); clearErrors(); }}
-                      required
-                      autoComplete="email"
-                      placeholder="you@example.com"
-                      className={`lp-input${inputShake ? ' input-error' : ''}`}
-                    />
-                    {/* Inline error message */}
-                    {loginError && (
-                      <div className="lp-inline-error">
-                        <span className="lp-inline-error-dot" />
-                        <span className="lp-inline-error-text">{loginError}</span>
-                      </div>
+                        {/* Send OTP button */}
+                        <button
+                          id="lp-send-otp-btn"
+                          type="submit"
+                          disabled={otpLoading || phoneNumber.length !== 10}
+                          className="lp-btn-primary"
+                        >
+                          {otpLoading ? (
+                            <Loader2 style={{ width: '16px', height: '16px' }} className="animate-spin" />
+                          ) : (
+                            <>
+                              <Phone style={{ width: '14px', height: '14px' }} />
+                              Send Code
+                            </>
+                          )}
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {/* OTP Verification Input */}
+                        <div className="lp-field">
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                            <label htmlFor="lp-otp" className="lp-label" style={{ margin: 0 }}>Verification Code</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOtpSent(false);
+                                setVerificationCode('');
+                                setConfirmationResult(null);
+                                clearErrors();
+                              }}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                color: '#B8A07A',
+                                fontFamily: "var(--font-inter), 'Inter', sans-serif",
+                                fontSize: '11px',
+                                textDecoration: 'underline',
+                                padding: 0
+                              }}
+                            >
+                              Change number
+                            </button>
+                          </div>
+                          <input
+                            id="lp-otp"
+                            type="text"
+                            value={verificationCode}
+                            onChange={(e) => {
+                              setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6));
+                              clearErrors();
+                            }}
+                            required
+                            placeholder="Enter 6-digit Code"
+                            className={`lp-input${inputShake && passwordError ? ' input-error' : ''}`}
+                          />
+                          {passwordError && (
+                            <div className="lp-inline-error">
+                              <span className="lp-inline-error-dot" />
+                              <span className="lp-inline-error-text">{passwordError}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Verify button */}
+                        <button
+                          id="lp-verify-otp-btn"
+                          type="submit"
+                          disabled={isLoading || verificationCode.length !== 6}
+                          className="lp-btn-primary"
+                        >
+                          {isLoading ? (
+                            <Loader2 style={{ width: '16px', height: '16px' }} className="animate-spin" />
+                          ) : (
+                            <>
+                              <Key style={{ width: '14px', height: '14px' }} />
+                              Verify & Sign In
+                            </>
+                          )}
+                        </button>
+                      </>
                     )}
-                  </div>
+                  </form>
+                ) : (
+                  <form onSubmit={handleEmailAuth} noValidate>
 
-                  {/* Password */}
-                  <div className="lp-field">
-                    <label htmlFor="lp-password" className="lp-label">Password</label>
-                    <div className="lp-input-password-wrap">
-                      <input
-                        id="lp-password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={(e) => { setPassword(e.target.value); clearErrors(); }}
-                        required
-                        autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-                        placeholder="Min 8 characters"
-                        className={`lp-input${inputShake ? ' input-error' : ''}`}
-                      />
-                      <button
-                        type="button"
-                        className="lp-eye-btn"
-                        onClick={() => setShowPassword(!showPassword)}
-                        aria-label="Toggle password visibility"
+                    {/* Name field — only on register */}
+                    {mode === 'register' && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.22 }}
+                        className="lp-field"
                       >
-                        {showPassword
-                          ? <EyeOff style={{ width: '16px', height: '16px' }} strokeWidth={1.5} />
-                          : <Eye style={{ width: '16px', height: '16px' }} strokeWidth={1.5} />
-                        }
-                      </button>
-                    </div>
-                    {mode === 'login' && (
-                      <Link href="/reset-password" className="lp-forgot">
-                        Forgot password?
-                      </Link>
+                        <label htmlFor="lp-name" className="lp-label">Full Name</label>
+                        <input
+                          id="lp-name"
+                          type="text"
+                          value={name}
+                          onChange={(e) => { setName(e.target.value); clearErrors(); }}
+                          required={mode === 'register'}
+                          autoComplete="name"
+                          placeholder="Your name"
+                          className="lp-input"
+                        />
+                      </motion.div>
                     )}
-                  </div>
 
-                  {/* CTA */}
-                  <button
-                    id="lp-submit-btn"
-                    type="submit"
-                    disabled={isLoading || !email || !password || (mode === 'register' && !name)}
-                    className="lp-btn-primary"
-                  >
-                    {isLoading
-                      ? <Loader2 style={{ width: '16px', height: '16px' }} className="animate-spin" />
-                      : mode === 'login' ? 'Continue' : 'Create Account'
-                    }
-                  </button>
-                </form>
+                    {/* Email */}
+                    <div className="lp-field">
+                      <label htmlFor="lp-email" className="lp-label">Email Address</label>
+                      <input
+                        id="lp-email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => { setEmail(e.target.value); clearErrors(); }}
+                        required
+                        autoComplete="email"
+                        placeholder="you@example.com"
+                        className={`lp-input${inputShake && emailError ? ' input-error' : ''}`}
+                      />
+                      {/* Inline error message */}
+                      {emailError && (
+                        <div className="lp-inline-error">
+                          <span className="lp-inline-error-dot" />
+                          <span className="lp-inline-error-text">{emailError}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Password */}
+                    <div className="lp-field">
+                      <label htmlFor="lp-password" className="lp-label">Password</label>
+                      <div className="lp-input-password-wrap">
+                        <input
+                          id="lp-password"
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          onChange={(e) => { setPassword(e.target.value); clearErrors(); }}
+                          required
+                          autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                          placeholder="Min 8 characters"
+                          className={`lp-input${inputShake && passwordError ? ' input-error' : ''}`}
+                        />
+                        <button
+                          type="button"
+                          className="lp-eye-btn"
+                          onClick={() => setShowPassword(!showPassword)}
+                          aria-label="Toggle password visibility"
+                        >
+                          {showPassword
+                            ? <EyeOff style={{ width: '16px', height: '16px' }} strokeWidth={1.5} />
+                            : <Eye style={{ width: '16px', height: '16px' }} strokeWidth={1.5} />
+                          }
+                        </button>
+                      </div>
+                      {/* Inline error message */}
+                      {passwordError && (
+                        <div className="lp-inline-error">
+                          <span className="lp-inline-error-dot" />
+                          <span className="lp-inline-error-text">{passwordError}</span>
+                        </div>
+                      )}
+                      {mode === 'login' && (
+                        <Link href="/reset-password" className="lp-forgot">
+                          Forgot password?
+                        </Link>
+                      )}
+                    </div>
+
+                    {/* CTA */}
+                    <button
+                      id="lp-submit-btn"
+                      type="submit"
+                      disabled={isLoading || !email || !password || (mode === 'register' && !name)}
+                      className="lp-btn-primary"
+                    >
+                      {isLoading
+                        ? <Loader2 style={{ width: '16px', height: '16px' }} className="animate-spin" />
+                        : mode === 'login' ? 'Continue' : 'Create Account'
+                      }
+                    </button>
+                  </form>
+                )}
 
                 {/* OR Divider */}
                 <div className="lp-divider">
@@ -883,10 +1226,15 @@ export default function LoginPage() {
                   {' '}and{' '}
                   <Link href="/privacy">Privacy Policy</Link>.
                   <br />
-                  {mode === 'login'
-                    ? <>No account? <button type="button" onClick={() => { setMode('register'); clearErrors(); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#B8A07A', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}>Create one →</button></>
-                    : <>Have an account? <button type="button" onClick={() => { setMode('login'); clearErrors(); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#B8A07A', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}>Sign in →</button></>
-                  }
+                  {mode === 'login' && (
+                    <>No account? <button type="button" onClick={() => { setMode('register'); clearErrors(); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#B8A07A', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}>Create one →</button></>
+                  )}
+                  {mode === 'phone' && (
+                    <>Use email instead? <button type="button" onClick={() => { setMode('login'); clearErrors(); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#B8A07A', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}>Sign in →</button></>
+                  )}
+                  {mode === 'register' && (
+                    <>Have an account? <button type="button" onClick={() => { setMode('login'); clearErrors(); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#B8A07A', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}>Sign in →</button></>
+                  )}
                 </p>
               </motion.div>
             ) : (
@@ -989,6 +1337,9 @@ export default function LoginPage() {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Global Invisible ReCAPTCHA Container for Firebase OTP */}
+        <div id="recaptcha-container" />
 
       </div>
     </>

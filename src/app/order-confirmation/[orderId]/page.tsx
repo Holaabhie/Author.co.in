@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, MapPin, Package, Calendar, ArrowRight } from "lucide-react";
+import { MapPin, Package, Calendar, ArrowRight } from "lucide-react";
+import { AuthorLoader } from "@/components/ui/AuthorLoader";
 
 interface OrderItem {
   id: string;
@@ -107,14 +108,7 @@ export default function OrderConfirmationPage() {
   }, [orderId]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] text-white">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-[#C8956C] mx-auto mb-4" />
-          <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-400">Loading Confirmation...</p>
-        </div>
-      </div>
-    );
+    return <AuthorLoader fullscreen />;
   }
 
   if (error || !order) {
@@ -156,9 +150,9 @@ export default function OrderConfirmationPage() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.85, duration: 0.3 }}
-            className="text-[10px] uppercase tracking-[0.4em] text-[#C8956C] font-semibold mb-2"
+            className="text-[10px] uppercase tracking-[0.4em] text-[#C8956C] font-bold mb-2"
           >
-            Order Confirmed 🎉
+            Order Confirmed
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 6 }}
@@ -239,30 +233,15 @@ export default function OrderConfirmationPage() {
 
           {/* Totals Summary */}
           <div className="pt-4 border-t border-neutral-800/60 space-y-2 text-xs">
-            <div className="flex justify-between text-neutral-400">
-              <span>Subtotal</span>
-              <span>₹{(order.subtotal / 100).toLocaleString("en-IN")}</span>
-            </div>
-            <div className="flex justify-between text-neutral-400">
-              <span>GST (18%)</span>
-              <span>₹{(order.tax / 100).toLocaleString("en-IN")}</span>
-            </div>
-            <div className="flex justify-between text-neutral-400">
-              <span>Shipping</span>
-              <span>
-                {order.shippingFee === 0 ? (
-                  <span className="text-neutral-500 uppercase tracking-widest text-[10px]">Complimentary</span>
-                ) : (
-                  `₹${(order.shippingFee / 100).toLocaleString("en-IN")}`
-                )}
-              </span>
-            </div>
-            <div className="flex justify-between items-baseline pt-3 border-t border-neutral-800/60 text-sm">
+            <div className="flex justify-between items-baseline pt-3 text-sm">
               <span className="uppercase tracking-wider font-semibold">Total Paid</span>
               <span className="text-base text-[#C8956C] font-bold">
                 ₹{(order.total / 100).toLocaleString("en-IN")}
               </span>
             </div>
+            <p className="text-[9px] uppercase tracking-wider text-neutral-500 text-right mt-1">
+              Inclusive of all charges.
+            </p>
           </div>
         </motion.div>
 

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Package, MapPin } from 'lucide-react';
+import { AuthorLoader } from '@/components/ui/AuthorLoader';
 
 interface OrderResult {
   orderId: string;
@@ -108,11 +109,7 @@ export default function CheckoutSuccessPage() {
   };
 
   if (loading) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0A0A0A' }}>
-        <Loader2 style={{ width: '20px', height: '20px', color: '#C8956C' }} className="animate-spin" />
-      </div>
-    );
+    return <AuthorLoader fullscreen />;
   }
 
   const estimatedDelivery = getEstimatedDelivery();
@@ -191,7 +188,7 @@ export default function CheckoutSuccessPage() {
           text-transform: uppercase;
           color: #B8A07A;
           font-family: var(--font-jost), 'Jost', sans-serif;
-          font-weight: 500;
+          font-weight: 700;
           margin-bottom: 10px;
           display: block;
         }

@@ -52,14 +52,14 @@ const IMAGE_MAPPINGS: Array<{
   // ── AUTHOR ESSENTIAL TEE — Black (2 images) ──
   {
     productSlug: "author-essential-tee",
-    publicId: "products/tshirt_black_front",
+    publicId: "tshirt_2nd_ldhr3h",
     color: "Black",
     sortOrder: 0,
     alt: "Author Essential Tee Black Front",
   },
   {
     productSlug: "author-essential-tee",
-    publicId: "products/tshirt_black_back",
+    publicId: "black_t_shirt_1st_aradpv",
     color: "Black",
     sortOrder: 1,
     alt: "Author Essential Tee Black Back",
@@ -68,14 +68,14 @@ const IMAGE_MAPPINGS: Array<{
   // ── AUTHOR ESSENTIAL TEE — White (2 images) ──
   {
     productSlug: "author-essential-tee",
-    publicId: "products/tshirt_white_front",
+    publicId: "white_t_shirt_2nd_siebfk",
     color: "White",
     sortOrder: 0,
     alt: "Author Essential Tee White Front",
   },
   {
     productSlug: "author-essential-tee",
-    publicId: "products/tshirt_white_back",
+    publicId: "white_tshirt_1_st_bbzsdu",
     color: "White",
     sortOrder: 1,
     alt: "Author Essential Tee White Back",
@@ -84,14 +84,14 @@ const IMAGE_MAPPINGS: Array<{
   // ── AUTHOR ESSENTIAL TOP — Black (2 images) ──
   {
     productSlug: "author-essential-top",
-    publicId: "products/top_black_front",
+    publicId: "top_black_2nd_gegyy3",
     color: "Black",
     sortOrder: 0,
     alt: "Author Essential Top Black Front",
   },
   {
     productSlug: "author-essential-top",
-    publicId: "products/top_black_back",
+    publicId: "top_black_1st_wgsy3e",
     color: "Black",
     sortOrder: 1,
     alt: "Author Essential Top Black Back",
@@ -100,14 +100,14 @@ const IMAGE_MAPPINGS: Array<{
   // ── AUTHOR ESSENTIAL TOP — White (2 images) ──
   {
     productSlug: "author-essential-top",
-    publicId: "products/top_white_front",
+    publicId: "top_1st_l0udlk",
     color: "White",
     sortOrder: 0,
     alt: "Author Essential Top White Front",
   },
   {
     productSlug: "author-essential-top",
-    publicId: "products/top_white_back",
+    publicId: "top_2nd_kxfr24",
     color: "White",
     sortOrder: 1,
     alt: "Author Essential Top White Back",
@@ -116,75 +116,75 @@ const IMAGE_MAPPINGS: Array<{
   // ── AUTHOR ESSENTIAL SWEATPANTS — Black (5 images) ──
   {
     productSlug: "author-essential-sweatpants",
-    publicId: "products/sweatpants_black_front",
+    publicId: "sweat_black_2nd_zxtogc",
     color: "Black",
     sortOrder: 0,
     alt: "Author Sweatpants Black Front",
   },
   {
     productSlug: "author-essential-sweatpants",
-    publicId: "products/sweatpants_black_back",
+    publicId: "black_1st_tvrnqs",
     color: "Black",
     sortOrder: 1,
     alt: "Author Sweatpants Black Back",
   },
   {
     productSlug: "author-essential-sweatpants",
-    publicId: "products/sweatpants_black_1st",
+    publicId: "DSCF5576_bgms0v",
     color: "Black",
     sortOrder: 2,
     alt: "Author Sweatpants Black Side",
   },
   {
     productSlug: "author-essential-sweatpants",
-    publicId: "products/sweatpants_black_2nd",
+    publicId: "DSCF5622_e7xihx",
     color: "Black",
     sortOrder: 3,
     alt: "Author Sweatpants Black Detail",
   },
   {
     productSlug: "author-essential-sweatpants",
-    publicId: "products/sweatpants_black_3rd",
+    publicId: "DSCF5582_nycf50",
     color: "Black",
     sortOrder: 4,
     alt: "Author Sweatpants Black Full",
   },
 
-  // ── AUTHOR ESSENTIAL SWEATPANTS — White (5 images) ──
+  // ── AUTHOR ESSENTIAL SWEATPANTS — Grey (5 images) ──
   {
     productSlug: "author-essential-sweatpants",
-    publicId: "products/sweatpants_white_front",
-    color: "White",
+    publicId: "gray_sweat_2nd_a1mdog",
+    color: "Grey",
     sortOrder: 0,
-    alt: "Author Sweatpants White Front",
+    alt: "Author Sweatpants Grey Front",
   },
   {
     productSlug: "author-essential-sweatpants",
-    publicId: "products/sweatpants_white_back",
-    color: "White",
+    publicId: "gray_sweat_1st_cgspx0",
+    color: "Grey",
     sortOrder: 1,
-    alt: "Author Sweatpants White Back",
+    alt: "Author Sweatpants Grey Back",
   },
   {
     productSlug: "author-essential-sweatpants",
-    publicId: "products/sweatpants_white_1st",
-    color: "White",
+    publicId: "DSCF5541_plog3s",
+    color: "Grey",
     sortOrder: 2,
-    alt: "Author Sweatpants White Side",
+    alt: "Author Sweatpants Grey Side",
   },
   {
     productSlug: "author-essential-sweatpants",
-    publicId: "products/sweatpants_white_2nd",
-    color: "White",
+    publicId: "DSCF5529_etgtdf",
+    color: "Grey",
     sortOrder: 3,
-    alt: "Author Sweatpants White Detail",
+    alt: "Author Sweatpants Grey Detail",
   },
   {
     productSlug: "author-essential-sweatpants",
-    publicId: "products/sweatpants_white_3rd",
-    color: "White",
+    publicId: "DSCF5515_ocdsro",
+    color: "Grey",
     sortOrder: 4,
-    alt: "Author Sweatpants White Full",
+    alt: "Author Sweatpants Grey Full",
   },
 ];
 

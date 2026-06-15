@@ -740,40 +740,19 @@ export default function CheckoutPage() {
                 </h3>
 
                 <div className="space-y-4 text-sm">
-                  <div className="flex justify-between text-black/70">
-                    <span>Subtotal ({items.length} items)</span>
-                    <span className="text-black font-semibold">₹{subtotal.toLocaleString()}</span>
+                  <div className="flex justify-between text-lg">
+                    <span className="font-medium">Total</span>
+                    <span className="font-bold text-[#C8956C]">₹{total.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-black/70">
-                    <span>GST (18%)</span>
-                    <span className="text-black font-semibold">₹{tax.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-black/70">
-                    <span>Shipping</span>
-                    <span>
-                      {shippingCost === 0 ? (
-                        <span className="text-green-600 font-bold label-uppercase">FREE</span>
-                      ) : (
-                        <span className="text-black font-semibold">₹{shippingCost.toLocaleString()}</span>
-                      )}
-                    </span>
-                  </div>
-                  <div className="border-t border-black/10 pt-5 mt-6">
-                    <div className="flex justify-between text-lg">
-                      <span className="font-medium">Total</span>
-                      <span className="font-bold text-[#C8956C]">₹{total.toLocaleString()}</span>
-                    </div>
-                  </div>
+                  <p className="text-[10px] uppercase tracking-wider text-black/60 text-right mt-2 border-t border-black/10 pt-4">
+                    Inclusive of all charges.
+                  </p>
                 </div>
 
                 <div className="mt-8 space-y-3 pt-6 border-t border-black/10 text-[10px] text-black/60 label-uppercase">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="w-4 h-4 text-green-600" />
                     <span>Secure 256-bit SSL encryption</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Truck className="w-4 h-4 text-black" />
-                    <span>Free shipping on orders above ₹4,000</span>
                   </div>
                 </div>
               </div>

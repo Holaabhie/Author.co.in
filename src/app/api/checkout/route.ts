@@ -28,6 +28,10 @@ export async function POST(request: Request) {
           name: true,
           slug: true,
           isActive: true,
+          images: {
+            select: { url: true, color: true, isPrimary: true },
+            orderBy: { sortOrder: 'asc' as const },
+          },
         },
       },
     };
@@ -85,6 +89,10 @@ export async function POST(request: Request) {
               name: true,
               slug: true,
               isActive: true,
+              images: {
+                select: { url: true, color: true, isPrimary: true },
+                orderBy: { sortOrder: 'asc' as const },
+              },
             },
           },
           variant: {
@@ -129,6 +137,29 @@ export async function POST(request: Request) {
     const productIds = cartItems.map((item) => item.productId);
     const priceMap = await resolvePrices(productIds);
 
+    // Helper: resolve best image for an order item based on variant color
+    const resolveItemImage = (item: typeof cartItems[0]): string | null => {
+      const images = (item.product as any).images as { url: string; color: string | null; isPrimary: boolean }[] | undefined;
+      if (!images || images.length === 0) return null;
+
+      const variantColor = item.variant?.color ?? null;
+
+      // Priority 1: Image matching the selected variant/color
+      if (variantColor) {
+        const colorMatch = images.find(
+          (img) => img.color && img.color.toLowerCase() === variantColor.toLowerCase()
+        );
+        if (colorMatch) return colorMatch.url;
+      }
+
+      // Priority 2: Primary image
+      const primary = images.find((img) => img.isPrimary);
+      if (primary) return primary.url;
+
+      // Priority 3: First available image
+      return images[0]?.url ?? null;
+    };
+
     // Calculate totals (all in paise)
     let subtotal = 0;
     const lineItems = cartItems.map((item) => {
@@ -147,19 +178,14 @@ export async function POST(request: Request) {
         quantity: item.quantity,
         unitPrice: resolved.finalPrice,
         totalPrice: lineTotal,
+        imageUrl: resolveItemImage(item),
       };
     });
 
-    // Shipping fee calculation (free above ₹4000 = 400000 paise)
-    const FREE_SHIPPING_THRESHOLD = 400000; // ₹4000 in paise
-    const STANDARD_SHIPPING = 9900; // ₹99 in paise
-    const shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING;
-
-    // Tax calculation (18% GST — will be split to CGST/SGST or IGST in invoice)
-    const taxRate = 0.18;
-    const tax = Math.round(subtotal * taxRate);
-
-    const total = subtotal + shippingFee + tax;
+    // Shipping fee and tax are now included in final price (0 extra)
+    const shippingFee = 0;
+    const tax = 0;
+    const total = subtotal;
 
     // Save inline address first if provided
     let deliveryAddressId = addressId;
@@ -185,22 +211,46 @@ export async function POST(request: Request) {
         return apiError('VALIDATION_ERROR', 'Invalid postal code. Must be 6 digits.', 400);
       }
 
-      const savedAddress = await prisma.address.create({
-        data: {
-          userId: user.id,
-          fullName: shippingAddress.fullName.trim(),
-          phone: shippingAddress.phone.trim(),
-          line1: shippingAddress.line1.trim(),
-          line2: shippingAddress.line2?.trim() || '',
-          city: shippingAddress.city.trim(),
-          state: shippingAddress.state.trim(),
-          postalCode: shippingAddress.postalCode.trim(),
-          country: shippingAddress.country || 'India',
-          label: 'Shipping',
-          isDefault: false
-        }
-      });
-      deliveryAddressId = savedAddress.id;
+      // Duplicate check
+      const normalizeStr = (s: string | null | undefined) => (s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      const normalizePhoneNum = (s: string | null | undefined) => (s || '').replace(/\s+/g, '');
+
+      const isDuplicateAddress = (addr1: any, addr2: any) => {
+        return (
+          normalizeStr(addr1.fullName) === normalizeStr(addr2.fullName) &&
+          normalizePhoneNum(addr1.phone) === normalizePhoneNum(addr2.phone) &&
+          normalizeStr(addr1.line1) === normalizeStr(addr2.line1) &&
+          normalizeStr(addr1.line2) === normalizeStr(addr2.line2) &&
+          normalizeStr(addr1.city) === normalizeStr(addr2.city) &&
+          normalizeStr(addr1.state) === normalizeStr(addr2.state) &&
+          normalizePhoneNum(addr1.postalCode) === normalizePhoneNum(addr2.postalCode) &&
+          normalizeStr(addr1.country || 'India') === normalizeStr(addr2.country || 'India')
+        );
+      };
+
+      const existingAddresses = await prisma.address.findMany({ where: { userId: user.id } });
+      const duplicate = existingAddresses.find(addr => isDuplicateAddress(addr, shippingAddress));
+
+      if (duplicate) {
+        deliveryAddressId = duplicate.id;
+      } else {
+        const savedAddress = await prisma.address.create({
+          data: {
+            userId: user.id,
+            fullName: shippingAddress.fullName.trim(),
+            phone: shippingAddress.phone.trim(),
+            line1: shippingAddress.line1.trim(),
+            line2: shippingAddress.line2?.trim() || '',
+            city: shippingAddress.city.trim(),
+            state: shippingAddress.state.trim(),
+            postalCode: shippingAddress.postalCode.trim(),
+            country: shippingAddress.country || 'India',
+            label: 'Shipping',
+            isDefault: false
+          }
+        });
+        deliveryAddressId = savedAddress.id;
+      }
     }
 
     if (!deliveryAddressId) {
@@ -258,6 +308,7 @@ export async function POST(request: Request) {
             quantity: item.quantity,
             unitPrice: item.unitPrice,
             totalPrice: item.totalPrice,
+            imageUrl: item.imageUrl,
           })),
         },
         statusHistory: {

@@ -1,9 +1,32 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Instagram, Facebook, Twitter } from "lucide-react";
 
+
+const HIDE_FOOTER_PATHS = ["/", "/login", "/register", "/reset-password", "/update-password"];
+
 export default function Footer() {
+  const pathname = usePathname();
+  
+  const shouldHideFooter = (path: string) => {
+    if (HIDE_FOOTER_PATHS.includes(path)) return true;
+    
+    const hiddenPrefixes = [
+      '/account',
+      '/my-account',
+      '/profile',
+      '/orders',
+      '/addresses',
+      '/wishlist',
+      '/auth/account'
+    ];
+    
+    return hiddenPrefixes.some(prefix => path === prefix || path.startsWith(prefix + '/'));
+  };
+
+  if (shouldHideFooter(pathname)) return null;
   const shopLinks = [
     { name: "T-Shirts", href: "/shop?category=t-shirts" },
     { name: "Tops", href: "/shop?category=tops" },
@@ -42,11 +65,6 @@ export default function Footer() {
 
             {/* Brand Column */}
             <div className="lg:col-span-1">
-              <Link href="/" className="inline-block mb-6">
-                <span className="font-[family:var(--font-barlow-condensed)] text-2xl text-white tracking-[0.15em] uppercase font-bold">
-                  Author
-                </span>
-              </Link>
               <p className="text-[#A1A1AA] text-sm leading-relaxed max-w-[260px] mb-8">
                 Premium streetwear crafted for the bold.
                 Write your story through what you wear.
