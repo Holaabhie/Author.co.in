@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     try {
       switch (eventType) {
         case 'payment.captured': {
-          await handlePaymentCaptured(event);
+          await handlePaymentCaptured(event, signature ?? undefined);
           break;
         }
         case 'payment.failed': {
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
 
 // ─── Event Handlers ───────────────────────────────────────────────
 
-async function handlePaymentCaptured(event: Record<string, unknown>) {
+async function handlePaymentCaptured(event: Record<string, unknown>, signature?: string) {
   const payment = (event.payload as Record<string, Record<string, unknown>>)?.payment?.entity as Record<string, unknown>;
   if (!payment) return;
 
@@ -163,6 +163,8 @@ async function handlePaymentCaptured(event: Record<string, unknown>) {
         status: 'CONFIRMED',
         paymentStatus: 'PAID',
         razorpayPaymentId,
+        razorpaySignature: signature ?? null,
+        paidAt: new Date(),
       },
     });
 
@@ -202,6 +204,12 @@ async function handlePaymentFailed(event: Record<string, unknown>) {
   });
 
   if (!order) return;
+
+  // Guard against marking an already PAID order as FAILED
+  if (order.paymentStatus === 'PAID') {
+    console.info(`[WEBHOOK] Order ${order.orderNumber} is already PAID. Ignoring payment.failed event.`);
+    return;
+  }
 
   await prisma.$transaction(async (tx) => {
     await tx.order.update({

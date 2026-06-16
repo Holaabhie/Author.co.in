@@ -42,6 +42,11 @@ export const metadata: Metadata = {
     "Gen-Z fashion",
     "Indian streetwear",
   ],
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
   openGraph: {
     title: "AUTHOR — Author Your Style",
     description: "Premium streetwear for the bold and unapologetic.",

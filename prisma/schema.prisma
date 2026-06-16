@@ -261,6 +261,8 @@ model Order {
   billingAddressId  String?
   razorpayOrderId   String?
   razorpayPaymentId String?              @unique
+  razorpaySignature String?
+  paidAt            DateTime?
   trackingNumber    String?
   courierName       String?
   adminNotes        String?

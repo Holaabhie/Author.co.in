@@ -108,6 +108,8 @@ export async function POST(request: NextRequest) {
             status: 'CONFIRMED',
             paymentStatus: 'PAID',
             razorpayPaymentId: razorpay_payment_id,
+            razorpaySignature: razorpay_signature,
+            paidAt: new Date(),
           },
         });
 
