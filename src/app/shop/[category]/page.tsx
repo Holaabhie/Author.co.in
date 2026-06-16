@@ -120,11 +120,14 @@ export default function CategoryPage() {
     fetchProducts();
   }, [categorySlug, sort]);
 
-  // Get primary image for a product
+  // Get primary image for a product card — always use images[0] which is the FRONT image.
+  // Fix: previously used isPrimary flag which could mismatch; now we rely on sort order
+  // where images[0] is always the front-side image after the data fix.
   const getPrimaryImage = (product: Product): string => {
     if (product.images.length === 0) return "/placeholder.png";
-    const primary = product.images.find((img) => img.isPrimary);
-    return primary?.url || product.images[0].url;
+    // images are returned sorted by sortOrder asc from the API,
+    // so images[0] is always the front image.
+    return product.images[0].url;
   };
 
   // Get unique colors from variants
@@ -268,7 +271,8 @@ export default function CategoryPage() {
                             sizes="(max-width: 768px) 100vw, 33vw"
                             quality={85}
                           />
-                          {product.badge && (
+                          {/* Badge — hide 'new' badge for tshirts category per user request */}
+                          {product.badge && !(product.badge === "new" && categorySlug === "tshirts") && (
                             <div className="absolute top-3 left-3 z-10">
                               <span className="text-[8px] bg-black text-white px-2 py-1 tracking-[0.2em] uppercase font-bold">
                                 {product.badge === "best-seller"

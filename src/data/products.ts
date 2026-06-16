@@ -86,7 +86,8 @@ export const products: Product[] = [
     rating: 4.9,
     reviewCount: 312,
     stock: 25,
-    badge: "new",
+    // badge removed — was "new", removed per user request to clean T-shirt cards
+    badge: undefined,
     description:
       "Premium Looper Lycra T-shirt designed for ultimate comfort and a sleek fit. Wrinkle resistant and shape retaining.",
     fabric: "Looper Lycra",
@@ -141,7 +142,8 @@ export const products: Product[] = [
     rating: 4.9,
     reviewCount: 278,
     stock: 22,
-    badge: "new",
+    // badge removed — was "new", removed per user request to clean T-shirt cards
+    badge: undefined,
     description:
       "Premium Looper Lycra T-shirt designed for ultimate comfort and a sleek fit. Wrinkle resistant and shape retaining.",
     fabric: "Looper Lycra",
