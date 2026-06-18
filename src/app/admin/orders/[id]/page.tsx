@@ -120,7 +120,7 @@ function resolveItemDisplayImage(item: OrderItem): string | null {
   if (primary) return primary.url;
 
   // Final fallback: use shared helper which handles sortOrder + keyword detection
-  return getPrimaryProductImage(images) || images[0]?.url || null;
+  return getPrimaryProductImage(images);
 }
 
 export default function OrderDetailPage() {

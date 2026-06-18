@@ -10,6 +10,7 @@ import {
   applyCouponToCartItems,
   type ServerCartItem,
 } from '@/lib/pricing/coupons';
+import { getPrimaryProductImage } from '@/lib/shop/media-helpers';
 
 /**
  * POST /api/checkout
@@ -172,7 +173,7 @@ export async function POST(request: Request) {
       if (primary) return primary.url;
 
       // Priority 3: First available image
-      return images[0]?.url ?? null;
+      return getPrimaryProductImage(images);
     };
 
     // Calculate totals (all in paise)
@@ -321,8 +322,9 @@ export async function POST(request: Request) {
     let razorpayOrder;
     const keyId = process.env.RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const enableMock = process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
 
-    if (!keyId || !keySecret || keyId === 'rzp_test_...' || keySecret === 'your-key-secret') {
+    if (enableMock) {
       // Mock order for test checkout sandbox
       razorpayOrder = {
         id: `order_MOCK_${Math.random().toString(36).substring(2, 15)}`,

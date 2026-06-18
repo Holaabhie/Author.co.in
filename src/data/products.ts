@@ -76,8 +76,8 @@ export const products: Product[] = [
     category: "tshirts",
     // Image order: front image first (was swapped from back-first)
     images: [
-      { url: `${CLD}/black_t_shirt_1st_aradpv`, color: "Black" },
       { url: `${CLD}/tshirt_2nd_ldhr3h`, color: "Black" },
+      { url: `${CLD}/black_t_shirt_1st_aradpv`, color: "Black" },
       { url: `${CLD}/DSCF5641.JPG_rz60rf`, color: "Black" },
       { url: `${CLD}/DSCF5604.JPG_jwlpqv`, color: "Black" },
     ],
@@ -132,8 +132,8 @@ export const products: Product[] = [
     category: "tshirts",
     // Image order: front image first (was swapped from back-first)
     images: [
-      { url: `${CLD}/white_tshirt_1_st_bbzsdu`, color: "White" },
       { url: `${CLD}/white_t_shirt_2nd_siebfk`, color: "White" },
+      { url: `${CLD}/white_tshirt_1_st_bbzsdu`, color: "White" },
       { url: `${CLD}/5e863912-1833-49b5-9c8e-b80f52e2f1bc_1_kwwi1v`, color: "White" },
       { url: `${CLD}/IMG_7677.JPG_rrtgih`, color: "White" },
     ],
@@ -190,8 +190,8 @@ export const products: Product[] = [
     category: "sweatpants",
     // Image order: front image first (was swapped from back-first)
     images: [
-      { url: `${CLD}/black_1st_tvrnqs`, color: "Black" },
       { url: `${CLD}/sweat_black_2nd_zxtogc`, color: "Black" },
+      { url: `${CLD}/black_1st_tvrnqs`, color: "Black" },
       { url: `${CLD}/author-black-sweatpants-back%201s`, color: "Black" },
       { url: `${CLD}/author-black-sweatpants-back%202nd`, color: "Black" },
       { url: `${CLD}/author-black-sweatpants-back%203rd`, color: "Black" },
@@ -252,8 +252,8 @@ export const products: Product[] = [
     category: "sweatpants",
     // Image order: front image first (was swapped from back-first)
     images: [
-      { url: `${CLD}/gray_sweat_1st_cgspx0`, color: "White" },
       { url: `${CLD}/gray_sweat_2nd_a1mdog`, color: "White" },
+      { url: `${CLD}/gray_sweat_1st_cgspx0`, color: "White" },
       { url: `${CLD}/DSCF5541_plog3s`, color: "White" },
       { url: `${CLD}/DSCF5529_etgtdf`, color: "White" },
       { url: `${CLD}/DSCF5515_ocdsro`, color: "White" },
@@ -316,8 +316,8 @@ export const products: Product[] = [
     category: "tops",
     // Image order: front image first (was swapped from back-first)
     images: [
-      { url: `${CLD}/top_black_1st_wgsy3e`, color: "Black" },
       { url: `${CLD}/top_black_2nd_gegyy3`, color: "Black" },
+      { url: `${CLD}/top_black_1st_wgsy3e`, color: "Black" },
     ],
     sizes: ["XS", "S", "M", "L"],
     colors: [{ name: "Black", hex: "#0A0A0A" }],

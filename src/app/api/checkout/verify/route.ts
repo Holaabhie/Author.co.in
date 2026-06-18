@@ -53,20 +53,23 @@ export async function POST(request: NextRequest) {
 
     // Verify the signature
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const enableMock = process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
     let isValid = false;
 
-    if (keySecret === 'your-key-secret' || razorpay_signature === 'mock_signature_123456') {
+    if (enableMock && (keySecret === 'your-key-secret' || razorpay_signature === 'mock_signature_123456')) {
       isValid = true;
-    } else if (keySecret) {
+    } else if (keySecret && keySecret !== 'your-key-secret') {
       const generatedSignature = crypto
         .createHmac('sha256', keySecret)
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)
         .digest('hex');
 
-      isValid = crypto.timingSafeEqual(
-        Buffer.from(razorpay_signature),
-        Buffer.from(generatedSignature)
-      );
+      if (razorpay_signature.length === generatedSignature.length) {
+        isValid = crypto.timingSafeEqual(
+          Buffer.from(razorpay_signature),
+          Buffer.from(generatedSignature)
+        );
+      }
     } else {
       return apiError('CONFIG_ERROR', 'Payment configuration error', 500);
     }

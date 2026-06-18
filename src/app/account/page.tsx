@@ -113,7 +113,7 @@ function resolveItemDisplayImage(item: any): string | null {
   const primary = images.find((img: any) => img.isPrimary);
   if (primary) return primary.url;
 
-  return getPrimaryProductImage(images) || images[0]?.url || null;
+  return getPrimaryProductImage(images);
 }
 
 // ─── Sidebar nav item config ─────────────────────────────────────────────────
