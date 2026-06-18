@@ -13,6 +13,8 @@ import {
   FileText,
   Download,
   RefreshCw,
+  Trash2,
+  Archive,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -66,6 +68,9 @@ export default function AdminOrdersPage() {
   const [expandedOrderIds, setExpandedOrderIds] = useState<Record<string, boolean>>({});
   const [pendingCount, setPendingCount] = useState(0);
   const initialLoadTimeRef = useRef(new Date());
+  const [showArchived, setShowArchived] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; orderNumber: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const statuses = [
     { value: "all", label: "All" },
@@ -84,9 +89,10 @@ export default function AdminOrdersPage() {
     try {
       const statusParam = status === "all" ? "" : `&status=${status}`;
       const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+      const archiveParam = showArchived ? `&showDeleted=true` : "";
       
       const [res, pendingRes] = await Promise.all([
-        fetch(`/api/admin/orders?page=${page}&pageSize=10${statusParam}${searchParam}`),
+        fetch(`/api/admin/orders?page=${page}&pageSize=10${statusParam}${searchParam}${archiveParam}`),
         fetch(`/api/admin/orders?pageSize=1&status=PENDING`),
       ]);
       
@@ -116,7 +122,7 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     fetchOrders();
-  }, [page, status]);
+  }, [page, status, showArchived]);
 
   // Debounced search trigger
   useEffect(() => {
@@ -202,6 +208,7 @@ export default function AdminOrdersPage() {
   };
 
   return (
+    <>
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -278,15 +285,28 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Filters Bar */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-author-mid" />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search orders by Order Number (e.g. AUTH-00123)..."
-          className="w-full bg-author-charcoal/50 border border-white/10 pl-10 pr-4 py-2.5 text-sm text-author-white focus:outline-none focus:border-author-cream/40 transition-colors rounded"
-        />
+      <div className="flex gap-3 items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-author-mid" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search orders by Order Number (e.g. AUTH-00123)..."
+            className="w-full bg-author-charcoal/50 border border-white/10 pl-10 pr-4 py-2.5 text-sm text-author-white focus:outline-none focus:border-author-cream/40 transition-colors rounded"
+          />
+        </div>
+        <button
+          onClick={() => { setShowArchived(!showArchived); setPage(1); }}
+          className={`flex items-center gap-2 px-3 py-2.5 text-[10px] uppercase tracking-wider font-heading font-semibold rounded border transition-colors whitespace-nowrap ${
+            showArchived
+              ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
+              : "bg-author-charcoal/50 border-white/10 text-author-mid hover:text-author-white"
+          }`}
+        >
+          <Archive className="w-3.5 h-3.5" />
+          {showArchived ? "Showing Archived" : "Show Archived"}
+        </button>
       </div>
 
       {/* Orders Table */}
@@ -408,6 +428,13 @@ export default function AdminOrdersPage() {
                               >
                                 <Eye className="w-4 h-4" />
                               </Link>
+                              <button
+                                onClick={() => setDeleteConfirm({ id: order.id, orderNumber: order.orderNumber })}
+                                className="p-1.5 hover:bg-red-500/10 rounded text-author-mid hover:text-red-400 transition-colors"
+                                title="Archive Order"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
                             </div>
                           </td>
                         </motion.tr>
@@ -538,5 +565,68 @@ export default function AdminOrdersPage() {
         )}
       </div>
     </div>
+
+    {/* Archive Confirmation Modal */}
+    <AnimatePresence>
+      {deleteConfirm && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => !deleting && setDeleteConfirm(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            className="glass rounded-lg p-6 max-w-sm w-full mx-4 border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-heading text-lg font-bold text-author-white uppercase tracking-wider mb-2">
+              Archive Order
+            </h3>
+            <p className="text-sm text-author-mid mb-6">
+              Are you sure you want to archive order <strong className="text-author-white">{deleteConfirm.orderNumber}</strong>? This will hide it from the default order list.
+            </p>
+            <div className="flex items-center gap-3 justify-end">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                disabled={deleting}
+                className="px-4 py-2 text-xs font-heading uppercase tracking-wider text-author-mid hover:text-author-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setDeleting(true);
+                  try {
+                    const res = await fetch(`/api/admin/orders/${deleteConfirm.id}`, { method: "DELETE" });
+                    const json = await res.json();
+                    if (json.success) {
+                      setOrders((prev) => prev.filter((o) => o.id !== deleteConfirm.id));
+                      toast.success(`Order ${deleteConfirm.orderNumber} archived`);
+                    } else {
+                      toast.error(json.message || "Failed to archive order");
+                    }
+                  } catch {
+                    toast.error("Failed to archive order");
+                  } finally {
+                    setDeleting(false);
+                    setDeleteConfirm(null);
+                  }
+                }}
+                disabled={deleting}
+                className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-heading uppercase tracking-wider rounded hover:bg-red-500/20 transition-colors disabled:opacity-50"
+              >
+                {deleting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                Archive
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }

@@ -3,13 +3,21 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, ArrowLeft } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, ArrowLeft, Tag, X, Loader2 } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
+import { useState as useLocalState } from "react";
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, getSubtotal, getTax, getTotal, getItemCount } = useCartStore();
+  const {
+    items, removeItem, updateQuantity, getSubtotal, getTax, getTotal, getItemCount,
+    couponCode, couponResult, couponLoading, couponError,
+    applyCoupon, removeCoupon, getCouponDiscount,
+  } = useCartStore();
+
+  const [couponInput, setCouponInput] = useLocalState("");
 
   const subtotal = getSubtotal();
+  const couponDiscount = getCouponDiscount();
   const tax = getTax();
   const total = getTotal();
   const itemCount = getItemCount();
@@ -173,7 +181,78 @@ export default function CartPage() {
                   Order Summary
                 </h3>
 
+                {/* Coupon Code Input */}
+                <div className="mb-6 pb-6 border-b border-black/10">
+                  {couponCode && couponResult ? (
+                    <div className="flex items-center justify-between bg-green-50 border border-green-200 px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <Tag className="w-3.5 h-3.5 text-green-600" />
+                        <span className="text-xs font-bold text-green-700 uppercase tracking-wider">
+                          {couponCode}
+                        </span>
+                        <span className="text-[10px] text-green-600">
+                          — ₹{couponDiscount.toLocaleString()} off
+                        </span>
+                      </div>
+                      <button
+                        onClick={removeCoupon}
+                        className="text-green-600 hover:text-green-800 transition-colors"
+                        aria-label="Remove coupon"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="text-[10px] uppercase tracking-[0.15em] text-black/50 font-bold mb-2 block">
+                        Coupon Code
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponInput}
+                          onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                          placeholder="Enter code"
+                          className="flex-1 bg-white border border-black/10 px-3 py-2.5 text-xs text-black uppercase tracking-wider focus:outline-none focus:border-black/30 transition-colors"
+                          disabled={couponLoading}
+                        />
+                        <button
+                          onClick={() => {
+                            if (couponInput.trim()) applyCoupon(couponInput.trim());
+                          }}
+                          disabled={!couponInput.trim() || couponLoading}
+                          className="px-4 py-2.5 bg-black text-white text-[10px] uppercase tracking-wider font-bold hover:bg-[#333] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+                        >
+                          {couponLoading ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            "Apply"
+                          )}
+                        </button>
+                      </div>
+                      {couponError && (
+                        <p className="text-[10px] text-red-500 mt-2">{couponError}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <div className="space-y-4 text-sm mb-8">
+                  {couponDiscount > 0 && (
+                    <>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-black/60">Subtotal</span>
+                        <span className="text-black/60">₹{subtotal.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-sm text-green-600">
+                        <span className="flex items-center gap-1">
+                          <Tag className="w-3 h-3" />
+                          Coupon ({couponCode})
+                        </span>
+                        <span>−₹{couponDiscount.toLocaleString()}</span>
+                      </div>
+                    </>
+                  )}
                   <div className="flex justify-between text-base">
                     <span className="font-medium text-black">Total</span>
                     <span className="font-medium text-black">₹{total.toLocaleString()}</span>

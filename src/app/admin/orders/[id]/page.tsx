@@ -14,14 +14,18 @@ import {
   Clock,
   MapPin,
   User,
+  FileText,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import AdminOrderReceipt from "@/components/admin/AdminOrderReceipt";
 
 interface OrderItem {
   id: string;
   productName: string;
   quantity: number;
   unitPrice: number;
+  originalUnitPrice: number | null;
+  discountAmount: number | null;
   totalPrice: number;
   imageUrl: string | null;
   size: string | null;
@@ -58,6 +62,8 @@ interface OrderDetail {
   adminNotes: string | null;
   razorpayOrderId: string | null;
   razorpayPaymentId: string | null;
+  paidAt: string | null;
+  discountCode: string | null;
   createdAt: string;
   updatedAt: string;
   user: {
@@ -122,6 +128,7 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [showReceipt, setShowReceipt] = useState(false);
 
   useEffect(() => {
     async function fetchOrder() {
@@ -239,6 +246,17 @@ export default function OrderDetailPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowReceipt(!showReceipt)}
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-heading uppercase tracking-wider rounded transition-colors ${
+              showReceipt
+                ? "bg-author-cream/20 border border-author-cream/30 text-author-cream"
+                : "bg-white/5 border border-white/10 text-author-mid hover:bg-white/10"
+            }`}
+          >
+            <FileText className="w-4 h-4" />
+            {showReceipt ? "Hide Receipt" : "View Receipt"}
+          </button>
           {order.status !== "SHIPPED" && order.status !== "DELIVERED" && order.status !== "CANCELLED" && (
             <button
               onClick={() => handleStatusChange("SHIPPED")}
@@ -259,6 +277,11 @@ export default function OrderDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Receipt Section */}
+      {showReceipt && (
+        <AdminOrderReceipt order={order} />
+      )}
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Left Column */}

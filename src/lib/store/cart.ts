@@ -17,10 +17,32 @@ export interface CartItem {
   stock: number;
 }
 
+export interface CouponApplyResult {
+  couponCode: string;
+  items: {
+    productId: string;
+    variantId: string;
+    categorySlug: string;
+    quantity: number;
+    originalUnitPrice: number;
+    finalUnitPrice: number;
+    discountPerUnit: number;
+  }[];
+  originalSubtotal: number;
+  discountAmount: number;
+  finalTotal: number;
+}
+
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
   closeTimeout?: any;
+
+  // Coupon state
+  couponCode: string | null;
+  couponResult: CouponApplyResult | null;
+  couponLoading: boolean;
+  couponError: string | null;
 
   // Actions
   addItem: (item: CartItem) => { added: boolean; error?: string };
@@ -31,10 +53,14 @@ interface CartState {
   toggleCart: () => void;
   openCart: () => void;
   closeCart: () => void;
+  applyCoupon: (code: string) => Promise<void>;
+  removeCoupon: () => void;
+  _recalcCoupon: () => void;
 
   // Computed
   getItemCount: () => number;
   getSubtotal: () => number;
+  getCouponDiscount: () => number;
   getTax: () => number;
   getTotal: () => number;
 }
@@ -45,6 +71,10 @@ export const useCartStore = create<CartState>()(
       items: [],
       isOpen: false,
       closeTimeout: null,
+      couponCode: null,
+      couponResult: null,
+      couponLoading: false,
+      couponError: null,
 
       addItem: (newItem: CartItem) => {
         const normalizedItem = {
@@ -91,6 +121,9 @@ export const useCartStore = create<CartState>()(
           set({ closeTimeout: timeout });
         }
 
+        // Auto-recalculate coupon after adding item
+        setTimeout(() => get()._recalcCoupon(), 0);
+
         return { added: true };
       },
 
@@ -98,6 +131,13 @@ export const useCartStore = create<CartState>()(
         set((state) => ({
           items: state.items.filter((item) => item.variantId !== variantId),
         }));
+        // Auto-recalculate coupon after removing item
+        const { items, couponCode: cc } = get();
+        if (items.length === 0 && cc) {
+          get().removeCoupon();
+        } else {
+          setTimeout(() => get()._recalcCoupon(), 0);
+        }
       },
 
       updateQuantity: (variantId: string, quantity: number) => {
@@ -114,14 +154,16 @@ export const useCartStore = create<CartState>()(
             item.variantId === variantId ? { ...item, quantity } : item
           ),
         }));
+        // Auto-recalculate coupon after quantity change
+        setTimeout(() => get()._recalcCoupon(), 0);
       },
 
       clearCart: () => {
-        set({ items: [] });
+        set({ items: [], couponCode: null, couponResult: null, couponError: null });
       },
 
       clearCartAndStorage: () => {
-        set({ items: [] });
+        set({ items: [], couponCode: null, couponResult: null, couponError: null });
         if (typeof window !== "undefined") {
           useCartStore.persist.clearStorage();
         }
@@ -144,6 +186,63 @@ export const useCartStore = create<CartState>()(
       },
       closeCart: () => set({ isOpen: false }),
 
+      applyCoupon: async (code: string) => {
+        const { items } = get();
+        if (items.length === 0) {
+          set({ couponError: "Cart is empty" });
+          return;
+        }
+        set({ couponLoading: true, couponError: null });
+        try {
+          const res = await fetch("/api/coupons/apply", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              couponCode: code,
+              items: items.map((i) => ({
+                productId: i.productId,
+                variantId: i.variantId,
+                quantity: i.quantity,
+              })),
+            }),
+          });
+          const json = await res.json();
+          if (json.success && json.data?.valid) {
+            set({
+              couponCode: json.data.couponCode,
+              couponResult: json.data,
+              couponError: null,
+            });
+          } else {
+            set({
+              couponCode: null,
+              couponResult: null,
+              couponError: json.message || "Invalid coupon code",
+            });
+          }
+        } catch {
+          set({
+            couponCode: null,
+            couponResult: null,
+            couponError: "Failed to apply coupon",
+          });
+        } finally {
+          set({ couponLoading: false });
+        }
+      },
+
+      removeCoupon: () => {
+        set({ couponCode: null, couponResult: null, couponError: null });
+      },
+
+      /** Internal: re-apply coupon after cart changes */
+      _recalcCoupon: () => {
+        const { couponCode: cc, items } = get();
+        if (!cc || items.length === 0) return;
+        // Fire-and-forget recalculation
+        get().applyCoupon(cc);
+      },
+
       getItemCount: () => {
         return get().items.reduce((total, item) => total + item.quantity, 0);
       },
@@ -155,11 +254,23 @@ export const useCartStore = create<CartState>()(
         }, 0);
       },
 
+      getCouponDiscount: () => {
+        const result = get().couponResult;
+        if (!result) return 0;
+        // couponResult amounts are in paise, convert to rupees for frontend
+        return result.discountAmount / 100;
+      },
+
       getTax: () => {
         return 0;
       },
 
       getTotal: () => {
+        const { couponResult } = get();
+        if (couponResult) {
+          // couponResult.finalTotal is in paise, convert to rupees
+          return couponResult.finalTotal / 100;
+        }
         return get().getSubtotal();
       },
     }),
@@ -181,7 +292,7 @@ export const useCartStore = create<CartState>()(
           })),
         };
       },
-      partialize: (state) => ({ items: state.items }),
+      partialize: (state) => ({ items: state.items, couponCode: state.couponCode }),
     }
   )
 );

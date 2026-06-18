@@ -40,6 +40,9 @@ function FacebookIcon({ size = 18 }: { size?: number }) {
 type AuthMode = 'login' | 'register' | 'phone';
 type PageView = 'auth' | 'check-inbox';
 
+// Feature flag: set to true to re-enable Phone OTP login
+const ENABLE_PHONE_OTP = false;
+
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -933,6 +936,7 @@ export default function LoginPage() {
                   >
                     Sign In
                   </button>
+                  {ENABLE_PHONE_OTP && (
                   <button
                     id="lp-tab-phone"
                     role="tab"
@@ -942,6 +946,7 @@ export default function LoginPage() {
                   >
                     Phone
                   </button>
+                  )}
                   <button
                     id="lp-tab-register"
                     role="tab"
@@ -954,7 +959,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Form */}
-                {mode === 'phone' ? (
+                {ENABLE_PHONE_OTP && mode === 'phone' ? (
                   <form onSubmit={otpSent ? handleVerifyOtp : handleSendOtp} noValidate>
 
                     {!otpSent ? (

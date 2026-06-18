@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth/get-user';
 import { apiSuccess, apiError, apiUnauthorized } from '@/lib/api-helpers';
 import { sendOrderConfirmation } from '@/lib/notifications';
+import { getRazorpay } from '@/lib/razorpay';
 
 /**
  * POST /api/checkout/verify
@@ -96,6 +97,23 @@ export async function POST(request: NextRequest) {
 
     if (!order) {
       return apiError('ORDER_NOT_FOUND', 'Order not found', 404);
+    }
+
+    // Verify Razorpay paid/captured amount matches order.total (correction #3)
+    if (!razorpay_order_id.startsWith('order_MOCK_')) {
+      try {
+        const razorpay = getRazorpay();
+        const rzpOrder = await razorpay.orders.fetch(razorpay_order_id);
+        if (rzpOrder.amount !== order.total) {
+          console.error(
+            `[AMOUNT_MISMATCH] Razorpay amount ${rzpOrder.amount} !== order.total ${order.total} for order ${order.orderNumber}`
+          );
+          return apiError('AMOUNT_MISMATCH', 'Payment amount does not match order total', 400);
+        }
+      } catch (amtErr) {
+        console.error('[AMOUNT_CHECK_ERROR] Non-critical:', amtErr);
+        // Proceed if Razorpay API fetch fails — signature was already verified
+      }
     }
 
     // If webhook hasn't fired yet, update the status, payment, stock and clear cart

@@ -16,6 +16,7 @@ import {
   Loader2,
   Check,
   X,
+  Tag,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -33,7 +34,7 @@ const INDIAN_STATES = [
 ];
 
 export default function CheckoutPage() {
-  const { items, getSubtotal, getTax, getTotal, clearCartAndStorage } = useCartStore();
+  const { items, getSubtotal, getTax, getTotal, clearCartAndStorage, couponCode, couponResult, getCouponDiscount } = useCartStore();
   const { user, loading: userLoading } = useUser();
   const [step, setStep] = useState<CheckoutStep>("address");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -62,6 +63,7 @@ export default function CheckoutPage() {
   const [mockPaymentData, setMockPaymentData] = useState<any | null>(null);
 
   const subtotal = getSubtotal();
+  const couponDiscount = getCouponDiscount();
   const tax = getTax();
   const total = getTotal();
   const shippingCost = subtotal >= 999 ? 0 : 99;
@@ -156,6 +158,11 @@ export default function CheckoutPage() {
           quantity: item.quantity,
         })),
       };
+
+      // Include coupon code if applied (server recalculates everything)
+      if (couponCode) {
+        payload.couponCode = couponCode;
+      }
 
       if (showAddressForm) {
         payload.shippingAddress = formAddress;
@@ -740,6 +747,21 @@ export default function CheckoutPage() {
                 </h3>
 
                 <div className="space-y-4 text-sm">
+                  {couponDiscount > 0 && (
+                    <>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-black/60">Subtotal</span>
+                        <span className="text-black/60">₹{subtotal.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-sm text-green-600">
+                        <span className="flex items-center gap-1">
+                          <Tag className="w-3 h-3" />
+                          Coupon ({couponCode})
+                        </span>
+                        <span>−₹{couponDiscount.toLocaleString()}</span>
+                      </div>
+                    </>
+                  )}
                   <div className="flex justify-between text-lg">
                     <span className="font-medium">Total</span>
                     <span className="font-bold text-[#C8956C]">₹{total.toLocaleString()}</span>

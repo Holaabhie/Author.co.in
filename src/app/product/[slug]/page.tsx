@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import { AuthorLoader } from "@/components/ui/AuthorLoader";
 import { optimizeCloudinaryUrl } from "@/lib/shop/catalog";
 import { getProductVideo } from "@/lib/shop/videos";
+import SizeChart from "@/components/product/SizeChart";
 
 // ── Types matching the API response shape ─────────────────────────────
 interface ProductImage {
@@ -545,6 +546,11 @@ export default function ProductPage() {
                   ))}
                 </div>
               </div>
+
+              {/* Size Chart — category-specific */}
+              {product.category?.slug && (
+                <SizeChart categorySlug={product.category.slug} />
+              )}
 
               {/* Quantity & Add to Cart */}
               <div className="flex flex-col sm:flex-row gap-4 mb-4">

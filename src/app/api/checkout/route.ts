@@ -4,6 +4,12 @@ import { prisma } from '@/lib/db';
 import { getRazorpay, formatCurrency } from '@/lib/razorpay';
 import { resolvePrices } from '@/lib/pricing';
 import { apiError, apiUnauthorized } from '@/lib/api-helpers';
+import {
+  normalizeCouponCode,
+  isValidCoupon,
+  applyCouponToCartItems,
+  type ServerCartItem,
+} from '@/lib/pricing/coupons';
 
 /**
  * POST /api/checkout
@@ -20,7 +26,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { items, addressId, shippingAddress } = body;
+    const { items, addressId, shippingAddress, couponCode } = body;
     const variantInclude = {
       product: {
         select: {
@@ -137,6 +143,15 @@ export async function POST(request: Request) {
     const productIds = cartItems.map((item) => item.productId);
     const priceMap = await resolvePrices(productIds);
 
+    // Fetch product categories for coupon logic
+    const productCategories = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true, category: { select: { slug: true } } },
+    });
+    const categoryMap = new Map(
+      productCategories.map((p) => [p.id, p.category?.slug ?? ''])
+    );
+
     // Helper: resolve best image for an order item based on variant color
     const resolveItemImage = (item: typeof cartItems[0]): string | null => {
       const images = (item.product as any).images as { url: string; color: string | null; isPrimary: boolean }[] | undefined;
@@ -177,15 +192,56 @@ export async function POST(request: Request) {
         color: item.variant?.color ?? null,
         quantity: item.quantity,
         unitPrice: resolved.finalPrice,
+        originalUnitPrice: resolved.finalPrice,
         totalPrice: lineTotal,
         imageUrl: resolveItemImage(item),
+        categorySlug: categoryMap.get(item.productId) ?? '',
       };
     });
+
+    // Apply coupon if provided (server-side calculation — never trust frontend)
+    let discountAmount = 0;
+    let discountCode: string | null = null;
+    let finalTotal = subtotal;
+
+    if (couponCode) {
+      const code = normalizeCouponCode(couponCode);
+      if (!isValidCoupon(code)) {
+        return apiError('INVALID_COUPON', 'Invalid or expired coupon code', 400);
+      }
+
+      const serverItems: ServerCartItem[] = lineItems.map((li) => ({
+        productId: li.productId,
+        variantId: li.variantId,
+        quantity: li.quantity,
+        categorySlug: li.categorySlug,
+        originalUnitPrice: li.originalUnitPrice,
+      }));
+
+      const couponResult = applyCouponToCartItems(code, serverItems);
+      if (couponResult.valid) {
+        discountAmount = couponResult.discountAmount;
+        discountCode = couponResult.couponCode;
+        finalTotal = couponResult.finalTotal;
+
+        // Update line items with coupon-adjusted prices
+        for (const couponItem of couponResult.items) {
+          const li = lineItems.find(
+            (l) => l.productId === couponItem.productId && l.variantId === couponItem.variantId
+          );
+          if (li) {
+            li.unitPrice = couponItem.finalUnitPrice;
+            li.totalPrice = couponItem.lineTotal;
+          }
+        }
+      }
+    }
 
     // Shipping fee and tax are now included in final price (0 extra)
     const shippingFee = 0;
     const tax = 0;
-    const total = subtotal;
+    // order.total = final amount the customer pays (source of truth)
+    const total = finalTotal;
 
     // Save inline address first if provided
     let deliveryAddressId = addressId;
@@ -281,6 +337,12 @@ export async function POST(request: Request) {
         notes: {
           userId: user.id,
           orderNumber,
+          ...(discountCode && {
+            couponCode: discountCode,
+            originalSubtotal: String(subtotal),
+            discountAmount: String(discountAmount),
+            finalTotal: String(total),
+          }),
         },
       });
     }
@@ -293,6 +355,8 @@ export async function POST(request: Request) {
         status: 'PENDING',
         paymentStatus: 'PENDING',
         subtotal,
+        discount: discountAmount,
+        discountCode,
         shippingFee,
         tax,
         total,
@@ -307,6 +371,8 @@ export async function POST(request: Request) {
             color: item.color,
             quantity: item.quantity,
             unitPrice: item.unitPrice,
+            originalUnitPrice: item.originalUnitPrice,
+            discountAmount: item.originalUnitPrice - item.unitPrice,
             totalPrice: item.totalPrice,
             imageUrl: item.imageUrl,
           })),
@@ -314,7 +380,9 @@ export async function POST(request: Request) {
         statusHistory: {
           create: {
             status: 'PENDING',
-            note: 'Order created, awaiting payment',
+            note: discountCode
+              ? `Order created with coupon ${discountCode}, awaiting payment`
+              : 'Order created, awaiting payment',
           },
         },
       },

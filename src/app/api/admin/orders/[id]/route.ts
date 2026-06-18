@@ -158,3 +158,53 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     return apiError('INTERNAL_ERROR', 'Failed to update order', 500);
   }
 }
+
+// ─── DELETE /api/admin/orders/[id] ─────────────────────────────────
+// Soft delete (archive) an order. Sets deletedAt/deletedBy.
+export async function DELETE(_request: NextRequest, context: RouteContext) {
+  try {
+    const admin = await requireRole(['ADMIN', 'SUPER_ADMIN']);
+    if ('error' in admin) {
+      return NextResponse.json(admin, { status: admin.status });
+    }
+
+    const { id } = await context.params;
+
+    const order = await prisma.order.findUnique({
+      where: { id },
+      select: { id: true, orderNumber: true, paymentStatus: true, deletedAt: true },
+    });
+
+    if (!order) {
+      return apiError('NOT_FOUND', 'Order not found', 404);
+    }
+
+    if (order.deletedAt) {
+      return apiError('ALREADY_DELETED', 'Order is already archived', 400);
+    }
+
+    await prisma.order.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+        deletedBy: admin.id,
+      },
+    });
+
+    await logAdminAction({
+      adminId: admin.id,
+      action: 'order.archive',
+      entity: 'Order',
+      entityId: id,
+      payload: {
+        orderNumber: order.orderNumber,
+        paymentStatus: order.paymentStatus,
+      },
+    });
+
+    return apiSuccess({ archived: true, orderNumber: order.orderNumber });
+  } catch (error) {
+    console.error('[ADMIN_ORDER_DELETE]', error);
+    return apiError('INTERNAL_ERROR', 'Failed to archive order', 500);
+  }
+}

@@ -19,9 +19,15 @@ export async function GET(request: NextRequest) {
     const dateFrom = searchParams.get('dateFrom') ?? undefined;
     const dateTo = searchParams.get('dateTo') ?? undefined;
     const isBlocked = searchParams.get('isBlocked');
+    const showDeleted = searchParams.get('showDeleted') === 'true';
 
     // Build where clause
     const where: Record<string, unknown> = {};
+
+    // Exclude archived customers by default (correction #11)
+    if (!showDeleted) {
+      where.deletedAt = null;
+    }
 
     if (search) {
       where.OR = [

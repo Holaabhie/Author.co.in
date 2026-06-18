@@ -23,9 +23,15 @@ export async function GET(request: NextRequest) {
     const dateTo = searchParams.get('dateTo') ?? undefined;
     const sortBy = searchParams.get('sortBy') ?? 'createdAt';
     const sortOrder = searchParams.get('sortOrder') === 'asc' ? 'asc' : 'desc';
+    const showDeleted = searchParams.get('showDeleted') === 'true';
 
     // Build where clause
     const where: Record<string, unknown> = {};
+
+    // Exclude archived orders by default (correction #11)
+    if (!showDeleted) {
+      where.deletedAt = null;
+    }
 
     if (search) {
       where.OR = [

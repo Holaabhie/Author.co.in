@@ -54,6 +54,7 @@ export async function GET(request: NextRequest) {
         where: {
           createdAt: { gte: from, lte: to },
           paymentStatus: 'PAID',
+          deletedAt: null,
         },
         _sum: { total: true },
         _count: true,
@@ -63,6 +64,7 @@ export async function GET(request: NextRequest) {
       prisma.order.aggregate({
         where: {
           createdAt: { gte: from, lte: to },
+          deletedAt: null,
         },
         _count: true,
         _sum: { total: true },
@@ -77,18 +79,19 @@ export async function GET(request: NextRequest) {
           where: {
             createdAt: { gte: prevFrom, lt: from },
             paymentStatus: 'PAID',
+            deletedAt: null,
           },
           _sum: { total: true },
           _count: true,
         });
       })(),
 
-      // Total customers (all time)
-      prisma.user.count(),
+      // Total customers (all time, exclude archived)
+      prisma.user.count({ where: { deletedAt: null } }),
 
       // New customers in period
       prisma.user.count({
-        where: { createdAt: { gte: from, lte: to } },
+        where: { createdAt: { gte: from, lte: to }, deletedAt: null },
       }),
 
       // Top products by sales (in period)
@@ -98,6 +101,7 @@ export async function GET(request: NextRequest) {
           order: {
             createdAt: { gte: from, lte: to },
             paymentStatus: 'PAID',
+            deletedAt: null,
           },
         },
         _sum: { quantity: true, totalPrice: true },
@@ -107,7 +111,7 @@ export async function GET(request: NextRequest) {
 
       // Recent orders
       prisma.order.findMany({
-        where: { createdAt: { gte: from, lte: to } },
+        where: { createdAt: { gte: from, lte: to }, deletedAt: null },
         orderBy: { createdAt: 'desc' },
         take: 10,
         select: {
@@ -129,13 +133,13 @@ export async function GET(request: NextRequest) {
 
       // Orders placed in period (for conversion rate)
       prisma.order.count({
-        where: { createdAt: { gte: from, lte: to } },
+        where: { createdAt: { gte: from, lte: to }, deletedAt: null },
       }),
 
       // Order status breakdown
       prisma.order.groupBy({
         by: ['status'],
-        where: { createdAt: { gte: from, lte: to } },
+        where: { createdAt: { gte: from, lte: to }, deletedAt: null },
         _count: true,
       }),
     ]);
