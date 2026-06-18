@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -41,7 +41,7 @@ export default function AdminCustomersPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string; email: string } | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  async function fetchCustomers() {
+  const fetchCustomers = useCallback(async () => {
     setLoading(true);
     try {
       const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
@@ -66,11 +66,11 @@ export default function AdminCustomersPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [page, sortBy, sortOrder, search, showArchived]);
 
   useEffect(() => {
     fetchCustomers();
-  }, [page, sortBy, sortOrder, showArchived]);
+  }, [fetchCustomers]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -78,7 +78,7 @@ export default function AdminCustomersPage() {
       fetchCustomers();
     }, 450);
     return () => clearTimeout(handler);
-  }, [search]);
+  }, [search, fetchCustomers]);
 
   function toggleSort(field: string) {
     if (sortBy === field) {
