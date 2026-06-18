@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Package, Calendar, ArrowRight } from "lucide-react";
+import { MapPin, Package, Calendar, ArrowRight, FileText } from "lucide-react";
 import { AuthorLoader } from "@/components/ui/AuthorLoader";
 
 interface OrderItem {
@@ -258,6 +258,14 @@ export default function OrderConfirmationPage() {
           >
             Continue Shopping <ArrowRight className="w-4 h-4" />
           </Link>
+          <a
+            href={`/api/orders/${orderId}/invoice`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full border border-neutral-800 hover:border-[#C8956C] text-neutral-400 hover:text-[#C8956C] py-4 text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <FileText className="w-4 h-4" /> Download Invoice
+          </a>
           <Link
             href="/account?tab=orders"
             className="w-full border border-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-white py-4 text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-300 flex items-center justify-center"

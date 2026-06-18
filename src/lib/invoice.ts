@@ -58,17 +58,29 @@ export async function generateInvoice(orderId: string): Promise<string | null> {
       });
     }
 
-    // Get next invoice number from sequence (or fallback)
+    // Get next invoice number using OrderSequence table (atomic increment, same pattern as order numbers)
     let invoiceNumber: string;
     try {
-      const result = await prisma.$queryRaw<[{ nextval: bigint }]>`
-        SELECT nextval('invoice_number_seq')
-      `;
-      invoiceNumber = `${settings.invoicePrefix}-${String(result[0].nextval).padStart(6, '0')}`;
+      // Primary path: atomically increment the existing sequence row
+      const updated = await prisma.orderSequence.update({
+        where: { name: 'AUTHOR_INVOICE' },
+        data: { value: { increment: 1 } },
+      });
+      invoiceNumber = `${settings.invoicePrefix}-INV-${String(updated.value).padStart(6, '0')}`;
     } catch {
-      // Fallback: count-based
-      const count = await prisma.invoice.count();
-      invoiceNumber = `${settings.invoicePrefix}-${String(count + 1).padStart(6, '0')}`;
+      // Row doesn't exist yet — create it via upsert (handles race conditions)
+      try {
+        const created = await prisma.orderSequence.upsert({
+          where: { name: 'AUTHOR_INVOICE' },
+          update: { value: { increment: 1 } },
+          create: { name: 'AUTHOR_INVOICE', value: 1 },
+        });
+        invoiceNumber = `${settings.invoicePrefix}-INV-${String(created.value).padStart(6, '0')}`;
+      } catch {
+        // Last resort fallback: count-based
+        const count = await prisma.invoice.count();
+        invoiceNumber = `${settings.invoicePrefix}-INV-${String(count + 1).padStart(6, '0')}`;
+      }
     }
 
     // Determine GST type

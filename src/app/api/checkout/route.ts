@@ -456,6 +456,8 @@ export async function POST(request: Request) {
       message: error?.message,
       code: error?.code,
       statusCode: error?.statusCode,
+      description: error?.error?.description,
+      reason: error?.error?.reason,
       stack: error?.stack?.split('\n').slice(0, 3).join('\n'),
     });
     // Distinguish Razorpay SDK errors from other failures

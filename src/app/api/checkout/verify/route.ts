@@ -5,6 +5,7 @@ import { getCurrentUser } from '@/lib/auth/get-user';
 import { apiSuccess, apiError, apiUnauthorized } from '@/lib/api-helpers';
 import { sendOrderConfirmation } from '@/lib/notifications';
 import { getRazorpay } from '@/lib/razorpay';
+import { generateInvoice } from '@/lib/invoice';
 
 /**
  * POST /api/checkout/verify
@@ -201,6 +202,14 @@ export async function POST(request: NextRequest) {
       }
     } catch (e) {
       console.error('[EMAIL_SEND_ERROR] Non-critical:', e);
+    }
+
+    // Generate invoice PDF asynchronously after payment verification
+    // Awaited to ensure it completes before Vercel freezes the serverless function
+    try {
+      await generateInvoice(order.id);
+    } catch (e) {
+      console.error('[INVOICE_AUTO_GENERATE] Non-critical:', e);
     }
 
     return apiSuccess({

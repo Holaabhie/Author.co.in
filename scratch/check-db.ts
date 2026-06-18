@@ -12,17 +12,15 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const sequences = await prisma.orderSequence.findMany();
-  console.log("=== ORDER SEQUENCES ===");
-  console.log(JSON.stringify(sequences, null, 2));
+  const settings = await prisma.invoiceSetting.findMany();
+  console.log("=== INVOICE SETTINGS ===");
+  console.log(JSON.stringify(settings, null, 2));
 
-  const orders = await prisma.order.findMany({
-    select: { id: true, orderNumber: true, status: true, paymentStatus: true, total: true, createdAt: true },
-    orderBy: { createdAt: "desc" },
-    take: 10
+  const invoices = await prisma.invoice.findMany({
+    take: 5
   });
-  console.log("\n=== RECENT ORDERS ===");
-  console.log(JSON.stringify(orders, null, 2));
+  console.log("\n=== RECENT INVOICES ===");
+  console.log(JSON.stringify(invoices, null, 2));
 }
 
 main()

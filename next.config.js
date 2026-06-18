@@ -38,13 +38,13 @@ const nextConfig = {
   async headers() {
     const cspHeader = `
       default-src 'self';
-      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://checkout.razorpay.com;
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://checkout.razorpay.com https://*.razorpay.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       img-src 'self' blob: data: https://images.unsplash.com https://lh3.googleusercontent.com https://res.cloudinary.com https://www.fratelliarena.com https://*.supabase.co https://*.supabase.in;
       media-src 'self' blob: https://res.cloudinary.com;
       font-src 'self' https://fonts.gstatic.com;
-      connect-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://*.supabase.co wss://*.supabase.co;
-      frame-src 'self' https://checkout.razorpay.com;
+      connect-src 'self' https://*.razorpay.com https://*.supabase.co wss://*.supabase.co https://*.sentry.io https://*.ingest.sentry.io;
+      frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com https://*.razorpay.com;
       object-src 'none';
       base-uri 'self';
       form-action 'self';
