@@ -31,10 +31,11 @@ export interface ProductImageLike {
  * Returns the best "front" image URL for a product, used in cards/listings.
  *
  * Priority:
- * 1. isPrimary === true AND is an image (not a video URL)
- * 2. Image whose alt/publicId/url contains "front" or "1st" keywords
- * 3. Lowest sortOrder image
- * 4. First image in array
+ * 1. First non-video image in array order (API sorts by sortOrder asc,
+ *    so images[0] is always the front-side image)
+ * 2. isPrimary flag fallback
+ * 3. Keyword detection ("front", "1st", "first")
+ * 4. First image regardless of type
  * 5. Placeholder fallback
  */
 export function getPrimaryProductImage(
@@ -49,15 +50,20 @@ export function getPrimaryProductImage(
   const nonVideoImages = imgs.filter(
     (img) => img.url && !img.url.includes("/video/upload/")
   );
-  const candidates = nonVideoImages.length > 0 ? nonVideoImages : imgs;
 
-  // 1. isPrimary flag
-  const primary = candidates.find((img) => img.isPrimary);
+  // 1. First non-video image in array order (sortOrder from API)
+  //    This is the card's first photo = front side of the cloth
+  if (nonVideoImages.length > 0 && nonVideoImages[0].url) {
+    return nonVideoImages[0].url;
+  }
+
+  // 2. isPrimary flag (fallback for edge cases)
+  const primary = imgs.find((img) => img.isPrimary);
   if (primary?.url) return primary.url;
 
-  // 2. Keyword detection: "front", "1st", "_1st_", "first" in alt/publicId/url
+  // 3. Keyword detection: "front", "1st", "first" in alt/publicId/url
   const frontKeywords = /front|1st|first/i;
-  const frontMatch = candidates.find(
+  const frontMatch = imgs.find(
     (img) =>
       frontKeywords.test(img.alt || "") ||
       frontKeywords.test(img.publicId || "") ||
@@ -65,14 +71,8 @@ export function getPrimaryProductImage(
   );
   if (frontMatch?.url) return frontMatch.url;
 
-  // 3. Lowest sortOrder
-  const sorted = [...candidates].sort(
-    (a, b) => (a.sortOrder ?? 999) - (b.sortOrder ?? 999)
-  );
-  if (sorted[0]?.url) return sorted[0].url;
-
-  // 4. First image
-  if (candidates[0]?.url) return candidates[0].url;
+  // 4. First image regardless
+  if (imgs[0]?.url) return imgs[0].url;
 
   return PLACEHOLDER_IMAGE;
 }

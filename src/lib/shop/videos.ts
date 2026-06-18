@@ -15,8 +15,9 @@
  */
 export const PRODUCT_VIDEOS: Record<string, string> = {
   // Public IDs sourced from Cloudinary player embed links
-  "black-top": "https://res.cloudinary.com/dpxirx0mn/video/upload/q_auto,f_auto/IMG_4677_ecmly7.mp4",
-  "white-top": "https://res.cloudinary.com/dpxirx0mn/video/upload/q_auto,f_auto/IMG_4681_y8q1o8.mp4",
+  // Fix: swapped — black-top gets black video, white-top gets white video
+  "black-top": "https://res.cloudinary.com/dpxirx0mn/video/upload/q_auto,f_auto/IMG_4681_y8q1o8.mp4",
+  "white-top": "https://res.cloudinary.com/dpxirx0mn/video/upload/q_auto,f_auto/IMG_4677_ecmly7.mp4",
 };
 
 /**
