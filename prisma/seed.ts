@@ -1,4 +1,4 @@
-import { prisma } from "../lib/prisma";
+import { prisma } from "../src/lib/db";
 import { products } from "../src/data/products";
 
 async function main() {
