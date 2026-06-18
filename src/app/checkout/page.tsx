@@ -34,10 +34,19 @@ const INDIAN_STATES = [
 ];
 
 export default function CheckoutPage() {
-  const { items, getSubtotal, getTax, getTotal, clearCartAndStorage, couponCode, couponResult, getCouponDiscount } = useCartStore();
+  const { items, getSubtotal, getTax, getTotal, clearCartAndStorage, couponCode, couponResult, getCouponDiscount, couponLoading, couponError, applyCoupon, removeCoupon } = useCartStore();
   const { user, loading: userLoading } = useUser();
   const [step, setStep] = useState<CheckoutStep>("address");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [couponInput, setCouponInput] = useState(couponCode || "");
+
+  useEffect(() => {
+    if (couponCode) {
+      setCouponInput(couponCode);
+    } else {
+      setCouponInput("");
+    }
+  }, [couponCode]);
 
   // Address States
   const [addresses, setAddresses] = useState<any[]>([]);
@@ -178,7 +187,7 @@ export default function CheckoutPage() {
 
       const json = await res.json();
       if (!res.ok || !json.success) {
-        throw new Error(json.message || "Failed to create checkout session");
+        throw new Error(json.message || "Payment could not be started. Please try again.");
       }
 
       const checkoutData = json.data;
@@ -213,8 +222,8 @@ export default function CheckoutPage() {
         rzp.open();
       }
     } catch (err: any) {
-      console.error("Payment error:", err);
-      toast.error(err.message || "Server Error");
+      console.error("Payment error:", { message: err?.message, stack: err?.stack });
+      toast.error(err.message || "Payment could not be started. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -745,6 +754,68 @@ export default function CheckoutPage() {
                 <h3 className="text-xs label-uppercase tracking-widest font-semibold border-b border-black/10 pb-5 mb-6">
                   Order Summary
                 </h3>
+
+                {/* Coupon Code Section */}
+                <div className="border-b border-black/10 pb-6 mb-6">
+                  <h4 className="text-[10px] uppercase tracking-widest text-black/60 mb-3 font-semibold">
+                    Coupon Code
+                  </h4>
+                  {couponCode ? (
+                    <div className="flex items-center justify-between bg-green-50 border border-green-200/50 px-3.5 py-2.5 rounded-[4px]">
+                      <div className="flex items-center gap-2 text-green-700">
+                        <Tag className="w-3.5 h-3.5" />
+                        <span className="text-xs font-bold tracking-wider uppercase">
+                          {couponCode}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          removeCoupon();
+                          setCouponInput("");
+                        }}
+                        className="text-green-700 hover:text-green-900 transition-colors p-1"
+                        title="Remove Coupon"
+                      >
+                        <X className="w-3.5 h-3.5" strokeWidth={2.5} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponInput}
+                          onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                          placeholder="Enter coupon code"
+                          className="flex-1 bg-white border border-black/10 px-3.5 py-2.5 text-xs focus:outline-none focus:border-black transition-colors uppercase tracking-wider font-medium placeholder:normal-case placeholder:tracking-normal rounded-[4px]"
+                          disabled={couponLoading}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (couponInput.trim()) {
+                              applyCoupon(couponInput.trim());
+                            }
+                          }}
+                          disabled={couponLoading || !couponInput.trim()}
+                          className="bg-black hover:bg-neutral-850 text-white px-5 py-2.5 text-xs uppercase tracking-wider font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center min-w-[76px] rounded-[4px]"
+                        >
+                          {couponLoading ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            "Apply"
+                          )}
+                        </button>
+                      </div>
+                      {couponError && (
+                        <p className="text-[11px] text-red-600 font-semibold mt-1">
+                          {couponError}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 <div className="space-y-4 text-sm">
                   {couponDiscount > 0 && (

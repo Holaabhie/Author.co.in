@@ -12,27 +12,17 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const products = await prisma.product.findMany({
-    select: { id: true, name: true, slug: true },
-    orderBy: { name: "asc" },
-  });
-  console.log("=== PRODUCTS ===");
-  console.log(JSON.stringify(products, null, 2));
+  const sequences = await prisma.orderSequence.findMany();
+  console.log("=== ORDER SEQUENCES ===");
+  console.log(JSON.stringify(sequences, null, 2));
 
-  const images = await prisma.productImage.findMany({
-    include: { product: { select: { name: true } } },
-    orderBy: [{ productId: "asc" }, { sortOrder: "asc" }],
+  const orders = await prisma.order.findMany({
+    select: { id: true, orderNumber: true, status: true, paymentStatus: true, total: true, createdAt: true },
+    orderBy: { createdAt: "desc" },
+    take: 10
   });
-  console.log("\n=== PRODUCT IMAGES ===");
-  console.log(JSON.stringify(images, null, 2));
-  console.log("Total images:", images.length);
-
-  const variants = await prisma.productVariant.findMany({
-    select: { color: true },
-    distinct: ["color"],
-  });
-  console.log("\n=== DISTINCT VARIANT COLORS ===");
-  console.log(variants.map((v: any) => v.color));
+  console.log("\n=== RECENT ORDERS ===");
+  console.log(JSON.stringify(orders, null, 2));
 }
 
 main()

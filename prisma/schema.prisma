@@ -708,3 +708,11 @@ model SiteSetting {
   @@map("site_settings")
 }
 
+model OrderSequence {
+  name      String   @id
+  value     Int
+  updatedAt DateTime @updatedAt
+
+  @@map("order_sequences")
+}
+

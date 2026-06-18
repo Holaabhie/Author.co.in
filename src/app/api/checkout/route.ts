@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/get-user';
-import { prisma } from '@/lib/db';
+import { prisma, Prisma } from '@/lib/db';
 import { getRazorpay, formatCurrency } from '@/lib/razorpay';
 import { resolvePrices } from '@/lib/pricing';
 import { apiError, apiUnauthorized } from '@/lib/api-helpers';
@@ -21,6 +21,19 @@ import { getPrimaryProductImage } from '@/lib/shop/media-helpers';
  */
 export async function POST(request: Request) {
   try {
+    // ── Early env var validation (fail fast with clear message) ──
+    const enableMockEarly = process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
+    if (!enableMockEarly) {
+      const missingVars: string[] = [];
+      if (!process.env.RAZORPAY_KEY_ID) missingVars.push('RAZORPAY_KEY_ID');
+      if (!process.env.RAZORPAY_KEY_SECRET) missingVars.push('RAZORPAY_KEY_SECRET');
+      if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) missingVars.push('NEXT_PUBLIC_RAZORPAY_KEY_ID');
+      if (missingVars.length > 0) {
+        console.error(`[CHECKOUT] Missing Razorpay env vars: ${missingVars.join(', ')}`);
+        return apiError('CONFIG_ERROR', 'Razorpay environment variables are missing. Please contact support.', 500);
+      }
+    }
+
     const user = await getCurrentUser();
     if (!user) {
       return apiUnauthorized();
@@ -314,86 +327,113 @@ export async function POST(request: Request) {
       return apiError('VALIDATION_ERROR', 'No delivery address provided', 400);
     }
 
-    // Generate order number
-    const orderCount = await prisma.order.count();
-    const orderNumber = `AUTH-${String(orderCount + 1).padStart(6, '0')}`;
+    // ─── Atomic order number generation + order creation ───────────────
+    // Uses OrderSequence table with atomic increment and P2002 retry.
+    const MAX_RETRIES = 3;
+    let order: { id: string; orderNumber: string; total: number } | null = null;
+    let razorpayOrder: { id: string } | null = null;
 
-    // Create the Razorpay order with auto-capture, or fallback to mock in local sandbox environment
-    let razorpayOrder;
-    const keyId = process.env.RAZORPAY_KEY_ID;
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    const enableMock = process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      try {
+        // Atomically increment the sequence and get the next value
+        const updated = await prisma.orderSequence.update({
+          where: { name: 'AUTHOR_ORDER' },
+          data: { value: { increment: 1 } },
+        });
+        const orderNumber = `AUTH-${String(updated.value).padStart(6, '0')}`;
 
-    if (enableMock) {
-      // Mock order for test checkout sandbox
-      razorpayOrder = {
-        id: `order_MOCK_${Math.random().toString(36).substring(2, 15)}`,
-      };
-    } else {
-      const razorpay = getRazorpay();
-      razorpayOrder = await razorpay.orders.create({
-        amount: total, // Already in paise
-        currency: 'INR',
-        receipt: orderNumber,
-        payment_capture: true, // Auto-capture — [Audit #4]
-        notes: {
-          userId: user.id,
-          orderNumber,
-          ...(discountCode && {
-            couponCode: discountCode,
-            originalSubtotal: String(subtotal),
-            discountAmount: String(discountAmount),
-            finalTotal: String(total),
-          }),
-        },
-      });
+        // Create the Razorpay order with auto-capture, or fallback to mock in local sandbox
+        const enableMock = process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
+
+        if (enableMock) {
+          // Mock order for test checkout sandbox
+          razorpayOrder = {
+            id: `order_MOCK_${Math.random().toString(36).substring(2, 15)}`,
+          };
+        } else {
+          const razorpay = getRazorpay();
+          razorpayOrder = await razorpay.orders.create({
+            amount: total, // Already in paise
+            currency: 'INR',
+            receipt: orderNumber,
+            payment_capture: 1 as any, // Auto-capture — [Audit #4]
+            notes: {
+              userId: user.id,
+              orderNumber,
+              ...(discountCode && {
+                couponCode: discountCode,
+                originalSubtotal: String(subtotal),
+                discountAmount: String(discountAmount),
+                finalTotal: String(total),
+              }),
+            },
+          });
+        }
+
+        // Create the order in our database
+        order = await prisma.order.create({
+          data: {
+            orderNumber,
+            userId: user.id,
+            status: 'PENDING',
+            paymentStatus: 'PENDING',
+            subtotal,
+            discount: discountAmount,
+            discountCode,
+            shippingFee,
+            tax,
+            total,
+            addressId: deliveryAddressId,
+            razorpayOrderId: razorpayOrder.id,
+            items: {
+              create: lineItems.map((item) => ({
+                productId: item.productId,
+                variantId: item.variantId,
+                productName: item.productName,
+                size: item.size,
+                color: item.color,
+                quantity: item.quantity,
+                unitPrice: item.unitPrice,
+                originalUnitPrice: item.originalUnitPrice,
+                discountAmount: item.originalUnitPrice - item.unitPrice,
+                totalPrice: item.totalPrice,
+                imageUrl: item.imageUrl,
+              })),
+            },
+            statusHistory: {
+              create: {
+                status: 'PENDING',
+                note: discountCode
+                  ? `Order created with coupon ${discountCode}, awaiting payment`
+                  : 'Order created, awaiting payment',
+              },
+            },
+          },
+          select: {
+            id: true,
+            orderNumber: true,
+            total: true,
+          },
+        });
+
+        break; // Success — exit retry loop
+      } catch (err: any) {
+        // P2002 = unique constraint violation on orderNumber — retry with next sequence
+        if (
+          err instanceof Prisma.PrismaClientKnownRequestError &&
+          err.code === 'P2002' &&
+          attempt < MAX_RETRIES - 1
+        ) {
+          console.warn(`[CHECKOUT] P2002 duplicate orderNumber on attempt ${attempt + 1}, retrying...`);
+          continue;
+        }
+        throw err; // Re-throw non-retryable errors
+      }
     }
 
-    // Create the order in our database
-    const order = await prisma.order.create({
-      data: {
-        orderNumber,
-        userId: user.id,
-        status: 'PENDING',
-        paymentStatus: 'PENDING',
-        subtotal,
-        discount: discountAmount,
-        discountCode,
-        shippingFee,
-        tax,
-        total,
-        addressId: deliveryAddressId,
-        razorpayOrderId: razorpayOrder.id,
-        items: {
-          create: lineItems.map((item) => ({
-            productId: item.productId,
-            variantId: item.variantId,
-            productName: item.productName,
-            size: item.size,
-            color: item.color,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            originalUnitPrice: item.originalUnitPrice,
-            discountAmount: item.originalUnitPrice - item.unitPrice,
-            totalPrice: item.totalPrice,
-            imageUrl: item.imageUrl,
-          })),
-        },
-        statusHistory: {
-          create: {
-            status: 'PENDING',
-            note: discountCode
-              ? `Order created with coupon ${discountCode}, awaiting payment`
-              : 'Order created, awaiting payment',
-          },
-        },
-      },
-      select: {
-        id: true,
-        orderNumber: true,
-        total: true,
-      },
-    });
+    if (!order || !razorpayOrder) {
+      return apiError('CHECKOUT_FAILED', 'Failed to create order after retries', 500);
+    }
 
     return NextResponse.json({
       success: true,
@@ -411,8 +451,18 @@ export async function POST(request: Request) {
         },
       },
     });
-  } catch (error) {
-    console.error('[CHECKOUT_ERROR]', error);
-    return apiError('CHECKOUT_FAILED', 'Failed to create checkout session', 500);
+  } catch (error: any) {
+    console.error('[CHECKOUT_ERROR]', {
+      message: error?.message,
+      code: error?.code,
+      statusCode: error?.statusCode,
+      stack: error?.stack?.split('\n').slice(0, 3).join('\n'),
+    });
+    // Distinguish Razorpay SDK errors from other failures
+    const isRazorpayError = error?.message?.includes('razorpay') || error?.statusCode;
+    const userMessage = isRazorpayError
+      ? 'Payment gateway error. Please try again or contact support.'
+      : 'Failed to create Razorpay order. Please try again.';
+    return apiError('CHECKOUT_FAILED', userMessage, 500);
   }
 }

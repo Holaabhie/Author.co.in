@@ -38,10 +38,13 @@ export async function POST(request: NextRequest) {
       .update(body)
       .digest('hex');
 
-    const isValid = crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    );
+    let isValid = false;
+    if (signature.length === expectedSignature.length) {
+      isValid = crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expectedSignature)
+      );
+    }
 
     if (!isValid) {
       console.error('[WEBHOOK] Invalid signature');
