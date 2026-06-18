@@ -8,6 +8,7 @@ import { Heart } from "lucide-react";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { optimizeCloudinaryUrl } from "@/lib/shop/catalog";
 import { getProductVideo } from "@/lib/shop/videos";
+import { getPrimaryProductImage, PLACEHOLDER_IMAGE } from "@/lib/shop/media-helpers";
 import { ProductVideoCard } from "@/components/common/ProductVideoCard";
 
 interface DBProduct {
@@ -90,6 +91,7 @@ export default function BestSellers() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-14">
           {bestSellers.map((product, i) => {
             const images = product.images.map((img) => img.url);
+            const primaryImage = getPrimaryProductImage(product.images);
             const videoUrl = getProductVideo(product.slug);
 
             return (
@@ -103,7 +105,7 @@ export default function BestSellers() {
                 <Link href={`/product/${product.slug}`}>
                   {videoUrl ? (
                     <ProductVideoCard
-                      imageUrl={images[0] || ""}
+                      imageUrl={primaryImage}
                       videoUrl={videoUrl}
                       productName={product.name}
                       aspectRatioClassName="aspect-[3/4]"
@@ -119,7 +121,7 @@ export default function BestSellers() {
                             slug: product.slug,
                             price: product.price / 100, // paise to rupees
                             salePrice: product.discountPrice ? product.discountPrice / 100 : null,
-                            image: images[0] || "",
+                            image: primaryImage,
                             addedAt: new Date().toISOString(),
                           });
                         }}
@@ -141,9 +143,9 @@ export default function BestSellers() {
                     </ProductVideoCard>
                   ) : (
                     <div className="relative aspect-[3/4] overflow-hidden bg-[#F5F5F5] mb-4">
-                      {images[0] ? (
+                      {primaryImage !== PLACEHOLDER_IMAGE ? (
                         <Image
-                          src={optimizeCloudinaryUrl(images[0], 600)}
+                          src={optimizeCloudinaryUrl(primaryImage, 600)}
                           alt={product.name}
                           fill
                           className="object-cover transition-transform duration-[1.2s] ease-out-expo group-hover:scale-105"
@@ -177,7 +179,7 @@ export default function BestSellers() {
                             slug: product.slug,
                             price: product.price / 100, // paise to rupees
                             salePrice: product.discountPrice ? product.discountPrice / 100 : null,
-                            image: images[0] || "",
+                            image: primaryImage,
                             addedAt: new Date().toISOString(),
                           });
                         }}

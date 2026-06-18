@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { optimizeCloudinaryUrl } from "@/lib/shop/catalog";
+import { PLACEHOLDER_IMAGE } from "@/lib/shop/media-helpers";
 
 interface ProductVideoCardProps {
   imageUrl: string;
@@ -31,6 +32,7 @@ export function ProductVideoCard({
 }: ProductVideoCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [videoError, setVideoError] = useState(false);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
@@ -68,18 +70,24 @@ export function ProductVideoCard({
           Fix: object-fit: cover ensures video fills card without stretch/overflow/blank space */}
       <video
         ref={videoRef}
+        key={videoUrl}
         src={videoUrl}
+        poster={optimizeCloudinaryUrl(imageUrl, 600)}
         autoPlay
         loop
         muted
         playsInline
-        preload="metadata"
-        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 pointer-events-none opacity-0 group-hover:opacity-100"
+        preload="auto"
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 pointer-events-none ${videoError ? 'hidden' : 'opacity-0 group-hover:opacity-100'}`}
         style={{
           /* Fallback: ensure object-fit cover works in all browsers */
           objectFit: "cover",
           width: "100%",
           height: "100%",
+        }}
+        onError={() => {
+          console.error("Video failed to load:", videoUrl);
+          setVideoError(true);
         }}
       />
       {/* Play indicator badge — only visible on hover */}

@@ -34,6 +34,7 @@ import { useUser } from '@/hooks/use-user';
 import { AuthorLoader } from '@/components/ui/AuthorLoader';
 import toast from 'react-hot-toast';
 import { createClient } from '@/lib/supabase/client';
+import { getPrimaryProductImage } from '@/lib/shop/media-helpers';
 
 type AccountTab = 'profile' | 'orders' | 'addresses' | 'wishlist' | 'settings';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -112,7 +113,7 @@ function resolveItemDisplayImage(item: any): string | null {
   const primary = images.find((img: any) => img.isPrimary);
   if (primary) return primary.url;
 
-  return images[0]?.url ?? null;
+  return getPrimaryProductImage(images) || images[0]?.url || null;
 }
 
 // ─── Sidebar nav item config ─────────────────────────────────────────────────

@@ -8,6 +8,7 @@ import { Search, X, ArrowRight } from "lucide-react";
 import { AuthorLoader } from "@/components/ui/AuthorLoader";
 import { useUIStore } from "@/lib/store/ui";
 import { usePathname } from "next/navigation";
+import { getPrimaryProductImage, PLACEHOLDER_IMAGE } from "@/lib/shop/media-helpers";
 interface SearchedProduct {
   id: string;
   name: string;
@@ -16,6 +17,7 @@ interface SearchedProduct {
   price: number;
   salePrice: number | null;
   images: string[];
+  primaryImage: string;
 }
 
 export default function SearchModal() {
@@ -95,7 +97,8 @@ export default function SearchModal() {
               category: p.category?.name || "",
               price: p.price / 100,
               salePrice: p.discountPrice ? p.discountPrice / 100 : null,
-              images: p.images && p.images.length > 0 ? p.images.map((img: any) => img.url) : []
+              images: p.images && p.images.length > 0 ? p.images.map((img: any) => img.url) : [],
+              primaryImage: getPrimaryProductImage(p.images),
             }));
             setResults(mapped);
           }
@@ -189,9 +192,9 @@ export default function SearchModal() {
                         className="flex items-center gap-4 p-3 hover:bg-white/5 transition-colors group"
                       >
                         <div className="relative w-14 h-16 flex-shrink-0 bg-author-black overflow-hidden">
-                          {product.images[0] ? (
+                          {product.primaryImage !== PLACEHOLDER_IMAGE ? (
                             <Image
-                              src={product.images[0]}
+                              src={product.primaryImage}
                               alt={product.name}
                               fill
                               className="object-cover"

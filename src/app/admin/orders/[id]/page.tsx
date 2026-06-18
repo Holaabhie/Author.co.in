@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import AdminOrderReceipt from "@/components/admin/AdminOrderReceipt";
+import { getPrimaryProductImage } from "@/lib/shop/media-helpers";
 
 interface OrderItem {
   id: string;
@@ -118,7 +119,8 @@ function resolveItemDisplayImage(item: OrderItem): string | null {
   const primary = images.find((img) => img.isPrimary);
   if (primary) return primary.url;
 
-  return images[0]?.url ?? null;
+  // Final fallback: use shared helper which handles sortOrder + keyword detection
+  return getPrimaryProductImage(images) || images[0]?.url || null;
 }
 
 export default function OrderDetailPage() {

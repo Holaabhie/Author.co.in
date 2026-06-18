@@ -8,6 +8,7 @@ import { Heart } from "lucide-react";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { optimizeCloudinaryUrl } from "@/lib/shop/catalog";
 import { getProductVideo } from "@/lib/shop/videos";
+import { getPrimaryProductImage, PLACEHOLDER_IMAGE } from "@/lib/shop/media-helpers";
 import { ProductVideoCard } from "@/components/common/ProductVideoCard";
 
 interface DBProduct {
@@ -30,6 +31,7 @@ function ProductCard({ product }: ProductCardProps) {
   const isWishlisted = isInWishlist(product.id);
 
   const images = product.images.map((img: any) => img.url);
+  const primaryImage = getPrimaryProductImage(product.images);
   const videoUrl = getProductVideo(product.slug);
   const colors = Array.from(
     new Map(
@@ -45,7 +47,7 @@ function ProductCard({ product }: ProductCardProps) {
       slug: product.slug,
       price: product.price / 100, // paise to rupees
       salePrice: product.discountPrice ? product.discountPrice / 100 : null,
-      image: images[0] || "",
+      image: primaryImage,
       addedAt: new Date().toISOString(),
     });
   };
@@ -60,7 +62,7 @@ function ProductCard({ product }: ProductCardProps) {
         {/* Image wrapper - no borders, no shadow, clean aspect-ratio */}
         {videoUrl ? (
           <ProductVideoCard
-            imageUrl={images[0] || ""}
+            imageUrl={primaryImage}
             videoUrl={videoUrl}
             productName={product.name}
             aspectRatioClassName="aspect-[3/4]"
@@ -77,9 +79,9 @@ function ProductCard({ product }: ProductCardProps) {
           </ProductVideoCard>
         ) : (
           <div className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-5 transition-all duration-500">
-            {images[0] ? (
+            {primaryImage !== PLACEHOLDER_IMAGE ? (
               <Image
-                src={optimizeCloudinaryUrl(images[0], 600)}
+                src={optimizeCloudinaryUrl(primaryImage, 600)}
                 alt={product.name}
                 fill
                 className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105"

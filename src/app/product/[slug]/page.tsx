@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import { AuthorLoader } from "@/components/ui/AuthorLoader";
 import { optimizeCloudinaryUrl } from "@/lib/shop/catalog";
 import { getProductVideo } from "@/lib/shop/videos";
+import { getPrimaryProductImage, PLACEHOLDER_IMAGE } from "@/lib/shop/media-helpers";
 import SizeChart from "@/components/product/SizeChart";
 
 // ── Types matching the API response shape ─────────────────────────────
@@ -217,7 +218,7 @@ export default function ProductPage() {
     const colorImg = product.images.find(
       (img) => img.color && img.color.toLowerCase() === selectedColor.toLowerCase()
     );
-    const cartImage = colorImg?.url || product.images[0]?.url || "";
+    const cartImage = colorImg?.url || getPrimaryProductImage(product.images);
 
     const effectivePrice = matchedVariant.priceOverride ?? product.discountPrice ?? product.price;
 
@@ -241,7 +242,7 @@ export default function ProductPage() {
 
   const handleWishlistToggle = () => {
     if (!product) return;
-    const primaryImg = product.images.find((img) => img.isPrimary)?.url || product.images[0]?.url || "";
+    const primaryImg = getPrimaryProductImage(product.images);
     toggleItem({
       productId: product.id,
       name: product.name,
@@ -386,12 +387,18 @@ export default function ProductPage() {
                     ref={videoDetailRef}
                     key={videoUrl}
                     src={videoUrl}
+                    poster={colorImages[0] ? optimizeCloudinaryUrl(colorImages[0].url, 1200) : PLACEHOLDER_IMAGE}
                     autoPlay
-                    loop
                     muted
+                    loop
                     playsInline
+                    preload="auto"
                     controls
                     className="w-full h-full object-cover"
+                    onError={() => {
+                      console.error("Video failed to load:", videoUrl);
+                      setShowVideo(false);
+                    }}
                   />
                 ) : (
                   /* ── Static image with zoom ── */
@@ -409,6 +416,10 @@ export default function ProductPage() {
                       sizes="(max-width: 768px) 100vw, 50vw"
                       quality={85}
                       priority
+                      onError={(e) => {
+                        console.error("Image failed to load:", colorImages[selectedImage].url);
+                        (e.currentTarget as HTMLImageElement).src = PLACEHOLDER_IMAGE;
+                      }}
                     />
                   )
                 )}

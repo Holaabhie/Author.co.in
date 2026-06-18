@@ -9,6 +9,7 @@ import { ChevronDown } from "lucide-react";
 import { AuthorLoader } from "@/components/ui/AuthorLoader";
 import { optimizeCloudinaryUrl } from "@/lib/shop/catalog";
 import { getProductVideo } from "@/lib/shop/videos";
+import { getPrimaryProductImage, PLACEHOLDER_IMAGE } from "@/lib/shop/media-helpers";
 import { ProductVideoCard } from "@/components/common/ProductVideoCard";
 
 // ── Slug → DB category slug mapping ──────────────────────────────────
@@ -120,14 +121,11 @@ export default function CategoryPage() {
     fetchProducts();
   }, [categorySlug, sort]);
 
-  // Get primary image for a product card — always use images[0] which is the FRONT image.
-  // Fix: previously used isPrimary flag which could mismatch; now we rely on sort order
-  // where images[0] is always the front-side image after the data fix.
-  const getPrimaryImage = (product: Product): string => {
-    if (product.images.length === 0) return "/placeholder.png";
-    // images are returned sorted by sortOrder asc from the API,
-    // so images[0] is always the front image.
-    return product.images[0].url;
+  // Get primary image for a product card — uses shared helper with
+  // isPrimary → keyword detection → sortOrder fallback.
+  // Old logic: relied on images[0] which could mismatch.
+  const getCardImage = (product: Product): string => {
+    return getPrimaryProductImage(product.images);
   };
 
   // Get unique colors from variants
@@ -239,7 +237,7 @@ export default function CategoryPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-10 md:gap-x-8 md:gap-y-14">
               {products.map((product, index) => {
                 const uniqueColors = getUniqueColors(product.variants);
-                const imageUrl = getPrimaryImage(product);
+                const imageUrl = getCardImage(product);
                 const hasDiscount =
                   product.discountPrice !== null && product.discountPrice < product.price;
                 const videoUrl = getProductVideo(product.slug);

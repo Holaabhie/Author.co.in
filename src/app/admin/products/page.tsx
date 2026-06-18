@@ -19,6 +19,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { getPrimaryProductImage, PLACEHOLDER_IMAGE } from "@/lib/shop/media-helpers";
 
 interface Category {
   id: string;
@@ -296,10 +297,10 @@ export default function AdminProductsPage() {
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="relative w-10 h-12 flex-shrink-0 bg-author-black overflow-hidden rounded border border-white/10">
-                            {product.images?.[0]?.url ? (
+                            {getPrimaryProductImage(product.images) !== PLACEHOLDER_IMAGE ? (
                               <Image
-                                src={product.images[0].url}
-                                alt={product.images[0].alt || product.name}
+                                src={getPrimaryProductImage(product.images)}
+                                alt={product.images?.[0]?.alt || product.name}
                                 fill
                                 className="object-cover"
                                 sizes="40px"
