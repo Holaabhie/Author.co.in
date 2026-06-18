@@ -22,7 +22,7 @@ import { getPrimaryProductImage } from '@/lib/shop/media-helpers';
 export async function POST(request: Request) {
   try {
     // ── Early env var validation (fail fast with clear message) ──
-    const enableMockEarly = process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
+    const enableMockEarly = !process.env.VERCEL && process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
     if (!enableMockEarly) {
       const missingVars: string[] = [];
       if (!process.env.RAZORPAY_KEY_ID) missingVars.push('RAZORPAY_KEY_ID');
@@ -343,7 +343,7 @@ export async function POST(request: Request) {
         const orderNumber = `AUTH-${String(updated.value).padStart(6, '0')}`;
 
         // Create the Razorpay order with auto-capture, or fallback to mock in local sandbox
-        const enableMock = process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
+        const enableMock = !process.env.VERCEL && process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
 
         if (enableMock) {
           // Mock order for test checkout sandbox

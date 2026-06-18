@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     // Verify the signature
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    const enableMock = process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
+    const enableMock = !process.env.VERCEL && process.env.NEXT_PUBLIC_ENABLE_MOCK_PAYMENT === 'true';
     let isValid = false;
 
     if (enableMock && (keySecret === 'your-key-secret' || razorpay_signature === 'mock_signature_123456')) {

@@ -20,7 +20,7 @@ const BUCKET_NAME = 'invoices';
 export async function generateInvoice(orderId: string): Promise<string | null> {
   try {
     // Fetch all required data
-    const [order, settings] = await Promise.all([
+    const [order, fetchedSettings] = await Promise.all([
       prisma.order.findUnique({
         where: { id: orderId },
         include: {
@@ -36,9 +36,26 @@ export async function generateInvoice(orderId: string): Promise<string | null> {
       prisma.invoiceSetting.findFirst(),
     ]);
 
-    if (!order || !settings) {
-      console.error('[INVOICE] Order or settings not found');
+    if (!order) {
+      console.error('[INVOICE] Order not found');
       return null;
+    }
+
+    let settings = fetchedSettings;
+    if (!settings) {
+      console.info('[INVOICE] Invoice settings not found, creating defaults');
+      settings = await prisma.invoiceSetting.create({
+        data: {
+          businessName: 'AUTHOR',
+          address: '123 Fashion Street, New Delhi',
+          state: 'Delhi',
+          gstin: '07AAAAA0000A1Z5',
+          invoicePrefix: 'AUTH',
+          cgstRate: 9,
+          sgstRate: 9,
+          igstRate: 18,
+        },
+      });
     }
 
     // Get next invoice number from sequence (or fallback)
@@ -300,6 +317,16 @@ export async function generateInvoice(orderId: string): Promise<string | null> {
     // Upload to Supabase Storage
     const supabase = createAdminClient();
     const fileName = `${invoiceNumber}.pdf`;
+
+    // Ensure storage bucket exists
+    try {
+      const { data: buckets } = await supabase.storage.listBuckets();
+      if (!buckets?.some(b => b.name === BUCKET_NAME)) {
+        await supabase.storage.createBucket(BUCKET_NAME, { public: true });
+      }
+    } catch (bucketError) {
+      console.warn('[INVOICE] Error checking/creating bucket, proceeding anyway:', bucketError);
+    }
 
     const { error: uploadError } = await supabase.storage
       .from(BUCKET_NAME)
