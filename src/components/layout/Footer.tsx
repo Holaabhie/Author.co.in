@@ -36,7 +36,7 @@ export default function Footer() {
   const aboutLinks = [
     { name: "Our Story", href: "/about" },
     { name: "Shipping", href: "/shipping" },
-    { name: "Returns", href: "/returns" },
+    // REMOVED: { name: "Returns", href: "/returns" },
     { name: "Contact", href: "/contact" },
   ];
 

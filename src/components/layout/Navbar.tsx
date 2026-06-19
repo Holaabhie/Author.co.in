@@ -126,7 +126,7 @@ export default function Navbar() {
       dropdown: [
         { name: 'Our Story', href: '/about' },
         { name: 'Shipping', href: '/shipping' },
-        { name: 'Returns', href: '/returns' },
+        // REMOVED: { name: 'Returns', href: '/returns' },
         { name: 'Contact', href: '/contact' },
       ],
     },
@@ -418,6 +418,7 @@ export default function Navbar() {
                     >
                       Shipping
                     </Link>
+                    {/* REMOVED: Returns link
                     <Link
                       href="/returns"
                       onClick={closeMobileMenu}
@@ -425,6 +426,7 @@ export default function Navbar() {
                     >
                       Returns
                     </Link>
+                    */}
                     <Link
                       href="/contact"
                       onClick={closeMobileMenu}

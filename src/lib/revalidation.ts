@@ -21,7 +21,7 @@ const CONTENT_PATH_MAP: Record<string, string[]> = {
   'privacy': ['/privacy'],
   'terms': ['/terms'],
   'shipping': ['/shipping-policy'],
-  'returns': ['/return-policy'],
+  // REMOVED: 'returns': ['/return-policy'],
   
   // Navigation
   'navigation': ['/'],

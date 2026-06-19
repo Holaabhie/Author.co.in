@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Truck, RotateCcw, ShieldCheck, Heart } from 'lucide-react';
+import { Truck, ShieldCheck, Heart } from 'lucide-react';
+// REMOVED: RotateCcw was used for the Returns & Exchanges section
 
 export default function AboutPage() {
   return (
@@ -79,7 +80,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Returns */}
+          {/* REMOVED: Returns & Exchanges section — replaced with Quality Guarantee
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm border border-neutral-150">
@@ -93,6 +94,22 @@ export default function AboutPage() {
               <p>• <strong>7-Day Window:</strong> File return requests directly from your customer account dashboard within 7 days of delivery.</p>
               <p>• <strong>Hassle-Free Pickup:</strong> Once approved, our logistics partner will arrange a reverse pickup from your address.</p>
               <p>• <strong>Condition:</strong> Items must be unworn, unwashed, and returned with original tags intact.</p>
+            </div>
+          </div>
+          */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm border border-neutral-150">
+                <ShieldCheck className="w-5 h-5 text-neutral-800" />
+              </div>
+              <h3 className="font-heading text-lg font-bold uppercase tracking-wider text-neutral-900">
+                Quality Guarantee
+              </h3>
+            </div>
+            <div className="space-y-2 text-xs text-neutral-600 leading-relaxed">
+              <p>• <strong>Pre-Dispatch QC:</strong> Every item undergoes a thorough quality check before shipping to ensure it meets our standards.</p>
+              <p>• <strong>Damaged Items:</strong> In the rare event you receive a damaged or incorrect product, contact us within 48 hours and we&apos;ll resolve it promptly.</p>
+              <p>• <strong>Get in Touch:</strong> Reach us at shopauthor.co@gmail.com or WhatsApp +91 9076252241.</p>
             </div>
           </div>
         </div>
